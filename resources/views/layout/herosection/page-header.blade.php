@@ -5,11 +5,11 @@
                 <div class="col-lg-12">
                     <!-- Page Header Box Start -->
                     <div class="page-header-box">
-                        <h1 class="text-anime-style-3" data-cursor="-opaque">About us</h1>                        
+                        <h1 class="text-anime-style-3" data-cursor="-opaque">Profile</h1>                        
                         <nav class="wow fadeInUp">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="./">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">About us</li>
+                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Tentang Kami</li>
                             </ol>
                         </nav>
                     </div>

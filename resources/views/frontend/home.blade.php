@@ -1,7 +1,6 @@
 @extends('layout.master')
 
 @section('content')
-
     <!-- About Us Section Start -->
     <div class="about-us">
         <div class="container">

@@ -54,7 +54,7 @@
       @include('layout.herosection.page-header')
     @endif
     <!-- Hero Section End -->
-
+    @yield('content')
     <!-- Footer Section Start -->
     @include('layout.footer')
     <!-- Footer Section End -->
