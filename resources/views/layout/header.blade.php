@@ -14,7 +14,7 @@
                             <ul class="navbar-nav mr-auto" id="menu">
                                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">Tentang Kami</a></li>
-                                <li class="nav-item"><a class="nav-link" href="programs.html">Programs</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('program') }}">Programs</a></li>
                                 <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
                                 <li class="nav-item submenu"><a class="nav-link" href="#">Pages</a>
                                     <ul>
