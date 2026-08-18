@@ -1,59 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tapak Suci Sport Academy Official Web
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Website resmi yang sedang dikembangkan untuk memperkenalkan Tapak Suci Sport Academy sebagai pusat latihan bela diri, pembentukan karakter, dan pengembangan prestasi atlet muda.
 
-## About Laravel
+## Gambaran Umum
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Project ini dibangun dengan Laravel untuk menyediakan landing page dan halaman profil organisasi yang modern, responsif, dan mudah dikembangkan untuk kebutuhan website resmi akademi.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Saat ini website mencakup beberapa halaman utama seperti:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Halaman utama / home
+- Halaman tentang / about
+- Halaman program / program
 
-## Learning Laravel
+## Tujuan Website
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Website ini dibuat untuk:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Memperkenalkan Tapak Suci Sport Academy secara profesional
+- Menampilkan visi, misi, dan profil organisasi
+- Menyampaikan program latihan dan kegiatan akademi
+- Menjadi media informasi bagi calon siswa, orang tua, dan mitra
+- Menjadi fondasi pengembangan website resmi yang lebih lengkap di masa depan
 
-## Laravel Sponsors
+## Fitur
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Desain modern dan responsif
+- Halaman Home untuk promosi utama
+- Halaman About untuk profil dan nilai organisasi
+- Halaman Program untuk menampilkan program latihan
+- Struktur Laravel yang siap dikembangkan lebih lanjut
+- Integrasi asset frontend dengan Vite
 
-### Premium Partners
+## Teknologi yang Digunakan
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- PHP 8.2
+- Laravel 12
+- Blade Template
+- Vite
+- Bootstrap / CSS custom
 
-## Contributing
+## Struktur Project
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- `app/` — logika aplikasi dan controller
+- `routes/` — definisi route website
+- `resources/views/` — view Blade untuk frontend
+- `public/` — aset statis seperti gambar, CSS, dan JS
+- `database/` — migration dan seeder
+- `config/` — konfigurasi aplikasi
 
-## Code of Conduct
+## Cara Menjalankan Project
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Install dependency PHP
 
-## Security Vulnerabilities
+```bash
+composer install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Salin file environment
 
-## License
+```bash
+cp .env.example .env
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. Generate key aplikasi
+
+```bash
+php artisan key:generate
+```
+
+4. Jalankan migrasi database
+
+```bash
+php artisan migrate
+```
+
+5. Install dependency frontend
+
+```bash
+npm install
+```
+
+6. Build asset frontend
+
+```bash
+npm run build
+```
+
+7. Jalankan server lokal
+
+```bash
+php artisan serve
+```
+
+Setelah itu, buka browser ke:
+
+```text
+http://localhost:8000
+```
+
+## Route Utama
+
+- `/` — Home
+- `/about` — About Us
+- `/program` — Program
+
+## Catatan
+
+Project ini masih dalam tahap pengembangan website resmi. Selanjutnya dapat dikembangkan dengan fitur seperti:
+
+- Form pendaftaran siswa
+- Galeri kegiatan
+- Testimoni
+- Kontak dan lokasi
+- Dashboard admin
+
+## Lisensi
+
+Project ini menggunakan lisensi MIT seperti default Laravel project.
