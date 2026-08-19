@@ -30,7 +30,7 @@
                                         <li class="nav-item"><a class="nav-link" href="404.html">404</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('contact-us') }}">Contact Us</a></li>
                                 <li class="nav-item highlighted-menu"><a class="nav-link" href="book-appointment.html">Book Free Trial</a></li>
                             </ul>
                         </div>
