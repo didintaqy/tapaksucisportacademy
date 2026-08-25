@@ -23,6 +23,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\Select;
 use UnitEnum;
+use App\Filament\Resources\Students\Widgets\StudentOverview;
 
 class StudentResource extends Resource
 {
@@ -37,7 +38,14 @@ class StudentResource extends Resource
 
     // protected static ?string $navigationBadgeTooltip = 'Jumlah Siswa';
 
-    protected static ?string $recordTitleAttribute = 'Siswa';
+    // protected static ?string $recordTitleAttribute = 'Siswa';
+
+    public static function getWidgets(): array
+    {
+        return [
+            StudentOverview::class,
+        ];
+    }
 
     public static function getNavigationBadge(): ?string
     {
