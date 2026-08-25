@@ -4,9 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
+    protected $fillable = [
+        'full_name',
+        'nickname',
+        'birth_place',
+        'birth_date',
+        'nik',
+        'family_card_number',
+        'phone_number',
+        'gender',
+        'belt_level',
+        'address',
+        'education',
+        'photo',
+    ]; 
+
     /** @use HasFactory<\Database\Factories\StudentFactory> */
-    use HasFactory;
+    use HasFactory, softDeletes;
 }
