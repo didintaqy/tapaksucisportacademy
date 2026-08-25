@@ -110,6 +110,11 @@ class StudentResource extends Resource
         return $table
             ->recordTitleAttribute('Siswa')
             ->columns([
+                ImageColumn::make('photo')
+                    // ->visibility('public')
+                    ->disk('public')
+                    ->circular()
+                    ->label('Photo'),
                 TextColumn::make('full_name')
                     ->searchable(),
                 TextColumn::make('nickname')
@@ -131,11 +136,6 @@ class StudentResource extends Resource
                     ->searchable(),
                 TextColumn::make('education')
                     ->searchable(),
-                ImageColumn::make('photo')
-                    // ->visibility('public')
-                    ->disk('public')
-                    ->circular()
-                    ->label('Photo'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
