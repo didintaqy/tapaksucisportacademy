@@ -21,14 +21,33 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\Select;
+use UnitEnum;
 
 class StudentResource extends Resource
 {
+
+    protected static string | UnitEnum | null $navigationGroup = 'Master Data';
+    
     protected static ?string $model = Student::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Users;
+
+    protected static ?string $navigationLabel = 'Daftar Siswa';
+
+    // protected static ?string $navigationBadgeTooltip = 'Jumlah Siswa';
 
     protected static ?string $recordTitleAttribute = 'Siswa';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Jumlah Siswa';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -43,11 +62,24 @@ class StudentResource extends Resource
                 TextInput::make('family_card_number'),
                 TextInput::make('phone_number')
                     ->tel(),
-                TextInput::make('gender'),
+                Select::make('gender')
+                    ->options([
+                        'L' => 'Laki-laki',
+                        'P' => 'Perempuan',
+                    ]),
                 TextInput::make('belt_level'),
                 Textarea::make('address')
                     ->columnSpanFull(),
-                TextInput::make('education'),
+                Select::make('education')
+                    ->options([
+                        'SD' => 'SD',
+                        'SMP' => 'SMP',
+                        'SMA' => 'SMA',
+                        'D3' => 'D3',
+                        'S1' => 'S1',
+                        'S2' => 'S2',
+                        'S3' => 'S3',
+                    ]),
                 FileUpload::make('photo')
                     ->avatar()
                     ->label('Foto Terbaru Seragam Tapak Suci')
