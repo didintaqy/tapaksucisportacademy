@@ -25,4 +25,9 @@ class Student extends Model
 
     /** @use HasFactory<\Database\Factories\StudentFactory> */
     use HasFactory, softDeletes;
+
+    public function performances(): HasMany
+    {
+        return $this->hasMany(UserPerformance::class);
+    }
 }
