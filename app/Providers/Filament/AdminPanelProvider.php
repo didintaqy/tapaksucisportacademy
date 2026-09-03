@@ -25,6 +25,9 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->navigationGroups([
+                'Masater Data'
+            ])
             ->sidebarCollapsibleOnDesktop()
             ->id('admin')
             ->path('admin')

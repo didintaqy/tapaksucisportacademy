@@ -17,11 +17,14 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
+
 class StudentPerformanceResource extends Resource
 {
     protected static string | UnitEnum | null $navigationGroup = 'Master Data';
 
     protected static ?string $navigationLabel = 'Performa Siswa';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $model = StudentPerformance::class;
 
