@@ -24,6 +24,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\Select;
 use UnitEnum;
 use App\Filament\Resources\Students\Widgets\StudentOverview;
+use App\Filament\Resources\Students\RelationManagers\PerformancesRelationManager;
 
 class StudentResource extends Resource
 {
@@ -31,7 +32,7 @@ class StudentResource extends Resource
     protected static string | UnitEnum | null $navigationGroup = 'Master Data';
 
     protected static ?int $navigationSort = 1;
-    
+
     protected static ?string $model = Student::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Users;
@@ -143,7 +144,7 @@ class StudentResource extends Resource
                     ->placeholder('-'),
                 TextEntry::make('deleted_at')
                     ->dateTime()
-                    ->visible(fn (Student $record): bool => $record->trashed()),
+                    ->visible(fn(Student $record): bool => $record->trashed()),
             ]);
     }
 
@@ -206,10 +207,18 @@ class StudentResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            PerformancesRelationManager::class, // <-- Tambahkan di sini
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => ManageStudents::route('/'),
+            'index' => Pages\ListStudents::route('/'),
+            'edit'  => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
 }
