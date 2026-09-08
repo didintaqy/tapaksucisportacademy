@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\StudentPerformances\Pages;
 
 use App\Filament\Resources\StudentPerformances\StudentPerformanceResource;
-use App\Filament\Resources\StudentPerformances\Widgets\PhysicalPillarsOverview;
-use App\Filament\Resources\StudentPerformances\Widgets\PhysicalRadarChart;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -15,14 +13,13 @@ class ViewStudentPerformance extends ViewRecord
 
     public function getTitle(): string
     {
-        return 'Performance Analysis: ' . ($this->record->student?->full_name ?? 'Siswa');
+        return 'Performance Analysis: ' . ($this->record->student?->nickname ?? 'Siswa');
     }
 
     protected function getHeaderWidgets(): array
     {
         return [
-            PhysicalPillarsOverview::class,
-            PhysicalRadarChart::class,
+
         ];
     }
 
@@ -45,7 +42,7 @@ class ViewStudentPerformance extends ViewRecord
         return [
             // Tombol Previous
             Action::make('previous')
-                ->label('')
+                ->label('Prev')
                 ->icon('heroicon-m-chevron-left')
                 ->color('gray')
                 ->disabled(! $previousRecord)

@@ -15,7 +15,7 @@ class StudentPerformancesTable
     {
         return $table
             ->columns([
-                TextColumn::make('student.id')
+                TextColumn::make('student.full_name')
                     ->searchable(),
                 TextColumn::make('resting_heart_rate')
                     ->numeric()
