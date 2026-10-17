@@ -211,6 +211,7 @@ class StudentResource extends Resource
     {
         return [
             PerformancesRelationManager::class, // <-- Tambahkan di sini
+            \App\Filament\Resources\Students\RelationManagers\PaymentsRelationManager::class,
         ];
     }
 

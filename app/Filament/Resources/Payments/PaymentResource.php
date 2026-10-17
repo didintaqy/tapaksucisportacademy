@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Filament\Resources\Payments;
+
+use App\Filament\Resources\Payments\Pages\CreatePayment;
+use App\Filament\Resources\Payments\Pages\EditPayment;
+use App\Filament\Resources\Payments\Pages\ListPayments;
+use App\Filament\Resources\Payments\Pages\ViewPayment;
+use App\Filament\Resources\Payments\Schemas\PaymentForm;
+use App\Filament\Resources\Payments\Schemas\PaymentInfolist;
+use App\Filament\Resources\Payments\Tables\PaymentsTable;
+use App\Filament\Widgets\PaymentsOverview;
+use App\Models\Payment;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use UnitEnum;
+
+class PaymentResource extends Resource
+{
+    protected static string|UnitEnum|null $navigationGroup = 'Keuangan';
+
+    protected static ?string $navigationLabel = 'Pembayaran Siswa';
+
+    protected static ?string $modelLabel = 'Pembayaran';
+
+    protected static ?string $pluralModelLabel = 'Pembayaran Siswa';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $model = Payment::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::CreditCard;
+
+    public static function getWidgets(): array
+    {
+        return [
+            PaymentsOverview::class,
+        ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::outstanding()->count();
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Jumlah tagihan belum lunas';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return PaymentForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return PaymentInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return PaymentsTable::configure($table);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPayments::route('/'),
+            'create' => CreatePayment::route('/create'),
+            'view' => ViewPayment::route('/{record}'),
+            'edit' => EditPayment::route('/{record}/edit'),
+        ];
+    }
+}

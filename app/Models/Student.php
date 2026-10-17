@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Database\Factories\StudentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
@@ -22,13 +23,18 @@ class Student extends Model
         'address',
         'education',
         'photo',
-    ]; 
+    ];
 
-    /** @use HasFactory<\Database\Factories\StudentFactory> */
+    /** @use HasFactory<StudentFactory> */
     use HasFactory, softDeletes;
 
     public function performances(): HasMany
     {
         return $this->hasMany(StudentPerformance::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }

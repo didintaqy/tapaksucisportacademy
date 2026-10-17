@@ -58,8 +58,9 @@
                             <ul>
                                 <li><a href="index.html">Home</a></li>
                                 <li><a href="about.html">About Us</a></li>
-                                <li><a href="programs.html">Programs</a></li>
-                                <li><a href="image-gallery.html">Gallery</a></li>
+                                <li><a href="{{ route('program') }}">Programs</a></li>
+                                <li><a href="{{ route('blog') }}">Blog</a></li>
+                                <li><a href="{{ route('gallery') }}">Gallery</a></li>
                                 <li><a href="contact.html">Contact Us</a></li>
                             </ul>
                         </div>

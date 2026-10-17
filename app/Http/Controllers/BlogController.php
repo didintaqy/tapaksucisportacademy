@@ -2,63 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Post;
 
 class BlogController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan daftar artikel yang sudah terbit.
      */
     public function index()
     {
-        //
+        $posts = Post::query()
+            ->published()
+            ->ordered()
+            ->paginate(6);
+
+        $page = 'Blog';
+        $breadcrumb = 'Blog';
+
+        return view('frontend.blog', compact('posts', 'page', 'breadcrumb'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Tampilkan detail satu artikel.
      */
-    public function create()
+    public function show(Post $post)
     {
-        //
-    }
+        abort_unless($post->isPublished(), 404);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $post->increment('views');
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $page = $post->title;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('frontend.blog-single', compact('post', 'page'));
     }
 }

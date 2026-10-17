@@ -26,7 +26,9 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->navigationGroups([
-                'Masater Data'
+                'Master Data',
+                'Keuangan',
+                'Manajemen Web',
             ])
             ->sidebarCollapsibleOnDesktop()
             ->id('admin')

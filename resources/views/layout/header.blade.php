@@ -4,7 +4,7 @@
 				<div class="container">
 					<!-- Logo Start -->
 					<a class="navbar-brand" href="./">
-						<img src="images/logo.svg" alt="Logo">
+						<img src="{{ asset('images/logo.svg') }}" alt="Logo">
 					</a>
 					<!-- Logo End -->
 
@@ -15,7 +15,8 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">Tentang Kami</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('program') }}">Programs</a></li>
-                                <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('blog') }}">Blog</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('gallery') }}">Gallery</a></li>
                                 <li class="nav-item submenu"><a class="nav-link" href="#">Pages</a>
                                     <ul>
                                         <li class="nav-item"><a class="nav-link" href="program-single.html">Program Details</a></li>
