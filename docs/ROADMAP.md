@@ -105,7 +105,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 Tujuan: website publik siap menjadi wajah resmi akademi.
 
-- [ ] Testimoni: CRUD admin + tampil di frontend
+- [x] Testimoni: CRUD admin + tampil di frontend
 - [ ] FAQ: CRUD admin + halaman frontend
 - [ ] Jadwal latihan: CRUD admin + tampil per cabang/kelas
 - [ ] Pendaftaran siswa online: form publik → tersimpan sebagai calon siswa → admin follow up

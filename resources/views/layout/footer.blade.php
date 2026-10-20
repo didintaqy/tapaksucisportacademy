@@ -56,12 +56,13 @@
                         <div class="footer-links">
                             <h3>Quick Links</h3>
                             <ul>
-                                <li><a href="index.html">Home</a></li>
-                                <li><a href="about.html">About Us</a></li>
+                                <li><a href="{{ route('home') }}">Home</a></li>
+                                <li><a href="{{ route('about') }}">About Us</a></li>
                                 <li><a href="{{ route('program') }}">Programs</a></li>
                                 <li><a href="{{ route('blog') }}">Blog</a></li>
+                                <li><a href="{{ route('testimonials') }}">Testimoni</a></li>
                                 <li><a href="{{ route('gallery') }}">Gallery</a></li>
-                                <li><a href="contact.html">Contact Us</a></li>
+                                <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
                             </ul>
                         </div>
                         <!-- Footer Links End -->

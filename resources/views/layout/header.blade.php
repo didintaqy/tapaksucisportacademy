@@ -24,7 +24,7 @@
                                         <li class="nav-item"><a class="nav-link" href="team.html">Our Team</a></li>
                                         <li class="nav-item"><a class="nav-link" href="team-single.html">Team Details</a></li>
                                         <li class="nav-item"><a class="nav-link" href="pricing.html">Pricing Plan</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="testimonials.html">Testimonials</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ route('testimonials') }}">Testimoni</a></li>
                                         <li class="nav-item"><a class="nav-link" href="image-gallery.html">Image Gallery</a></li>
                                         <li class="nav-item"><a class="nav-link" href="video-gallery.html">Video Gallery</a></li>
                                         <li class="nav-item"><a class="nav-link" href="faqs.html">FAQs</a></li>

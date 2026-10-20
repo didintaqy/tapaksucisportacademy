@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PaymentsTableSeeder::class);
         $this->call(GallerySeeder::class);
         $this->call(PostSeeder::class);
+        $this->call(TestimonialSeeder::class);
     }
 }
