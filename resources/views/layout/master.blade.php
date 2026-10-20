@@ -103,5 +103,22 @@
     <script src="{{ asset('js/wow.min.js') }}"></script>
     <!-- Main Custom js file -->
     <script src="{{ asset('js/function.js') }}"></script>
+
+    {{-- Analytics Hook (GA4 / Umami) --}}
+    @if (app()->environment('production') && env('GA_MEASUREMENT_ID'))
+        <!-- Google Analytics 4 -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('GA_MEASUREMENT_ID') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ env('GA_MEASUREMENT_ID') }}');
+        </script>
+    @endif
+
+    @if (app()->environment('production') && env('UMAMI_WEBSITE_ID') && env('UMAMI_SCRIPT_URL'))
+        <!-- Umami Analytics -->
+        <script defer src="{{ env('UMAMI_SCRIPT_URL') }}" data-website-id="{{ env('UMAMI_WEBSITE_ID') }}"></script>
+    @endif
 </body>
 </html>

@@ -112,7 +112,7 @@ Tujuan: website publik siap menjadi wajah resmi akademi.
 - [x] Notifikasi email saat ada pesan kontak atau pendaftaran baru
 - [x] SEO: meta title/description per halaman, sitemap.xml, Open Graph (metatags & sitemap)
 - [x] Halaman 404 kustom (fallback ke template)
-- [ ] Analytics hook (Umami/GA4 snippet di layout)
+- [x] Analytics hook (Umami/GA4 snippet di layout)
 - [ ] Audit responsivitas mobile (Bootstrap template, verifikasi manual)
 - [ ] SEO: meta title/description per halaman, sitemap.xml, Open Graph
 - [ ] Analytics (mis. Umami/GA4) dan halaman 404 kustom
