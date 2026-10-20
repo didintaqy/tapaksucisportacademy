@@ -62,6 +62,7 @@
                                 <li><a href="{{ route('blog') }}">Blog</a></li>
                                 <li><a href="{{ route('testimonials') }}">Testimoni</a></li>
                                 <li><a href="{{ route('faqs') }}">FAQ</a></li>
+                                <li><a href="{{ route('calendar') }}">Kalender Kegiatan</a></li>
                                 <li><a href="{{ route('schedules') }}">Jadwal Latihan</a></li>
                                 <li><a href="{{ route('registration') }}">Pendaftaran</a></li>
                                 <li><a href="{{ route('gallery') }}">Gallery</a></li>

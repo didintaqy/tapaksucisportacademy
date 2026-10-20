@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TrainingSchedules\Tables;
 
 use App\Models\TrainingSchedule;
+use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -48,7 +49,7 @@ class TrainingSchedulesTable
                     ->limit(30)
                     ->toggleable(),
 
-                TextColumn::make('coach_name')
+                TextColumn::make('coach.name')
                     ->label('Pelatih')
                     ->placeholder('-')
                     ->toggleable(),
@@ -74,6 +75,14 @@ class TrainingSchedulesTable
                         ->orderBy('branch')
                         ->pluck('branch', 'branch')
                         ->all()),
+
+                SelectFilter::make('coach_id')
+                    ->label('Pelatih')
+                    ->options(fn () => User::where('role', 'pelatih')
+                        ->orderBy('name')
+                        ->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload(),
 
                 TernaryFilter::make('is_active')
                     ->label('Status')

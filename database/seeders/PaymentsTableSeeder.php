@@ -38,6 +38,7 @@ class PaymentsTableSeeder extends Seeder
                         'description' => 'Biaya pendaftaran siswa baru',
                     ],
                     [
+                        'invoice_number' => 'INV-REG-'.$student->id.'-'.now()->subMonths(3)->format('Ymd'),
                         'amount' => 250000,
                         'status' => PaymentStatus::Paid,
                         'payment_method' => PaymentMethod::Cash,
@@ -56,6 +57,7 @@ class PaymentsTableSeeder extends Seeder
                         'period' => now()->subMonth()->format('Y-m'),
                     ],
                     [
+                        'invoice_number' => 'INV-SPP-'.$student->id.'-'.now()->subMonth()->format('Ym'),
                         'description' => 'Iuran bulanan '.now()->subMonth()->translatedFormat('F Y'),
                         'amount' => 150000,
                         'status' => PaymentStatus::Paid,
@@ -73,6 +75,7 @@ class PaymentsTableSeeder extends Seeder
                         'period' => now()->format('Y-m'),
                     ],
                     [
+                        'invoice_number' => 'INV-SPP-'.$student->id.'-'.now()->format('Ym'),
                         'description' => 'Iuran bulanan '.now()->translatedFormat('F Y'),
                         'amount' => 150000,
                         'status' => PaymentStatus::Unpaid,
@@ -89,6 +92,7 @@ class PaymentsTableSeeder extends Seeder
                         'description' => 'Biaya kejuaraan regional',
                     ],
                     [
+                        'invoice_number' => 'INV-EVT-'.$student->id.'-'.now()->format('Ymd'),
                         'amount' => 300000,
                         'status' => PaymentStatus::Pending,
                         'payment_method' => PaymentMethod::Qris,

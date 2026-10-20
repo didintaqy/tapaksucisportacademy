@@ -25,5 +25,8 @@ class DatabaseSeeder extends Seeder
         $this->call(FaqSeeder::class);
         $this->call(TrainingScheduleSeeder::class);
         $this->call(StudentRegistrationSeeder::class);
+        $this->call(EventSeeder::class);
+        $this->call(AttendanceSeeder::class);
+        $this->call(BeltPromotionSeeder::class);
     }
 }

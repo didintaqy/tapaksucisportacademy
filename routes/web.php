@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
@@ -35,6 +36,9 @@ Route::post('/testimoni', [TestimonialController::class, 'store'])
 
 Route::get('/faq', FaqController::class)->name('faqs');
 Route::get('/jadwal', TrainingScheduleController::class)->name('schedules');
+
+// Kalender Kegiatan
+Route::get('/kalender', [CalendarController::class, '__invoke'])->name('calendar');
 
 Route::get('/pendaftaran', [StudentRegistrationController::class, 'index'])->name('registration');
 Route::post('/pendaftaran', [StudentRegistrationController::class, 'store'])
