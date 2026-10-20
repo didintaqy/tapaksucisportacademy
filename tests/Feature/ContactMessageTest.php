@@ -40,6 +40,36 @@ class ContactMessageTest extends TestCase
         $response->assertSessionHasErrors(['name', 'email', 'message']);
     }
 
+    public function test_honeypot_blocks_spam_submissions(): void
+    {
+        $response = $this->post(route('contact-us.store'), [
+            'name' => 'Spam Bot',
+            'email' => 'bot@example.com',
+            'phone' => '081234567890',
+            'message' => 'Promo murah',
+            'website' => 'https://spam.example',
+        ]);
+
+        $response->assertSessionHasErrors('website');
+        $this->assertDatabaseCount('contact_messages', 0);
+    }
+
+    public function test_contact_form_is_rate_limited(): void
+    {
+        $payload = [
+            'name' => 'Budi',
+            'email' => 'budi@example.com',
+            'phone' => '081234567890',
+            'message' => 'Pesan uji coba',
+        ];
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->post(route('contact-us.store'), $payload)->assertRedirect();
+        }
+
+        $this->post(route('contact-us.store'), $payload)->assertStatus(429);
+    }
+
     public function test_mark_as_read_changes_status(): void
     {
         $message = ContactMessage::factory()->unread()->create();

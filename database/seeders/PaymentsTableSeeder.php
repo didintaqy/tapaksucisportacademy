@@ -31,54 +31,70 @@ class PaymentsTableSeeder extends Seeder
 
         foreach ($students as $student) {
             if ($registrationId) {
-                Payment::create([
-                    'student_id' => $student->id,
-                    'payment_type_id' => $registrationId,
-                    'description' => 'Biaya pendaftaran siswa baru',
-                    'amount' => 250000,
-                    'status' => PaymentStatus::Paid,
-                    'payment_method' => PaymentMethod::Cash,
-                    'paid_at' => now()->subMonths(3),
-                    'due_date' => now()->subMonths(3),
-                ]);
+                Payment::updateOrCreate(
+                    [
+                        'student_id' => $student->id,
+                        'payment_type_id' => $registrationId,
+                        'description' => 'Biaya pendaftaran siswa baru',
+                    ],
+                    [
+                        'amount' => 250000,
+                        'status' => PaymentStatus::Paid,
+                        'payment_method' => PaymentMethod::Cash,
+                        'paid_at' => now()->subMonths(3),
+                        'due_date' => now()->subMonths(3),
+                    ],
+                );
             }
 
             if ($sppId) {
                 // Bulan lalu: sudah lunas
-                Payment::create([
-                    'student_id' => $student->id,
-                    'payment_type_id' => $sppId,
-                    'period' => now()->subMonth()->format('Y-m'),
-                    'description' => 'Iuran bulanan '.now()->subMonth()->translatedFormat('F Y'),
-                    'amount' => 150000,
-                    'status' => PaymentStatus::Paid,
-                    'payment_method' => PaymentMethod::Transfer,
-                    'paid_at' => now()->subMonth(),
-                    'due_date' => now()->subMonth()->endOfMonth(),
-                ]);
+                Payment::updateOrCreate(
+                    [
+                        'student_id' => $student->id,
+                        'payment_type_id' => $sppId,
+                        'period' => now()->subMonth()->format('Y-m'),
+                    ],
+                    [
+                        'description' => 'Iuran bulanan '.now()->subMonth()->translatedFormat('F Y'),
+                        'amount' => 150000,
+                        'status' => PaymentStatus::Paid,
+                        'payment_method' => PaymentMethod::Transfer,
+                        'paid_at' => now()->subMonth(),
+                        'due_date' => now()->subMonth()->endOfMonth(),
+                    ],
+                );
 
                 // Bulan ini: belum lunas
-                Payment::create([
-                    'student_id' => $student->id,
-                    'payment_type_id' => $sppId,
-                    'period' => now()->format('Y-m'),
-                    'description' => 'Iuran bulanan '.now()->translatedFormat('F Y'),
-                    'amount' => 150000,
-                    'status' => PaymentStatus::Unpaid,
-                    'due_date' => now()->endOfMonth(),
-                ]);
+                Payment::updateOrCreate(
+                    [
+                        'student_id' => $student->id,
+                        'payment_type_id' => $sppId,
+                        'period' => now()->format('Y-m'),
+                    ],
+                    [
+                        'description' => 'Iuran bulanan '.now()->translatedFormat('F Y'),
+                        'amount' => 150000,
+                        'status' => PaymentStatus::Unpaid,
+                        'due_date' => now()->endOfMonth(),
+                    ],
+                );
             }
 
             if ($eventId) {
-                Payment::create([
-                    'student_id' => $student->id,
-                    'payment_type_id' => $eventId,
-                    'description' => 'Biaya kejuaraan regional',
-                    'amount' => 300000,
-                    'status' => PaymentStatus::Pending,
-                    'payment_method' => PaymentMethod::Qris,
-                    'due_date' => now()->addWeeks(2),
-                ]);
+                Payment::updateOrCreate(
+                    [
+                        'student_id' => $student->id,
+                        'payment_type_id' => $eventId,
+                        'description' => 'Biaya kejuaraan regional',
+                    ],
+                    [
+                        'amount' => 300000,
+                        'status' => PaymentStatus::Pending,
+                        'payment_method' => PaymentMethod::Qris,
+                        'due_date' => now()->addWeeks(2),
+                    ],
+                );
             }
         }
 

@@ -50,7 +50,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 - [x] Buat `docs/ROADMAP.md` (dokumen ini)
 - [x] Perbarui `README.md` agar sesuai fitur dan route aktual
 - [x] Buat `docs/ARCHITECTURE.md`: struktur modul, alur pembayaran, alur kontak
-- [ ] Dokumentasikan cara menambah resource Filament baru
+- [x] Dokumentasikan cara menambah resource Filament baru
 
 ### 0.2 Akses & Keamanan
 
@@ -59,27 +59,27 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 - [x] `User::canAccessPanel()` hanya untuk role yang berhak
 - [x] Buat Policy untuk `Student`, `Payment`, `ContactMessage`, `Post`, `Gallery`
 - [x] Batasi `UserResource` hanya untuk `admin`
-- [ ] Rate limit + honeypot pada form kontak untuk mencegah spam
+- [x] Rate limit + honeypot pada form kontak untuk mencegah spam
 - [x] Password akun seeder diambil dari `.env`, bukan hardcode
-- [ ] Audit controller yang tidak terpakai (mis. `StudentController` frontend)
+- [x] Audit controller yang tidak terpakai (mis. `StudentController` frontend)
 
 ### 0.3 Kualitas Kode
 
 - [x] Jalankan `vendor/bin/pint` dan commit hasilnya
 - [ ] Samakan gaya penamaan dan struktur resource Filament
-- [ ] Pindahkan validasi form kontak ke Form Request
-- [ ] Hapus kode mati dan komentar yang tidak relevan
+- [x] Pindahkan validasi form kontak ke Form Request
+- [x] Hapus kode mati dan komentar yang tidak relevan
 
 ### 0.4 Database & Seeder
 
-- [ ] Jadikan semua seeder idempotent (`firstOrCreate` / `updateOrCreate`)
+- [x] Jadikan semua seeder idempotent (`firstOrCreate` / `updateOrCreate`)
 - [x] Pastikan `DatabaseSeeder` memanggil seeder dengan urutan benar
 - [x] Lengkapi factory untuk semua model
-- [ ] Tentukan strategi backup database (file SQLite / `mysqldump`)
+- [x] Tentukan strategi backup database (lihat `docs/DEPLOYMENT.md`)
 
 ### 0.5 Testing & CI
 
-- [x] Baseline seluruh test hijau (saat ini 47 test)
+- [x] Baseline seluruh test hijau (saat ini 49 test)
 - [x] Test untuk modul kontak (submit, validasi, ubah status)
 - [x] Tambah test untuk generate tagihan bulanan dan policy akses
 - [x] Buat GitHub Actions: `vendor/bin/pint --test` + `php artisan test`
@@ -87,10 +87,10 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 ### 0.6 Operasional
 
-- [ ] Dokumentasikan deployment (server, `storage:link`, cron, queue)
+- [x] Dokumentasikan deployment (server, `storage:link`, cron, queue)
 - [ ] Aktifkan queue untuk email dan job berat
 - [ ] Siapkan logging dan error tracking
-- [ ] Terapkan alur git: branch per fitur, conventional commit, pull request
+- [x] Terapkan alur git: branch per fitur, conventional commit, pull request
 
 **Definisi selesai Fase 0:**
 
