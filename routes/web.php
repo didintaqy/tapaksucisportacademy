@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\TrainingScheduleController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,7 @@ Route::post('/testimoni', [TestimonialController::class, 'store'])
     ->name('testimonials.store');
 
 Route::get('/faq', FaqController::class)->name('faqs');
+Route::get('/jadwal', TrainingScheduleController::class)->name('schedules');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])
