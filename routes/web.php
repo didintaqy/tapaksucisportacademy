@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\TestimonialController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,11 @@ Route::post('/contact-us', [ContactUsController::class, 'store'])
 Route::get('/gallery', GalleryController::class)->name('gallery');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+
+Route::get('/testimoni', [TestimonialController::class, 'index'])->name('testimonials');
+Route::post('/testimoni', [TestimonialController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('testimonials.store');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])

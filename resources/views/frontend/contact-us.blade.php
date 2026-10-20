@@ -3,7 +3,7 @@
 @section('title', 'Kontak Kami')
 
 @section('hero')
-    @include('layout.herosection.page-header', ['title' => 'Kontak Kami'])
+    @include('layout.herosection.page-header', ['page' => 'Kontak Kami', 'breadcrumb' => 'Kontak Kami'])
 @endsection
 
 @section('content')
