@@ -349,8 +349,12 @@ class StudentsTableSeeder extends Seeder
         ];
 
         foreach ($students as $student) {
-            Student::create($student);
-            $this->command->info('Student '.$student['full_name'].' created successfully.');
+            Student::updateOrCreate(
+                ['nik' => $student['nik']],
+                $student,
+            );
+
+            $this->command->info('Student '.$student['full_name'].' siap.');
         }
     }
 }

@@ -93,3 +93,26 @@ Role pengguna disimpan di `users.role` dan di-cast ke `App\Enums\UserRole`.
 | Pelatih | Lihat | CRUD | — | — | — | — | — |
 
 Policy berada di `app/Policies/` dan ditemukan otomatis oleh Laravel. Widget dashboard yang menampilkan data keuangan disembunyikan untuk role Pelatih lewat `canView()`.
+
+## Menambah Resource Filament
+
+1. Buat resource:
+
+```bash
+php artisan make:filament-resource NamaModel
+```
+
+2. Tempatkan form di `Schemas/NamaModelForm.php` dan tabel di `Tables/NamaModelsTable.php`.
+3. Set `$navigationGroup` (`Master Data`, `Keuangan`, atau `Manajemen Web`) dan `$navigationSort`.
+4. Buat Policy di `app/Policies/NamaModelPolicy.php` dengan matriks role yang sama.
+5. Tambahkan test policy di `tests/Feature/RolePermissionTest.php`.
+6. Tambahkan factory dan seeder idempotent bila model butuh data awal.
+7. Jalankan `vendor/bin/pint` dan `php artisan test`.
+
+## Proteksi Form Publik
+
+Form kontak memakai tiga lapis perlindungan:
+
+1. **Form Request** (`StoreContactMessageRequest`) untuk validasi.
+2. **Honeypot** field `website` yang harus kosong.
+3. **Rate limit** `throttle:5,1` pada route `POST /contact-us`.

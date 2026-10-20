@@ -79,6 +79,10 @@
                         <div class="contact-form">
                             <form id="contactForm" action="{{ route('contact-us.store') }}" method="POST" class="wow fadeInUp" data-wow-delay="0.2s">
                                 @csrf
+                                <div class="position-absolute" style="left: -9999px;" aria-hidden="true">
+                                    <label for="website">Website</label>
+                                    <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                                </div>
                                 <div class="row">
                                     <div class="form-group col-md-6 mb-4">
                                         <label for="name" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>

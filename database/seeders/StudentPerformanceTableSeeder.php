@@ -23,6 +23,11 @@ class StudentPerformanceTableSeeder extends Seeder
         }
 
         foreach ($students as $student) {
+            // Seeder bersifat idempotent: siswa yang sudah punya riwayat tidak diisi ulang.
+            if ($student->performances()->exists()) {
+                continue;
+            }
+
             // Asumsikan tes dimulai dari beberapa bulan ke belakang
             $baseDate = Carbon::now()->subMonths(5);
 
