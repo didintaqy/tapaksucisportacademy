@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(GallerySeeder::class);
         $this->call(PostSeeder::class);
         $this->call(TestimonialSeeder::class);
+        $this->call(FaqSeeder::class);
     }
 }
