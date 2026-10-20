@@ -13,7 +13,7 @@ class ViewStudentPerformance extends ViewRecord
 
     public function getTitle(): string
     {
-        return 'Performance Analysis: ' . ($this->record->student?->nickname ?? 'Siswa');
+        return 'Performance Analysis: '.($this->record->student?->nickname ?? 'Siswa');
     }
 
     protected function getHeaderWidgets(): array

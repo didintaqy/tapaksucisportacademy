@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Students\Pages;
 
 use App\Filament\Resources\Students\StudentResource;
+use App\Filament\Resources\Students\Widgets\StudentOverview;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
-use App\Filament\Resources\Students\Widgets\StudentOverview;
 
 class ManageStudents extends ManageRecords
 {

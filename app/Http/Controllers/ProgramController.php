@@ -11,7 +11,8 @@ class ProgramController extends Controller
      */
     public function __invoke(Request $request)
     {
-      $page = 'Program';
+        $page = 'Program';
+
         return view('frontend.program', compact('page'));
     }
 }

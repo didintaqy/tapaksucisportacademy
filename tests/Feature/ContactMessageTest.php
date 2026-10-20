@@ -13,9 +13,9 @@ class ContactMessageTest extends TestCase
     public function test_contact_form_submission_creates_message(): void
     {
         $response = $this->post(route('contact-us.store'), [
-            'name'    => 'John Doe',
-            'email'   => 'john@example.com',
-            'phone'   => '081234567890',
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'phone' => '081234567890',
             'message' => 'Test message content',
         ]);
 
@@ -23,7 +23,7 @@ class ContactMessageTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('contact_messages', [
-            'name'  => 'John Doe',
+            'name' => 'John Doe',
             'email' => 'john@example.com',
             'status' => 'unread',
         ]);
@@ -32,8 +32,8 @@ class ContactMessageTest extends TestCase
     public function test_contact_form_validates_required_fields(): void
     {
         $response = $this->post(route('contact-us.store'), [
-            'name'    => '',
-            'email'   => 'invalid-email',
+            'name' => '',
+            'email' => 'invalid-email',
             'message' => '',
         ]);
 

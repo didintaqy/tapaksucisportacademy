@@ -1,15 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
+use App\Http\Controllers\ProgramController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/about', AboutController::class)->name('about');
@@ -43,5 +44,5 @@ Route::get('/pembayaran/keluar', [PaymentPortalController::class, 'logout'])
 
 // Callback / webhook dari payment gateway (tanpa CSRF)
 Route::post('/pembayaran/callback', [PaymentCallbackController::class, 'handle'])
-    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
+    ->withoutMiddleware([VerifyCsrfToken::class])
     ->name('payments.callback');
