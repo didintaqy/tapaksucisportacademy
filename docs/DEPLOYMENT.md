@@ -39,6 +39,21 @@ LOG_CHANNEL=stack
 
 Jangan pernah commit file `.env`.
 
+## Konfigurasi Analytics (Opsional)
+
+Tambahkan ke `.env` untuk production:
+
+```dotenv
+# Google Analytics 4
+GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# ATAU Umami (self-hosted)
+UMAMI_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+UMAMI_SCRIPT_URL=https://analytics.domain-anda.com/script.js
+```
+
+Pilih salah satu. Keduanya hanya di-load saat `APP_ENV=production`.
+
 ## Langkah Deploy
 
 ```bash
