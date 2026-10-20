@@ -21,13 +21,13 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 | Pembayaran & tagihan | ✅ portal | ✅ | Selesai |
 | Generate tagihan bulanan | — | ✅ | Selesai |
 | Dashboard admin | — | ✅ | Selesai |
-| Pendaftaran siswa online | ❌ | ❌ | Belum |
-| Testimoni, FAQ, jadwal | ❌ | ❌ | Belum |
+| Pendaftaran siswa online | ✅ | ✅ | Selesai |
+| Testimoni, FAQ, jadwal | ✅ | ✅ | Selesai |
 | Absensi / kehadiran | ❌ | ❌ | Belum |
-| Role & permission | — | ❌ | Belum |
+| Role & permission | — | ✅ | Selesai |
 | Notifikasi email | ❌ | ❌ | Belum |
 | SEO & analytics | ❌ | — | Belum |
-| Deployment & backup | — | — | Belum |
+| Deployment & backup | — | — | Dokumen siap, belum dieksekusi |
 
 ---
 
@@ -79,7 +79,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 ### 0.5 Testing & CI
 
-- [x] Baseline seluruh test hijau (saat ini 49 test)
+- [x] Baseline seluruh test hijau (saat ini 72 test)
 - [x] Test untuk modul kontak (submit, validasi, ubah status)
 - [x] Tambah test untuk generate tagihan bulanan dan policy akses
 - [x] Buat GitHub Actions: `vendor/bin/pint --test` + `php artisan test`
@@ -108,7 +108,7 @@ Tujuan: website publik siap menjadi wajah resmi akademi.
 - [x] Testimoni: CRUD admin + tampil di frontend
 - [x] FAQ: CRUD admin + halaman frontend
 - [x] Jadwal latihan: CRUD admin + tampil per cabang/kelas
-- [ ] Pendaftaran siswa online: form publik → tersimpan sebagai calon siswa → admin follow up
+- [x] Pendaftaran siswa online: form publik → tersimpan sebagai calon siswa → admin follow up
 - [ ] Notifikasi email saat ada pesan kontak atau pendaftaran baru
 - [ ] SEO: meta title/description per halaman, sitemap.xml, Open Graph
 - [ ] Analytics (mis. Umami/GA4) dan halaman 404 kustom

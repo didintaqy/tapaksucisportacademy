@@ -27,6 +27,10 @@ app/
 | Blog | `Post` | `Posts/` | `/blog` |
 | Galeri | `Gallery` | `Galleries/` | `/gallery` |
 | Kontak | `ContactMessage` | `ContactMessages/` | `/contact-us` |
+| Testimoni | `Testimonial` | `Testimonials/` | `/testimoni` |
+| FAQ | `Faq` | `Faqs/` | `/faq` |
+| Jadwal latihan | `TrainingSchedule` | `TrainingSchedules/` | `/jadwal` |
+| Pendaftaran siswa | `StudentRegistration` | `StudentRegistrations/` | `/pendaftaran` |
 | Pengguna | `User` | `Users/` | — |
 
 ## Alur Kontak
@@ -40,6 +44,22 @@ app/
 7. Balasan dilakukan lewat email eksternal; sistem hanya menyimpan status, bukan isi balasan.
 
 Status: `unread` → `read` → `replied`.
+
+## Alur Testimoni
+
+1. Pengunjung mengirim testimoni lewat `POST /testimoni`.
+2. Testimoni tersimpan dengan status `pending`.
+3. Admin/operator memoderasi di **Manajemen Web → Testimoni**.
+4. Aksi **Setujui** mengisi `published_at`; aksi **Tolak** menyembunyikan testimoni.
+5. Halaman `/testimoni` hanya menampilkan status `approved`.
+
+## Alur Pendaftaran Siswa
+
+1. Calon siswa/orang tua mengisi `POST /pendaftaran`.
+2. Data tersimpan di `student_registrations` dengan status `new`.
+3. Admin/operator menindaklanjuti di **Manajemen Web → Pendaftaran Siswa**.
+4. Status berubah `new` → `contacted` → `accepted`/`rejected`; `reviewed_by` dan `reviewed_at` terisi otomatis.
+5. Setelah diterima, admin membuat data siswa di menu **Master Data → Siswa** (pendaftaran tidak otomatis membuat siswa karena NIK dan data lain belum dikumpulkan).
 
 ## Alur Pembayaran
 

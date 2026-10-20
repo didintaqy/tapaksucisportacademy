@@ -13,7 +13,7 @@
                         
                         <!-- Footer Header Button Start -->
                         <div class="footer-header-btn">
-                            <a href="contact.html" class="btn-default btn-highlighted">Start Your Journey</a>
+                            <a href="{{ route('registration') }}" class="btn-default btn-highlighted">Mulai Pendaftaran</a>
                         </div>
                         <!-- Footer Header Button End -->
                     </div>
@@ -63,6 +63,7 @@
                                 <li><a href="{{ route('testimonials') }}">Testimoni</a></li>
                                 <li><a href="{{ route('faqs') }}">FAQ</a></li>
                                 <li><a href="{{ route('schedules') }}">Jadwal Latihan</a></li>
+                                <li><a href="{{ route('registration') }}">Pendaftaran</a></li>
                                 <li><a href="{{ route('gallery') }}">Gallery</a></li>
                                 <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
                             </ul>

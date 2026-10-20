@@ -33,13 +33,13 @@
                                     </ul>
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('contact-us') }}">Contact Us</a></li>
-                                <li class="nav-item highlighted-menu"><a class="nav-link" href="book-appointment.html">Book Free Trial</a></li>
+                                <li class="nav-item highlighted-menu"><a class="nav-link" href="{{ route('registration') }}">Daftar Sekarang</a></li>
                             </ul>
                         </div>
                         
                         <!-- Header Btn Start -->
                         <div class="header-btn">
-                            <a href="book-appointment.html" class="btn-default btn-highlighted">Book Free Trial</a>
+                            <a href="{{ route('registration') }}" class="btn-default btn-highlighted">Daftar Sekarang</a>
                         </div>
                         <!-- Header Btn End -->
                     </div>
