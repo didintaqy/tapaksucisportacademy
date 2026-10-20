@@ -10,6 +10,7 @@ use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TrainingScheduleController;
@@ -39,6 +40,9 @@ Route::get('/pendaftaran', [StudentRegistrationController::class, 'index'])->nam
 Route::post('/pendaftaran', [StudentRegistrationController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('registration.store');
+
+// Sitemap (SEO)
+Route::get('/sitemap.xml', [SitemapController::class, '__invoke'])->name('sitemap');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])

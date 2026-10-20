@@ -5,11 +5,22 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-	<meta name="description" content="">
-	<meta name="keywords" content="">
-	<meta name="author" content="Awaiken">
+	<meta name="description" content="{{ $seoDescription ?? 'Tapak Suci Sport Academy - Website resmi akademi pencak silat Tapak Suci. Profil, galeri, blog, pendaftaran siswa, dan portal pembayaran.' }}">
+	<meta name="keywords" content="{{ $seoKeywords ?? 'pencak silat, tapak suci, latihan silat, pendaftaran silat, akademi bela diri' }}">
+	<meta name="author" content="Tapak Suci Sport Academy">
 	<!-- Page Title -->
-    <title>Kickpro - Karate & Martial Arts School HTML Template</title>
+    <title>{{ $seoTitle ?? 'Tapak Suci Sport Academy' }}</title>
+	<!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta property="og:title" content="{{ $seoTitle ?? 'Tapak Suci Sport Academy' }}">
+    <meta property="og:description" content="{{ $seoDescription ?? 'Tapak Suci Sport Academy - Website resmi akademi pencak silat Tapak Suci.' }}">
+    <meta property="og:image" content="{{ $seoImage ?? asset('images/og-default.jpg') }}">
+	<!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle ?? 'Tapak Suci Sport Academy' }}">
+    <meta name="twitter:description" content="{{ $seoDescription ?? 'Tapak Suci Sport Academy - Website resmi akademi pencak silat Tapak Suci.' }}">
+    <meta name="twitter:image" content="{{ $seoImage ?? asset('images/og-default.jpg') }}">
 	<!-- Favicon Icon -->
 	<link rel="shortcut icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
 	<!-- Google Fonts Css-->

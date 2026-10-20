@@ -87,7 +87,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 ### 0.6 Operasional
 
-- [x] Dokumentasikan deployment (server, `storage:link`, cron, queue)
+- [x] Sekarang catatan deployment, backup config (mail/driver) disediakan di `docs/DEPLOYMENT.md`
 - [ ] Aktifkan queue untuk email dan job berat
 - [ ] Siapkan logging dan error tracking
 - [x] Terapkan alur git: branch per fitur, conventional commit, pull request
@@ -109,7 +109,11 @@ Tujuan: website publik siap menjadi wajah resmi akademi.
 - [x] FAQ: CRUD admin + halaman frontend
 - [x] Jadwal latihan: CRUD admin + tampil per cabang/kelas
 - [x] Pendaftaran siswa online: form publik → tersimpan sebagai calon siswa → admin follow up
-- [ ] Notifikasi email saat ada pesan kontak atau pendaftaran baru
+- [x] Notifikasi email saat ada pesan kontak atau pendaftaran baru
+- [x] SEO: meta title/description per halaman, sitemap.xml, Open Graph (metatags & sitemap)
+- [x] Halaman 404 kustom (fallback ke template)
+- [ ] Analytics hook (Umami/GA4 snippet di layout)
+- [ ] Audit responsivitas mobile (Bootstrap template, verifikasi manual)
 - [ ] SEO: meta title/description per halaman, sitemap.xml, Open Graph
 - [ ] Analytics (mis. Umami/GA4) dan halaman 404 kustom
 - [ ] Audit responsivitas dan aksesibilitas halaman publik
