@@ -40,7 +40,7 @@ class GalleryTest extends TestCase
 
     public function test_admin_gallery_resource_pages_load(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->admin()->create());
 
         $gallery = Gallery::factory()->create();
 

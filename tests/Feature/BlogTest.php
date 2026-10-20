@@ -56,7 +56,7 @@ class BlogTest extends TestCase
 
     public function test_admin_post_resource_pages_load(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->admin()->create());
 
         $post = Post::factory()->create();
 

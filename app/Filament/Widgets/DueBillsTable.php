@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\Payments\PaymentResource;
 use App\Models\Payment;
 use Filament\Tables\Columns\TextColumn;
@@ -14,6 +15,11 @@ class DueBillsTable extends TableWidget
     protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = 'full';
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole(UserRole::Admin, UserRole::Operator) ?? false;
+    }
 
     public function table(Table $table): Table
     {

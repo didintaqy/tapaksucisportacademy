@@ -81,3 +81,15 @@ Widget di `app/Filament/Widgets/` dan terdaftar otomatis lewat `discoverWidgets`
 - Status pembayaran memakai enum `App\Enums\PaymentStatus`.
 - Setiap resource admin menempatkan form di `Schemas/` dan tabel di `Tables/`.
 - Periode bulanan memakai format `Y-m` (contoh `2026-10`).
+
+## Role & Otorisasi
+
+Role pengguna disimpan di `users.role` dan di-cast ke `App\Enums\UserRole`.
+
+| Role | Siswa | Performa | Pembayaran | Jenis Bayar | Konten | Pesan Kontak | Pengguna |
+|---|---|---|---|---|---|---|---|
+| Administrator | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD |
+| Operator | CRUD | CRUD | CRU (tanpa hapus) | Lihat | CRUD | RU (tanpa hapus) | — |
+| Pelatih | Lihat | CRUD | — | — | — | — | — |
+
+Policy berada di `app/Policies/` dan ditemukan otomatis oleh Laravel. Widget dashboard yang menampilkan data keuangan disembunyikan untuk role Pelatih lewat `canView()`.

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\Galleries\GalleryResource;
 use App\Filament\Resources\Payments\PaymentResource;
 use App\Filament\Resources\Posts\PostResource;
@@ -17,6 +18,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class DashboardStatsOverview extends StatsOverviewWidget
 {
     protected static ?int $sort = 1;
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole(UserRole::Admin, UserRole::Operator) ?? false;
+    }
 
     protected function getStats(): array
     {

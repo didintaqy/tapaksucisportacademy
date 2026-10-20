@@ -2,12 +2,18 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\UserRole;
 use App\Models\Payment;
 use Filament\Widgets\ChartWidget;
 
 class IncomeChart extends ChartWidget
 {
     protected static ?int $sort = 2;
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole(UserRole::Admin, UserRole::Operator) ?? false;
+    }
 
     protected ?string $heading = 'Pemasukan 6 Bulan Terakhir';
 

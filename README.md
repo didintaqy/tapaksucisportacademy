@@ -17,8 +17,18 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 - **Master Data:** Siswa, Performa Siswa
 - **Keuangan:** Pembayaran, Jenis Pembayaran, generate tagihan bulanan
 - **Manajemen Web:** Galeri, Blog & Artikel, Pesan Kontak
-- **Pengguna:** manajemen akun admin
+- **Pengguna:** manajemen akun admin (khusus role Administrator)
 - **Dashboard:** ringkasan angka, grafik pemasukan 6 bulan, tagihan yang perlu tindakan, dan ringkasan performa fisik
+
+### Role pengguna
+
+| Role | Akses |
+|---|---|
+| Administrator | Semua modul, termasuk manajemen pengguna dan penghapusan data keuangan |
+| Operator | Siswa, pembayaran, konten, dan pesan kontak; tanpa manajemen pengguna |
+| Pelatih | Melihat siswa dan mengelola data performa fisik; tanpa akses keuangan dan konten |
+
+Role disimpan di kolom `users.role` dan diatur lewat Policy Laravel.
 
 ### Pembayaran
 

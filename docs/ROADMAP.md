@@ -54,18 +54,18 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 ### 0.2 Akses & Keamanan
 
-- [ ] Tambah kolom `role` pada tabel `users` (`admin`, `operator`, `pelatih`)
-  - Keputusan: enum sederhana vs `spatie/laravel-permission` (lihat bagian 9)
-- [ ] `User::canAccessPanel()` hanya untuk role yang berhak
-- [ ] Buat Policy untuk `Student`, `Payment`, `ContactMessage`, `Post`, `Gallery`
-- [ ] Batasi `UserResource` hanya untuk `admin`
+- [x] Tambah kolom `role` pada tabel `users` (`admin`, `operator`, `pelatih`)
+  - Keputusan: enum sederhana `App\Enums\UserRole` (tanpa paket tambahan)
+- [x] `User::canAccessPanel()` hanya untuk role yang berhak
+- [x] Buat Policy untuk `Student`, `Payment`, `ContactMessage`, `Post`, `Gallery`
+- [x] Batasi `UserResource` hanya untuk `admin`
 - [ ] Rate limit + honeypot pada form kontak untuk mencegah spam
-- [ ] Password akun seeder diambil dari `.env`, bukan hardcode
+- [x] Password akun seeder diambil dari `.env`, bukan hardcode
 - [ ] Audit controller yang tidak terpakai (mis. `StudentController` frontend)
 
 ### 0.3 Kualitas Kode
 
-- [ ] Jalankan `vendor/bin/pint` dan commit hasilnya
+- [x] Jalankan `vendor/bin/pint` dan commit hasilnya
 - [ ] Samakan gaya penamaan dan struktur resource Filament
 - [ ] Pindahkan validasi form kontak ke Form Request
 - [ ] Hapus kode mati dan komentar yang tidak relevan
@@ -73,16 +73,16 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 ### 0.4 Database & Seeder
 
 - [ ] Jadikan semua seeder idempotent (`firstOrCreate` / `updateOrCreate`)
-- [ ] Pastikan `DatabaseSeeder` memanggil seeder dengan urutan benar
-- [ ] Lengkapi factory untuk semua model
+- [x] Pastikan `DatabaseSeeder` memanggil seeder dengan urutan benar
+- [x] Lengkapi factory untuk semua model
 - [ ] Tentukan strategi backup database (file SQLite / `mysqldump`)
 
 ### 0.5 Testing & CI
 
-- [ ] Baseline seluruh test hijau (saat ini 38 test)
+- [x] Baseline seluruh test hijau (saat ini 47 test)
 - [x] Test untuk modul kontak (submit, validasi, ubah status)
-- [ ] Tambah test untuk generate tagihan bulanan dan policy akses
-- [ ] Buat GitHub Actions: `vendor/bin/pint --test` + `php artisan test`
+- [x] Tambah test untuk generate tagihan bulanan dan policy akses
+- [x] Buat GitHub Actions: `vendor/bin/pint --test` + `php artisan test`
 - [ ] Tetapkan target coverage minimal untuk modul keuangan
 
 ### 0.6 Operasional
@@ -165,7 +165,7 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 
 | Topik | Pilihan | Dampak |
 |---|---|---|
-| Role & permission | Enum `role` sederhana vs `spatie/laravel-permission` | Enum cukup untuk 3 role; Spatie lebih fleksibel jika role bertambah |
+| Role & permission | ✅ Enum `App\Enums\UserRole` + Policy | Cukup untuk 3 role saat ini; migrasi ke Spatie jika role bertambah banyak |
 | Payment gateway | Manual vs Midtrans vs Xendit | Menentukan alur checkout dan rekonsiliasi |
 | Email provider | SMTP biasa vs layanan transaksional | Memengaruhi pengiriman notifikasi |
 | Hosting | VPS vs shared hosting | Menentukan proses deploy dan cron |

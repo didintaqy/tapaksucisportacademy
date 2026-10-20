@@ -17,7 +17,7 @@ class FilamentPaymentResourceTest extends TestCase
     {
         parent::setUp();
 
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->admin()->create());
     }
 
     public function test_payment_resource_pages_load(): void

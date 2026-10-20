@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\StudentPerformances\StudentPerformanceResource;
 use App\Models\Student;
 use App\Models\StudentPerformance;
@@ -12,6 +13,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class PerformanceOverview extends StatsOverviewWidget
 {
     protected static ?int $sort = 5;
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRole(UserRole::Admin, UserRole::Operator, UserRole::Pelatih) ?? false;
+    }
 
     protected function getStats(): array
     {
