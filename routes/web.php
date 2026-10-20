@@ -10,6 +10,7 @@ use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TrainingScheduleController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -33,6 +34,11 @@ Route::post('/testimoni', [TestimonialController::class, 'store'])
 
 Route::get('/faq', FaqController::class)->name('faqs');
 Route::get('/jadwal', TrainingScheduleController::class)->name('schedules');
+
+Route::get('/pendaftaran', [StudentRegistrationController::class, 'index'])->name('registration');
+Route::post('/pendaftaran', [StudentRegistrationController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('registration.store');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])

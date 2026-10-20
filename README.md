@@ -9,6 +9,10 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 - Home, About, dan Program
 - Galeri kegiatan
 - Blog & artikel (index dan detail)
+- Testimoni dengan moderasi admin
+- FAQ per kategori
+- Jadwal latihan per cabang dan kelas
+- Pendaftaran siswa online
 - Kontak: form tersimpan ke database, info kontak, dan peta
 - Portal pembayaran siswa: cari berdasarkan ID/NIK, lihat tagihan, checkout QRIS, dan cetak kwitansi
 
@@ -16,7 +20,7 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 
 - **Master Data:** Siswa, Performa Siswa
 - **Keuangan:** Pembayaran, Jenis Pembayaran, generate tagihan bulanan
-- **Manajemen Web:** Galeri, Blog & Artikel, Pesan Kontak
+- **Manajemen Web:** Galeri, Blog & Artikel, Pesan Kontak, Testimoni, FAQ, Jadwal Latihan, Pendaftaran Siswa
 - **Pengguna:** manajemen akun admin (khusus role Administrator)
 - **Dashboard:** ringkasan angka, grafik pemasukan 6 bulan, tagihan yang perlu tindakan, dan ringkasan performa fisik
 
@@ -25,7 +29,7 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 | Role | Akses |
 |---|---|
 | Administrator | Semua modul, termasuk manajemen pengguna dan penghapusan data keuangan |
-| Operator | Siswa, pembayaran, konten, dan pesan kontak; tanpa manajemen pengguna |
+| Operator | Siswa, pembayaran, konten, pesan kontak, testimoni, FAQ, jadwal, dan pendaftaran; tanpa manajemen pengguna |
 | Pelatih | Melihat siswa dan mengelola data performa fisik; tanpa akses keuangan dan konten |
 
 Role disimpan di kolom `users.role` dan diatur lewat Policy Laravel.
@@ -102,6 +106,10 @@ Buka `http://localhost:8000` untuk website dan `http://localhost:8000/admin` unt
 - `/gallery` — Galeri
 - `/blog` — Blog
 - `/blog/{slug}` — Detail artikel
+- `/testimoni` — Testimoni (GET dan POST)
+- `/faq` — FAQ
+- `/jadwal` — Jadwal latihan
+- `/pendaftaran` — Pendaftaran siswa (GET dan POST)
 - `/contact-us` — Kontak (GET dan POST)
 
 ### Portal pembayaran
