@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactUsController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentCallbackController;
@@ -28,6 +29,8 @@ Route::get('/testimoni', [TestimonialController::class, 'index'])->name('testimo
 Route::post('/testimoni', [TestimonialController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('testimonials.store');
+
+Route::get('/faq', FaqController::class)->name('faqs');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])
