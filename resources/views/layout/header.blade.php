@@ -27,6 +27,7 @@
                                         <li class="nav-item"><a class="nav-link" href="{{ route('testimonials') }}">Testimoni</a></li>
                                         <li class="nav-item"><a class="nav-link" href="image-gallery.html">Image Gallery</a></li>
                                         <li class="nav-item"><a class="nav-link" href="video-gallery.html">Video Gallery</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ route('calendar') }}">Kalender Kegiatan</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ route('schedules') }}">Jadwal Latihan</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ route('faqs') }}">FAQ</a></li>
                                         <li class="nav-item"><a class="nav-link" href="404.html">404</a></li>
