@@ -4,7 +4,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 - **Stack:** Laravel 12.67, PHP 8.2, Filament 5, Blade + Vite, SQLite (development)
 - **Repo:** `tapaksuciacademy`
-- **Terakhir diperbarui:** 20 Oktober 2026
+- **Terakhir diperbarui:** 21 Oktober 2026
 
 ---
 
@@ -23,10 +23,14 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 | Dashboard admin | — | ✅ | Selesai |
 | Pendaftaran siswa online | ✅ | ✅ | Selesai |
 | Testimoni, FAQ, jadwal | ✅ | ✅ | Selesai |
-| Absensi / kehadiran | ❌ | ❌ | Belum |
+| Absensi / kehadiran | ❌ | ✅ | **Selesai** |
 | Role & permission | — | ✅ | Selesai |
 | Notifikasi email | ❌ | ❌ | Belum |
-| SEO & analytics | ❌ | — | Belum |
+| SEO & analytics | ✅ | — | Selesai |
+| Kalender kegiatan | ✅ | ✅ | **Selesai** |
+| Sabuk / UKT | — | ✅ | **Selesai** |
+| Rapor performa (PDF) | — | ✅ | **Selesai** |
+| Relasi pelatih ↔ kelas | — | ✅ | **Selesai** |
 | Deployment & backup | — | — | Dokumen siap, belum dieksekusi |
 
 ---
@@ -124,11 +128,11 @@ Tujuan: website publik siap menjadi wajah resmi akademi.
 
 Tujuan: admin bisa mengelola kegiatan harian, bukan hanya data master.
 
-- [ ] Absensi siswa per sesi latihan
-- [ ] Riwayat sabuk dan ujian kenaikan tingkat (UKT)
-- [ ] Rapor performa siswa (cetak PDF)
-- [ ] Kalender kegiatan dan pengumuman
-- [ ] Relasi pelatih ↔ kelas/siswa
+- [x] Absensi siswa per sesi latihan
+- [x] Riwayat sabuk dan ujian kenaikan tingkat (UKT)
+- [x] Rapor performa siswa (cetak PDF)
+- [x] Kalender kegiatan dan pengumuman
+- [x] Relasi pelatih ↔ kelas/siswa
 
 ---
 
