@@ -15,6 +15,7 @@ Route::get('/', HomeController::class)->name('home');
 Route::get('/about', AboutController::class)->name('about');
 Route::get('/program', ProgramController::class)->name('program');
 Route::get('/contact-us', ContactUsController::class)->name('contact-us');
+Route::post('/contact-us', [ContactUsController::class, 'store'])->name('contact-us.store');
 Route::get('/gallery', GalleryController::class)->name('gallery');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
