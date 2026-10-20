@@ -56,11 +56,18 @@ class TrainingScheduleTest extends TestCase
         $admin = User::factory()->admin()->create();
         $operator = User::factory()->create(['role' => UserRole::Operator]);
         $coach = User::factory()->create(['role' => UserRole::Pelatih]);
-        $schedule = TrainingSchedule::factory()->create();
+        $coach2 = User::factory()->create(['role' => UserRole::Pelatih]);
+        $schedule = TrainingSchedule::factory()->create(['coach_id' => $coach->id]);
+        $otherSchedule = TrainingSchedule::factory()->create(['coach_id' => $coach2->id]);
 
         $this->assertTrue($admin->can('viewAny', TrainingSchedule::class));
+        $this->assertTrue($operator->can('viewAny', TrainingSchedule::class));
+        $this->assertTrue($coach->can('viewAny', TrainingSchedule::class)); // pelatih can view list (filtered to own)
+        $this->assertTrue($coach->can('view', $schedule)); // can view own schedule
+        $this->assertFalse($coach->can('view', $otherSchedule)); // cannot view other coach's schedule
         $this->assertTrue($operator->can('update', $schedule));
-        $this->assertFalse($coach->can('viewAny', TrainingSchedule::class));
+        $this->assertTrue($coach->can('update', $schedule)); // can update own schedule
+        $this->assertFalse($coach->can('update', $otherSchedule)); // cannot update other coach's schedule
         $this->assertFalse($operator->can('delete', $schedule));
         $this->assertTrue($admin->can('delete', $schedule));
     }

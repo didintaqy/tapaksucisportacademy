@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TrainingSchedules\Schemas;
 
 use App\Models\TrainingSchedule;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
@@ -48,9 +49,14 @@ class TrainingScheduleForm
                     ->maxLength(255)
                     ->columnSpanFull(),
 
-                TextInput::make('coach_name')
+                Select::make('coach_id')
                     ->label('Pelatih')
-                    ->maxLength(255),
+                    ->options(fn () => User::where('role', 'pelatih')
+                        ->orderBy('name')
+                        ->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Pilih pelatih'),
 
                 TextInput::make('sort_order')
                     ->label('Urutan')
