@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Payment;
+use App\Models\PaymentType;
 use App\Models\Student;
 use App\Models\User;
+use App\Services\Payments\MonthlyBillGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -114,6 +116,29 @@ class PaymentManagementTest extends TestCase
             ->post(route('payments.portal.checkout', $payment));
 
         $response->assertNotFound();
+    }
+
+    public function test_monthly_generator_creates_one_bill_per_student_and_skips_existing(): void
+    {
+        $type = PaymentType::factory()->monthly()->create(['default_amount' => 150000]);
+        Student::factory()->count(3)->create();
+        $already = Student::factory()->create();
+
+        Payment::factory()->create([
+            'student_id' => $already->id,
+            'payment_type_id' => $type->id,
+            'period' => now()->format('Y-m'),
+        ]);
+
+        $result = app(MonthlyBillGenerator::class)->generate($type, now()->startOfMonth());
+
+        $this->assertSame(3, $result['created']);
+        $this->assertSame(1, $result['skipped']);
+        $this->assertSame(4, Payment::query()
+            ->where('payment_type_id', $type->id)
+            ->where('period', now()->format('Y-m'))
+            ->count());
+        $this->assertSame(PaymentStatus::Unpaid, Payment::query()->where('student_id', '!=', $already->id)->first()->status);
     }
 
     public function test_receipt_is_accessible_for_authenticated_user(): void
