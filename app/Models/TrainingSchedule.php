@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\DayOfWeek;
+use Carbon\Carbon;
 use Database\Factories\TrainingScheduleFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TrainingSchedule extends Model
 {
@@ -30,6 +33,7 @@ class TrainingSchedule extends Model
         'end_time',
         'location',
         'coach_name',
+        'coach_id',
         'is_active',
         'sort_order',
     ];
@@ -43,9 +47,19 @@ class TrainingSchedule extends Model
         ];
     }
 
+    public function coach(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'coach_id');
+    }
+
     public function getDayNameAttribute(): string
     {
         return self::DAYS[$this->day_of_week] ?? '-';
+    }
+
+    public function getDayAttribute(): DayOfWeek
+    {
+        return DayOfWeek::tryFrom($this->day_of_week);
     }
 
     public function getTimeRangeAttribute(): string
@@ -56,5 +70,32 @@ class TrainingSchedule extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    public function getNextSessionDate(?Carbon $from = null): ?Carbon
+    {
+        $from = $from ?? now();
+        $dayOfWeek = $this->day_of_week; // 1=Senin ... 7=Minggu
+
+        // Carbon: 0=Minggu, 1=Senin, ..., 6=Sabtu
+        $carbonDayOfWeek = $dayOfWeek === 7 ? 0 : $dayOfWeek;
+
+        $next = $from->copy()->next($carbonDayOfWeek);
+
+        // Jika hari ini adalah hari latihan dan belum lewat jam, return hari ini
+        if ($from->dayOfWeek === $carbonDayOfWeek && $from->format('H:i') <= $this->start_time) {
+            return $from->copy()->startOfDay();
+        }
+
+        return $next->startOfDay();
+    }
+
+    public function getPreviousSessionDate(?Carbon $from = null): ?Carbon
+    {
+        $from = $from ?? now();
+        $dayOfWeek = $this->day_of_week;
+        $carbonDayOfWeek = $dayOfWeek === 7 ? 0 : $dayOfWeek;
+
+        return $from->copy()->previous($carbonDayOfWeek)->startOfDay();
     }
 }

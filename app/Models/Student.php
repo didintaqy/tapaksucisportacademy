@@ -23,6 +23,7 @@ class Student extends Model
         'address',
         'education',
         'photo',
+        'branch',
     ];
 
     /** @use HasFactory<StudentFactory> */
