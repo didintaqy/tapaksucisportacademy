@@ -57,19 +57,22 @@ class PerformancesRelationManager extends RelationManager
                     ->label('Status BMI')
                     ->badge()
                     ->state(function (StudentPerformance $record) {
-                        if (!$record->height || !$record->weight) return '-';
+                        if (! $record->height || ! $record->weight) {
+                            return '-';
+                        }
                         $bmi = $record->weight / ($record->height * $record->height);
+
                         return match (true) {
                             $bmi < 18.5 => 'KURUS',
-                            $bmi < 23   => 'NORMAL',
-                            $bmi < 25   => 'KELEBIHAN BB',
-                            default     => 'OBESITAS',
+                            $bmi < 23 => 'NORMAL',
+                            $bmi < 25 => 'KELEBIHAN BB',
+                            default => 'OBESITAS',
                         };
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'OBESITAS' => 'danger',
-                        'NORMAL'   => 'success',
-                        default    => 'warning',
+                        'NORMAL' => 'success',
+                        default => 'warning',
                     }),
             ])
             ->headerActions([

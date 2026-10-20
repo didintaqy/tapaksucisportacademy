@@ -1,0 +1,8 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "KickPro-Template",
+        "bootstrap/cache",
+        "storage"
+    ]
+}

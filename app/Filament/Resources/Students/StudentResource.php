@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Students;
 
-use App\Filament\Resources\Students\Pages\ManageStudents;
+use App\Filament\Resources\Students\RelationManagers\PaymentsRelationManager;
+use App\Filament\Resources\Students\RelationManagers\PerformancesRelationManager;
+use App\Filament\Resources\Students\Widgets\StudentOverview;
 use App\Models\Student;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -11,25 +13,22 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Forms\Components\Select;
 use UnitEnum;
-use App\Filament\Resources\Students\Widgets\StudentOverview;
-use App\Filament\Resources\Students\RelationManagers\PerformancesRelationManager;
 
 class StudentResource extends Resource
 {
-
-    protected static string | UnitEnum | null $navigationGroup = 'Master Data';
+    protected static string|UnitEnum|null $navigationGroup = 'Master Data';
 
     protected static ?int $navigationSort = 1;
 
@@ -103,7 +102,7 @@ class StudentResource extends Resource
                         'image/jpeg',
                         'image/png',
                         'image/webp',
-                    ])
+                    ]),
             ]);
     }
 
@@ -144,7 +143,7 @@ class StudentResource extends Resource
                     ->placeholder('-'),
                 TextEntry::make('deleted_at')
                     ->dateTime()
-                    ->visible(fn(Student $record): bool => $record->trashed()),
+                    ->visible(fn (Student $record): bool => $record->trashed()),
             ]);
     }
 
@@ -211,7 +210,7 @@ class StudentResource extends Resource
     {
         return [
             PerformancesRelationManager::class, // <-- Tambahkan di sini
-            \App\Filament\Resources\Students\RelationManagers\PaymentsRelationManager::class,
+            PaymentsRelationManager::class,
         ];
     }
 
@@ -219,7 +218,7 @@ class StudentResource extends Resource
     {
         return [
             'index' => Pages\ListStudents::route('/'),
-            'edit'  => Pages\EditStudent::route('/{record}/edit'),
+            'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
 }

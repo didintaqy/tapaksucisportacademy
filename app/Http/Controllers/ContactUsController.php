@@ -9,16 +9,17 @@ class ContactUsController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $page  = 'Kontak Kami';
+        $page = 'Kontak Kami';
+
         return view('frontend.contact-us', compact('page'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'    => ['required', 'string', 'max:255'],
-            'email'   => ['required', 'email', 'max:255'],
-            'phone'   => ['nullable', 'string', 'max:30'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
             'message' => ['required', 'string', 'max:5000'],
         ]);
 

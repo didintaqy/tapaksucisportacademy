@@ -11,7 +11,8 @@ class AboutController extends Controller
      */
     public function __invoke(Request $request)
     {
-      $page = 'Profile';
-      return view('frontend.about', compact('page'));
+        $page = 'Profile';
+
+        return view('frontend.about', compact('page'));
     }
 }

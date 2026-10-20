@@ -33,8 +33,6 @@ class PaymentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CreditCard;
 
-    
-
     public static function getNavigationBadge(): ?string
     {
         return (string) static::getModel()::outstanding()->count();

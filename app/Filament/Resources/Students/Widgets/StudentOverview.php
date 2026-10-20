@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Students\Widgets;
 
+use App\Models\Student;
+use Carbon\Carbon;
+use Filament\Support\Enums\IconPosition;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use App\Models\Student;
-use Filament\Support\Enums\IconPosition;
-use Carbon\Carbon;
 
 class StudentOverview extends StatsOverviewWidget
 {
@@ -71,7 +71,7 @@ class StudentOverview extends StatsOverviewWidget
             Stat::make('Rata-rata Usia', "{$avgAge} Tahun")
                 ->description("Rentang usia: {$youngestAge} - {$oldestAge} tahun")
                 ->descriptionIcon('heroicon-m-calendar-days', IconPosition::Before)
-                ->chart([$youngestAge, (int)$avgAge, $oldestAge])
+                ->chart([$youngestAge, (int) $avgAge, $oldestAge])
                 ->color('primary'),
         ];
     }
