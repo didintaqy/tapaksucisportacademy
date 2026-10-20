@@ -9,7 +9,6 @@ use App\Filament\Resources\Payments\Pages\ViewPayment;
 use App\Filament\Resources\Payments\Schemas\PaymentForm;
 use App\Filament\Resources\Payments\Schemas\PaymentInfolist;
 use App\Filament\Resources\Payments\Tables\PaymentsTable;
-use App\Filament\Widgets\PaymentsOverview;
 use App\Models\Payment;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -34,12 +33,7 @@ class PaymentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CreditCard;
 
-    public static function getWidgets(): array
-    {
-        return [
-            PaymentsOverview::class,
-        ];
-    }
+    
 
     public static function getNavigationBadge(): ?string
     {
