@@ -131,6 +131,10 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - [ ] Tambahkan Composer cache + `concurrency` cancel-in-progress
 - [ ] Pertimbangkan matrix PHP 8.2/8.3/8.4 (sesuai versi produksi)
 - [x] Tambahkan `composer validate --strict` (sudah aktif di CI)
+- [x] Siapkan workflow deploy produksi Hostinger via SSH (`deploy.yml`)
+- [x] Tambahkan `ProductionSeeder` (admin + jenis pembayaran, tanpa data demo)
+- [x] Dokumentasikan setup Hostinger, cron, queue, dan rollback
+- [ ] Isi environment/secrets GitHub dan jalankan deploy pertama (operasional)
 
 ### P2.2 Sinkronisasi dokumentasi
 
@@ -166,3 +170,4 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - **21-10-2026** — Dokumen dibuat dari evaluasi Fase 0.
 - **21-10-2026** — P0 selesai: 5 policy baru + `PolicyCoverageTest`; aksi kirim newsletter ber-ability `send`; dependency upgrade (Filament 5.10.3, Laravel 12.70.0, CommonMark 2.10.4, Flysystem 3.36.0, Symfony 7.4.21); `composer audit` bersih; audit ditambahkan ke CI; `composer.json` memakai platform PHP 8.2.0 agar lock file tetap kompatibel dengan CI.
 - **21-10-2026** — P1 selesai (kecuali aktivasi server): standarisasi navigasi/label Filament; logging `daily` + `docs/MONITORING.md`; newsletter dipindah ke `SendNewsletterJob` + `NewsletterMail`; scoping Pelatih per jadwal; perbaikan route sertifikat UKT dan otorisasi kwitansi; perbaikan overflow kalender/tabel pembayaran.
+- **21-10-2026** — Deploy produksi Hostinger disiapkan: workflow GitHub Actions (`deploy.yml`), `ProductionSeeder`, dan panduan `docs/DEPLOYMENT-HOSTINGER.md` (SSH, shared `.env`/storage, cron queue, rollback).

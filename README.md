@@ -155,6 +155,7 @@ php artisan test
 - [Roadmap pengembangan](docs/ROADMAP.md) — rencana dari fondasi sampai go-live
 - [Panduan pengembangan](docs/ARCHITECTURE.md) — struktur modul dan alur utama
 - [Panduan deployment](docs/DEPLOYMENT.md) — konfigurasi produksi dan backup
+- [Deploy otomatis ke Hostinger](docs/DEPLOYMENT-HOSTINGER.md) — GitHub Actions + SSH, cron, dan rollback
 
 ## Lisensi
 

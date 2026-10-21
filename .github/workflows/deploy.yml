@@ -1,0 +1,210 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  quality:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: quality
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://tapaksucisportacademy.com
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_PORT: ${{ secrets.SSH_PORT || '65002' }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      PUBLIC_PATH: ${{ secrets.PUBLIC_PATH }}
+      PHP_BIN: ${{ secrets.PHP_BIN || 'php' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, dom, gd, zip, bcmath, intl
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress
+
+      - name: Build frontend assets
+        run: npm ci && npm run build
+
+      - name: Create release archive
+        run: |
+          tar \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            --exclude='./.idea' \
+            --exclude='./.vscode' \
+            --exclude='./tests' \
+            --exclude='./node_modules' \
+            --exclude='./.env' \
+            --exclude='./storage' \
+            --exclude='./public/storage' \
+            --exclude='./public/hot' \
+            --exclude='./bootstrap/cache/*.php' \
+            --exclude='./database/*.sqlite' \
+            --exclude='./.phpunit.result.cache' \
+            --exclude='./.phpunit.cache' \
+            -czf release.tar.gz .
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Prepare remote directories
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '$DEPLOY_PATH/releases' \
+              '$DEPLOY_PATH/shared/storage/app/public' \
+              '$DEPLOY_PATH/shared/storage/framework/cache/data' \
+              '$DEPLOY_PATH/shared/storage/framework/sessions' \
+              '$DEPLOY_PATH/shared/storage/framework/views' \
+              '$DEPLOY_PATH/shared/storage/logs' \
+              '$PUBLIC_PATH'"
+
+      - name: Upload release
+        run: |
+          scp -i ~/.ssh/deploy_key -P "$SSH_PORT" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            release.tar.gz "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/release.tar.gz"
+
+      - name: Deploy on server
+        env:
+          RELEASE_ID: ${{ github.sha }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "$SSH_USER@$SSH_HOST" \
+            "DEPLOY_PATH='$DEPLOY_PATH' PUBLIC_PATH='$PUBLIC_PATH' RELEASE_ID='$RELEASE_ID' PHP_BIN='$PHP_BIN' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          : "${DEPLOY_PATH:?DEPLOY_PATH belum diisi}"
+          : "${PUBLIC_PATH:?PUBLIC_PATH belum diisi}"
+          : "${RELEASE_ID:?RELEASE_ID belum diisi}"
+
+          APP_PATH="$DEPLOY_PATH"
+          RELEASE_ID="${RELEASE_ID:0:12}"
+          RELEASE_DIR="$APP_PATH/releases/$RELEASE_ID"
+
+          if [ ! -f "$APP_PATH/shared/.env" ]; then
+            echo "ERROR: $APP_PATH/shared/.env belum dibuat. Lihat docs/DEPLOYMENT-HOSTINGER.md."
+            exit 1
+          fi
+
+          mkdir -p "$APP_PATH/releases" \
+            "$APP_PATH/shared/storage/app/public" \
+            "$APP_PATH/shared/storage/framework/cache/data" \
+            "$APP_PATH/shared/storage/framework/sessions" \
+            "$APP_PATH/shared/storage/framework/views" \
+            "$APP_PATH/shared/storage/logs" \
+            "$PUBLIC_PATH"
+
+          rm -rf "$RELEASE_DIR"
+          mkdir -p "$RELEASE_DIR"
+          tar --no-same-owner -xzf "$APP_PATH/release.tar.gz" -C "$RELEASE_DIR"
+          rm -f "$APP_PATH/release.tar.gz"
+
+          ln -sfn "$APP_PATH/shared/.env" "$RELEASE_DIR/.env"
+          rm -rf "$RELEASE_DIR/storage"
+          ln -sfn "$APP_PATH/shared/storage" "$RELEASE_DIR/storage"
+          mkdir -p "$RELEASE_DIR/bootstrap/cache"
+          chmod -R ug+rwx "$RELEASE_DIR/bootstrap/cache" || true
+
+          ln -sfn "$RELEASE_DIR" "$APP_PATH/current"
+
+          cd "$APP_PATH/current"
+          "$PHP_BIN" artisan down --retry=60 || true
+          trap '"$PHP_BIN" artisan up || true' EXIT
+
+          "$PHP_BIN" artisan package:discover --ansi
+          "$PHP_BIN" artisan optimize:clear
+          "$PHP_BIN" artisan migrate --force
+          "$PHP_BIN" artisan config:cache
+          "$PHP_BIN" artisan route:cache
+          "$PHP_BIN" artisan view:cache
+
+          if command -v rsync >/dev/null 2>&1; then
+            rsync -a --delete \
+              --exclude='.well-known' \
+              --exclude='index.php' \
+              --exclude='storage' \
+              "$APP_PATH/current/public/" "$PUBLIC_PATH/"
+          else
+            find "$PUBLIC_PATH" -mindepth 1 -maxdepth 1 \
+              ! -name '.well-known' ! -name 'index.php' ! -name 'storage' \
+              -exec rm -rf {} +
+            cp -R "$APP_PATH/current/public/." "$PUBLIC_PATH/"
+          fi
+
+          cat > "$PUBLIC_PATH/index.php" <<'PHP'
+          <?php
+
+          use Illuminate\Foundation\Application;
+          use Illuminate\Http\Request;
+
+          define('LARAVEL_START', microtime(true));
+
+          if (file_exists($maintenance = '__APP_PATH__/current/storage/framework/maintenance.php')) {
+              require $maintenance;
+          }
+
+          require '__APP_PATH__/current/vendor/autoload.php';
+
+          /** @var Application $app */
+          $app = require_once '__APP_PATH__/current/bootstrap/app.php';
+
+          $app->handleRequest(Request::capture());
+          PHP
+          sed -i "s#__APP_PATH__#$APP_PATH#g" "$PUBLIC_PATH/index.php"
+
+          rm -rf "$PUBLIC_PATH/storage"
+          ln -s "$APP_PATH/shared/storage/app/public" "$PUBLIC_PATH/storage"
+
+          find "$PUBLIC_PATH" -type d -exec chmod 755 {} \;
+          find "$PUBLIC_PATH" -type f -exec chmod 644 {} \;
+
+          chmod -R ug+rwx "$APP_PATH/shared/storage" || true
+          find "$APP_PATH/shared/storage" -type d -exec chmod 775 {} \;
+          find "$APP_PATH/shared/storage" -type f -exec chmod 664 {} \;
+          chmod 600 "$APP_PATH/shared/.env" || true
+
+          "$PHP_BIN" artisan queue:restart || true
+          "$PHP_BIN" artisan up || true
+          trap - EXIT
+
+          cd "$APP_PATH/releases"
+          ls -1dt */ 2>/dev/null | tail -n +4 | xargs -r rm -rf
+          REMOTE
