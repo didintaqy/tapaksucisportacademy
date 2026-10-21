@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Newsletters\Tables;
 
+use App\Models\Newsletter;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -80,12 +81,13 @@ class NewslettersTable
                     ->label('Kirim')
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success')
+                    ->authorize('send')
                     ->visible(fn ($record) => $record->isDraft())
                     ->requiresConfirmation()
                     ->modalHeading('Kirim Newsletter')
                     ->modalDescription('Apakah Anda yakin ingin mengirim newsletter ini ke semua pelanggan? Tindakan ini tidak dapat dibatalkan.')
-                    ->action(function ($record): void {
-                        $record->send();
+                    ->action(function (Newsletter $record): void {
+                        $record->send(auth()->user());
                         Notification::make()
                             ->title('Newsletter terkirim')
                             ->body("Newsletter \"{$record->subject}\" telah dikirim ke {$record->recipients_count} penerima.")

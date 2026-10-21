@@ -50,17 +50,11 @@ class BeltPromotionsTable
 
                 BadgeColumn::make('result')
                     ->label('Hasil')
-                    ->colors([
-                        'success' => 'lulus',
-                        'danger' => 'tidak_lulus',
-                        'warning' => 'ditunda',
-                    ])
-                    ->formatStateUsing(fn ($state) => PromotionResult::tryFrom($state)?->label() ?? $state)
-                    ->icons([
-                        'lulus' => 'heroicon-o-check-circle',
-                        'tidak_lulus' => 'heroicon-o-x-circle',
-                        'ditunda' => 'heroicon-o-clock',
-                    ]),
+                    ->formatStateUsing(fn ($state): string => $state instanceof PromotionResult
+                        ? $state->label()
+                        : (PromotionResult::tryFrom((string) $state)?->label() ?? (string) $state))
+                    ->color(fn ($state): string => $state instanceof PromotionResult ? $state->color() : 'gray')
+                    ->icon(fn ($state): ?string => $state instanceof PromotionResult ? $state->icon() : null),
 
                 TextColumn::make('examiner.name')
                     ->label('Penguji')
