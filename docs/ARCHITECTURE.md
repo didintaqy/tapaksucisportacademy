@@ -214,13 +214,33 @@ Widget di `app/Filament/Widgets/` dan terdaftar otomatis lewat `discoverWidgets`
 
 Role pengguna disimpan di `users.role` dan di-cast ke `App\Enums\UserRole`.
 
-| Role | Siswa | Performa | Pembayaran | Laporan & Rekonsiliasi | Jenis Bayar | Konten | Pesan Kontak | Pengguna |
-|---|---|---|---|---|---|---|---|---|
-| Administrator | CRUD | CRUD | CRUD | Lihat + export + selaraskan | CRUD | CRUD | CRUD | CRUD |
-| Operator | CRUD | CRUD | CRU (tanpa hapus) | Lihat + export + selaraskan | Lihat | CRUD | RU (tanpa hapus) | — |
-| Pelatih | Lihat | CRUD | — | — | — | — | — | — |
+### Operasional & akademik
 
-Policy berada di `app/Policies/` dan ditemukan otomatis oleh Laravel. Widget dashboard yang menampilkan data keuangan disembunyikan untuk role Pelatih lewat `canView()`.
+| Role | Siswa | Performa | Absensi | UKT / Sabuk | Jadwal | Pendaftaran | Kegiatan |
+|---|---|---|---|---|---|---|---|
+| Administrator | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD |
+| Operator | CRU (tanpa hapus) | CRUD | CRUD | CRUD | CRU (tanpa hapus) | CRU (tanpa hapus) | CRU (tanpa hapus) |
+| Pelatih | Lihat | CRU (tanpa hapus) | CRU (tanpa hapus) | CRU (tanpa hapus) | Lihat & ubah jadwal sendiri | — | — |
+
+### Keuangan
+
+| Role | Pembayaran | Laporan & Rekonsiliasi | Jenis Bayar |
+|---|---|---|---|
+| Administrator | CRUD | Lihat + export + rekonsiliasi | CRUD |
+| Operator | CRU (tanpa hapus) | Lihat + export + rekonsiliasi | Lihat |
+| Pelatih | — | — | — |
+
+### Konten & web
+
+| Role | Konten (Artikel/Galeri) | Kategori & Tag | Newsletter | Program | Pesan Kontak | Testimoni & FAQ | Pengguna |
+|---|---|---|---|---|---|---|---|
+| Administrator | CRUD | CRUD | CRUD + kirim | CRUD | CRUD | CRUD | CRUD |
+| Operator | CRUD¹ | CRUD | CRU + kirim | CRU (tanpa hapus) | RU (tanpa hapus) | CRU (tanpa hapus) | — |
+| Pelatih | — | — | — | — | — | — | — |
+
+¹ Operator dapat membuat/mengubah artikel, tetapi hanya Administrator yang dapat mempublikasikan (status `Published`). Aksi **Kirim** newsletter memerlukan ability `send` pada `NewsletterPolicy`.
+
+Policy berada di `app/Policies/` dan ditemukan otomatis oleh Laravel. Setiap model yang dipakai resource Filament wajib punya policy; `tests/Feature/PolicyCoverageTest.php` akan gagal jika ada resource baru tanpa policy. Widget dashboard yang menampilkan data keuangan disembunyikan untuk role Pelatih lewat `canView()`.
 
 ## Menambah Resource Filament
 

@@ -71,6 +71,8 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
   - Keputusan: enum sederhana `App\Enums\UserRole` (tanpa paket tambahan)
 - [x] `User::canAccessPanel()` hanya untuk role yang berhak
 - [x] Buat Policy untuk `Student`, `Payment`, `ContactMessage`, `Post`, `Gallery`
+- [x] Lengkapi Policy untuk `Category`, `Tag`, `Newsletter` (termasuk ability `send`), `Attendance`, dan `BeltPromotion`
+- [x] Tambahkan `PolicyCoverageTest` agar resource Filament baru tanpa policy langsung gagal di CI
 - [x] Batasi `UserResource` hanya untuk `admin`
 - [x] Rate limit + honeypot pada form kontak untuk mencegah spam
 - [x] Password akun seeder diambil dari `.env`, bukan hardcode
@@ -96,6 +98,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 - [x] Test untuk modul kontak (submit, validasi, ubah status)
 - [x] Tambah test untuk generate tagihan bulanan dan policy akses
 - [x] Buat GitHub Actions: `vendor/bin/pint --test` + `php artisan test`
+- [x] Tambahkan `composer audit` ke CI dan pastikan seluruh advisory dependency sudah diperbaiki
 - [x] Target pengujian modul keuangan: setiap alur kritis (tagihan, perubahan status, reminder, ekspor, rekonsiliasi) punya feature test
 
 ### 0.6 Operasional
@@ -200,7 +203,8 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 ## 10. Cara Menggunakan Dokumen Ini
 
 1. Pilih satu fase aktif. Saat ini fokus pada **Fase 5 — Go-Live & Pemeliharaan**; sisa item Fase 0–3 dikerjakan sebagai task pendamping.
-2. Pecah item checklist menjadi issue/task kecil.
-3. Setiap task selesai: centang di dokumen ini dan sertakan test.
-4. Akhir fase: review bersama pemilik produk sebelum lanjut.
-5. Perbarui bagian "Status Modul" setiap ada fitur baru.
+2. Daftar tindak lanjut operasional lintas sesi ada di **`docs/TODO.md`** (prioritas P0/P1/P2, keputusan, dan acceptance criteria). Gunakan dokumen itu sebagai backlog harian.
+3. Pecah item checklist menjadi issue/task kecil.
+4. Setiap task selesai: centang di dokumen ini dan sertakan test.
+5. Akhir fase: review bersama pemilik produk sebelum lanjut.
+6. Perbarui bagian "Status Modul" setiap ada fitur baru.
