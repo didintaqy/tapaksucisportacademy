@@ -20,7 +20,10 @@ class DatabaseSeeder extends Seeder
         $this->call(PaymentTypeSeeder::class);
         $this->call(PaymentsTableSeeder::class);
         $this->call(GallerySeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(TagSeeder::class);
         $this->call(PostSeeder::class);
+        $this->call(NewsletterSeeder::class);
         $this->call(TestimonialSeeder::class);
         $this->call(FaqSeeder::class);
         $this->call(TrainingScheduleSeeder::class);

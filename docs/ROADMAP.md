@@ -35,6 +35,10 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 | Sabuk / UKT | — | ✅ | **Selesai** |
 | Rapor performa (PDF) | — | ✅ | **Selesai** |
 | Relasi pelatih ↔ kelas | — | ✅ | **Selesai** |
+| Newsletter / broadcast | — | ✅ | **Selesai** |
+| Kategori & tag artikel | ✅ | ✅ | **Selesai** |
+| Multi-penulis & moderasi artikel | — | ✅ | **Selesai** |
+| Notifikasi internal admin | — | ✅ | **Selesai** |
 | Deployment & backup | — | — | Dokumen siap, belum dieksekusi |
 
 ---
@@ -49,7 +53,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 ---
 
-## 3. Fase 0 — Fondasi (prioritas sekarang)
+## 3. Fase 0 — Fondasi (selesai, kecuali item operasional)
 
 **Tujuan:** aplikasi aman, konsisten, terdokumentasi, dan siap dikembangkan lebih lanjut oleh siapa pun.
 
@@ -160,10 +164,10 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 
 ## 7. Fase 4 — Konten & Komunikasi
 
-- [ ] Newsletter / broadcast
-- [ ] Multi-penulis dan moderasi artikel
-- [ ] Kategori dan tag artikel
-- [ ] Notifikasi internal untuk admin
+- [x] Newsletter / broadcast
+- [x] Multi-penulis dan moderasi artikel
+- [x] Kategori dan tag artikel
+- [x] Notifikasi internal untuk admin
 
 ---
 
@@ -193,7 +197,7 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 
 ## 10. Cara Menggunakan Dokumen Ini
 
-1. Pilih satu fase aktif. Fase 0 adalah fokus saat ini.
+1. Pilih satu fase aktif. Saat ini fokus pada **Fase 5 — Go-Live & Pemeliharaan**; sisa item Fase 0–3 dikerjakan sebagai task pendamping.
 2. Pecah item checklist menjadi issue/task kecil.
 3. Setiap task selesai: centang di dokumen ini dan sertakan test.
 4. Akhir fase: review bersama pemilik produk sebelum lanjut.

@@ -43,10 +43,58 @@ class PostForm
                             ->unique(ignoreRecord: true)
                             ->nullable(),
 
-                        TextInput::make('category')
+                        Select::make('category_id')
                             ->label('Kategori')
-                            ->maxLength(255)
-                            ->placeholder('contoh: Latihan, Tips, Kejuaraan'),
+                            ->relationship('categoryRelation', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->placeholder('Pilih kategori')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->label('Nama Kategori')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (?string $state, Set $set): void {
+                                        if (filled($state)) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
+                                TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->helperText('Dibuat otomatis dari nama. Boleh diubah.')
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true),
+                                Textarea::make('description')
+                                    ->label('Deskripsi')
+                                    ->rows(2)
+                                    ->maxLength(500),
+                            ]),
+
+                        Select::make('tags')
+                            ->label('Tag')
+                            ->relationship('tags', 'name')
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->placeholder('Pilih tag (bisa banyak)')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->label('Nama Tag')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (?string $state, Set $set): void {
+                                        if (filled($state)) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
+                                TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->helperText('Dibuat otomatis dari nama. Boleh diubah.')
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true),
+                            ]),
 
                         Textarea::make('excerpt')
                             ->label('Ringkasan')
@@ -87,7 +135,9 @@ class PostForm
                             ->relationship('author', 'name')
                             ->searchable()
                             ->preload()
-                            ->default(fn () => auth()->id()),
+                            ->default(fn () => auth()->id())
+                            ->disabled(fn (): bool => ! auth()->user()?->isAdmin())
+                            ->dehydrated(),
 
                         TextInput::make('views')
                             ->label('Jumlah Dilihat')
@@ -103,7 +153,12 @@ class PostForm
                     ->schema([
                         Select::make('status')
                             ->label('Status')
-                            ->options(PostStatus::class)
+                            ->options(fn () => auth()->user()?->isAdmin()
+                                ? PostStatus::class
+                                : [
+                                    PostStatus::Draft->value => PostStatus::Draft->getLabel(),
+                                    PostStatus::Review->value => PostStatus::Review->getLabel(),
+                                ])
                             ->default(PostStatus::Draft->value)
                             ->required()
                             ->native(false),

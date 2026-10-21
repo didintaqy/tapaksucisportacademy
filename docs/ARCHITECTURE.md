@@ -34,6 +34,10 @@ app/
 | Laporan keuangan | agregasi `Payment` | `Pages/IncomeReport`, `OutstandingReport` | — |
 | Rekonsiliasi gateway | `Payment.gateway_payload` | `Pages/GatewayReconciliation` | — |
 | Blog | `Post` | `Posts/` | `/blog` |
+| Kategori artikel | `Category` | `Categories/` | filter blog |
+| Tag artikel | `Tag` | `Tags/` | filter blog |
+| Newsletter / broadcast | `Newsletter` | `Newsletters/` | — |
+| Notifikasi internal | `notifications` (Filament DB notifications) | Lonceng di topbar admin | — |
 | Galeri | `Gallery` | `Galleries/` | `/gallery` |
 | Kontak | `ContactMessage` | `ContactMessages/` | `/contact-us` |
 | Testimoni | `Testimonial` | `Testimonials/` | `/testimoni` |
@@ -64,6 +68,35 @@ Status: `unread` → `read` → `replied`.
 3. Admin/operator memoderasi di **Manajemen Web → Testimoni**.
 4. Aksi **Setujui** mengisi `published_at`; aksi **Tolak** menyembunyikan testimoni.
 5. Halaman `/testimoni` hanya menampilkan status `approved`.
+
+## Alur Artikel: Kategori, Tag, dan Moderasi
+
+1. Artikel disimpan di `posts` dengan relasi `category_id` (satu kategori) dan pivot `post_tag` (banyak tag).
+2. Kategori dan tag dikelola di **Manajemen Web → Kategori Artikel / Tag Artikel**; slug dibuat otomatis dari nama.
+3. Status artikel: `draft` → `review` → `published`.
+4. Operator hanya dapat membuat/mengubah draf dan mengajukan **Ajukan Review**; tombol **Terbitkan** hanya muncul untuk Administrator (`PostPolicy::updateStatus`).
+5. Halaman publik `/blog` hanya menampilkan status `published` dan mendukung filter `?category=slug` serta `?tag=slug`.
+6. Saat operator membuat draf, sistem mengirim notifikasi database ke semua admin.
+
+## Alur Newsletter / Broadcast
+
+1. Admin/operator menyusun newsletter di **Manajemen Web → Newsletter / Broadcast** (subjek + konten HTML).
+2. Selama `is_draft` aktif, newsletter disimpan sebagai `draft` dan belum dikirim.
+3. Aksi **Kirim** memanggil `Newsletter::send()`: mengumpulkan email unik dari `users` dan `students`, mengirim HTML via `Mail`, lalu mengisi `sent_at` dan `recipients_count`.
+4. Pengiriman berjalan sinkron; pindahkan ke queued Mailable bila penerima bertambah besar.
+5. Setelah terkirim, admin menerima notifikasi database.
+
+## Notifikasi Internal Admin
+
+- Menggunakan fitur **database notifications bawaan Filament** (tabel `notifications`, UUID + morph `notifiable`).
+- Panel diaktifkan lewat `->databaseNotifications()` dan polling 30 detik; ikon lonceng muncul di topbar.
+- Pemicu otomatis via model event `created`/`updated`:
+  - `Post` draf oleh non-admin → artikel baru diajukan.
+  - `ContactMessage` → pesan kontak baru.
+  - `StudentRegistration` → pendaftaran siswa baru.
+  - `Payment` berubah ke `Paid` → pembayaran diterima.
+  - `Newsletter::send()` → newsletter terkirim.
+- Penerima ditentukan per tipe: admin saja, atau admin + operator.
 
 ## Alur Pendaftaran Siswa
 

@@ -48,17 +48,27 @@
                         </div>
                         <!-- Post Entry End -->
 
-                        @if ($post->category)
+                        @if ($post->category || $post->tags->isNotEmpty())
                             <!-- Post Tag Links Start -->
                             <div class="post-tag-links">
                                 <div class="row align-items-center">
                                     <div class="col-lg-8">
                                         <!-- Post Tags Start -->
                                         <div class="post-tags wow fadeInUp" data-wow-delay="0.5s">
-                                            <span class="tag-links">
-                                                Kategori:
-                                                <a href="#">{{ $post->category }}</a>
-                                            </span>
+                                            @if ($post->category)
+                                                <span class="tag-links">
+                                                    Kategori:
+                                                    <a href="{{ route('blog', ['category' => $post->category->slug]) }}">{{ $post->category->name }}</a>
+                                                </span>
+                                            @endif
+                                            @if ($post->tags->isNotEmpty())
+                                                <span class="tag-links d-block mt-2">
+                                                    Tag:
+                                                    @foreach ($post->tags as $tag)
+                                                        <a href="{{ route('blog', ['tag' => $tag->slug]) }}">{{ $tag->name }}</a>@if (! $loop->last), @endif
+                                                    @endforeach
+                                                </span>
+                                            @endif
                                         </div>
                                         <!-- Post Tags End -->
                                     </div>

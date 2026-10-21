@@ -3,6 +3,29 @@
     <!-- Page Blog Section Start -->
     <div class="page-blog">
         <div class="container">
+            @if ($categories->isNotEmpty() || $activeTag)
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex flex-wrap gap-2 align-items-center wow fadeInUp">
+                            <span class="text-muted me-1">Filter:</span>
+                            <a href="{{ route('blog') }}"
+                               class="btn btn-sm {{ ! $activeCategory && ! $activeTag ? 'btn-primary' : 'btn-outline-primary' }}">
+                                Semua
+                            </a>
+                            @foreach ($categories as $category)
+                                <a href="{{ route('blog', ['category' => $category->slug]) }}"
+                                   class="btn btn-sm {{ $activeCategory?->id === $category->id ? 'btn-primary' : 'btn-outline-primary' }}">
+                                    {{ $category->name }}
+                                </a>
+                            @endforeach
+                            @if ($activeTag)
+                                <span class="badge bg-secondary ms-2">Tag: {{ $activeTag->name }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @if ($posts->isEmpty())
                 <div class="row">
                     <div class="col-lg-12 text-center">
@@ -37,6 +60,10 @@
 
                                     <!-- Post Item Content -->
                                     <div class="post-item-content">
+                                        @if ($post->category)
+                                            <a href="{{ route('blog', ['category' => $post->category->slug]) }}"
+                                               class="badge bg-primary text-decoration-none mb-2">{{ $post->category->name }}</a>
+                                        @endif
                                         <h2><a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a></h2>
                                     </div>
                                     <!-- Post Item End -->
