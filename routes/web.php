@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\Admin\FinancialReportController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ContactUsController;
@@ -52,6 +53,16 @@ Route::get('/sitemap.xml', [SitemapController::class, '__invoke'])->name('sitema
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])
     ->middleware('auth')
     ->name('payments.receipt');
+
+// Export laporan keuangan (admin / operator)
+Route::middleware('auth')->prefix('admin/reports')->name('admin.reports.')->group(function (): void {
+    Route::get('/income/export', [FinancialReportController::class, 'exportIncome'])->name('income.export');
+    Route::get('/income/excel', [FinancialReportController::class, 'exportIncomeExcel'])->name('income.excel');
+    Route::get('/income/pdf', [FinancialReportController::class, 'exportIncomePdf'])->name('income.pdf');
+    Route::get('/outstanding/export', [FinancialReportController::class, 'exportOutstanding'])->name('outstanding.export');
+    Route::get('/outstanding/excel', [FinancialReportController::class, 'exportOutstandingExcel'])->name('outstanding.excel');
+    Route::get('/outstanding/pdf', [FinancialReportController::class, 'exportOutstandingPdf'])->name('outstanding.pdf');
+});
 
 // Portal pembayaran untuk orang tua / siswa
 Route::get('/pembayaran', [PaymentPortalController::class, 'index'])
