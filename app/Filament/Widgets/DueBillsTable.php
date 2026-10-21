@@ -39,7 +39,7 @@ class DueBillsTable extends TableWidget
                 TextColumn::make('status')->label('Status')->badge(),
                 TextColumn::make('due_date')->label('Jatuh Tempo')->date('d M Y')->placeholder('Belum diatur'),
             ])
-            ->recordUrl(fn (Payment $record): string => PaymentResource::getUrl('view', $record))
+            ->recordUrl(fn (Payment $record): string => PaymentResource::getUrl('view', ['record' => $record]))
             ->paginated([8])
             ->defaultPaginationPageOption(8);
     }
