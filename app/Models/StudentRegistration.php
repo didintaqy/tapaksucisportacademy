@@ -32,6 +32,7 @@ class StudentRegistration extends Model
         'email',
         'address',
         'branch',
+        'program_id',
         'notes',
         'status',
         'admin_notes',
@@ -62,6 +63,11 @@ class StudentRegistration extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(Program::class);
     }
 
     public function scopeNew(Builder $query): Builder

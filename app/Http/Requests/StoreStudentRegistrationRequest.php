@@ -28,6 +28,7 @@ class StoreStudentRegistrationRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['required', 'string', 'max:1000'],
             'branch' => ['nullable', 'string', 'max:255'],
+            'program_id' => ['nullable', 'integer', 'exists:programs,id'],
             'notes' => ['nullable', 'string', 'max:2000'],
 
             // Honeypot: harus kosong. Bot yang mengisi field ini akan ditolak.

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\RegistrationStatus;
+use App\Models\Program;
 use App\Models\StudentRegistration;
 use Illuminate\Database\Seeder;
 
@@ -61,10 +62,19 @@ class StudentRegistrationSeeder extends Seeder
             ],
         ];
 
+        $programIds = Program::query()->pluck('id', 'slug');
+        $programMap = [
+            'Muhammad Rizky Pratama' => 'kelas-dasar-tapak-suci',
+            'Aisyah Putri' => 'kelas-remaja',
+            'Fikri Ramadhan' => 'kelas-remaja',
+        ];
+
         foreach ($registrations as $registration) {
+            $slug = $programMap[$registration['full_name']] ?? null;
+
             StudentRegistration::updateOrCreate(
                 ['phone' => $registration['phone'], 'full_name' => $registration['full_name']],
-                $registration,
+                [...$registration, 'program_id' => $slug ? ($programIds[$slug] ?? null) : null],
             );
         }
     }

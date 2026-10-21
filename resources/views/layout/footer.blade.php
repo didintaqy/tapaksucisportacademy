@@ -58,7 +58,7 @@
                             <ul>
                                 <li><a href="{{ route('home') }}">Home</a></li>
                                 <li><a href="{{ route('about') }}">About Us</a></li>
-                                <li><a href="{{ route('program') }}">Programs</a></li>
+                                <li><a href="{{ route('program') }}">Program</a></li>
                                 <li><a href="{{ route('blog') }}">Blog</a></li>
                                 <li><a href="{{ route('testimonials') }}">Testimoni</a></li>
                                 <li><a href="{{ route('faqs') }}">FAQ</a></li>

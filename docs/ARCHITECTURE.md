@@ -34,6 +34,7 @@ app/
 | Laporan keuangan | agregasi `Payment` | `Pages/IncomeReport`, `OutstandingReport` | — |
 | Rekonsiliasi gateway | `Payment.gateway_payload` | `Pages/GatewayReconciliation` | — |
 | Blog | `Post` | `Posts/` | `/blog` |
+| Program latihan | `Program` | `Programs/` | `/program`, `/program/{slug}` |
 | Kategori artikel | `Category` | `Categories/` | filter blog |
 | Tag artikel | `Tag` | `Tags/` | filter blog |
 | Newsletter / broadcast | `Newsletter` | `Newsletters/` | — |
@@ -48,6 +49,14 @@ app/
 | Absensi | `Attendance` | `Attendances/` | — |
 | UKT / sabuk | `BeltPromotion` | `BeltPromotions/` | — |
 | Pengguna | `User` | `Users/` | — |
+
+## Alur Program
+
+1. Admin/operator mengelola program di **Manajemen Web → Program Latihan** (`ProgramResource`).
+2. Program menyimpan konten publik (deskripsi, gambar, usia, level, durasi, iuran, SEO) dan daftar cabang pada kolom JSON `branches`.
+3. `/program` menampilkan program aktif dan dapat difilter per cabang; `/program/{slug}` menampilkan detail beserta jadwal terkait.
+4. Program terhubung ke `TrainingSchedule.program_id`, `Student.program_id`, dan `StudentRegistration.program_id`.
+5. Generator tagihan bulanan memakai `Program.monthly_fee` bila tersedia, lalu fallback ke `PaymentType.default_amount`.
 
 ## Alur Kontak
 

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Program;
 use App\Models\TrainingSchedule;
 use Illuminate\Database\Seeder;
 
@@ -65,14 +66,25 @@ class TrainingScheduleSeeder extends Seeder
             ],
         ];
 
+        $programIds = Program::query()->pluck('id', 'slug');
+        $programMap = [
+            'Kelas Anak Pemula' => 'kelas-dasar-tapak-suci',
+            'Kelas Remaja' => 'kelas-remaja',
+            'Kelas Dewasa' => 'kelas-dewasa',
+            'Kelas Remaja & Dewasa' => 'kelas-dewasa',
+        ];
+
         foreach ($schedules as $schedule) {
+            $slug = $programMap[$schedule['class_name']] ?? null;
+            $programId = $slug ? ($programIds[$slug] ?? null) : null;
+
             TrainingSchedule::updateOrCreate(
                 [
                     'branch' => $schedule['branch'],
                     'class_name' => $schedule['class_name'],
                     'day_of_week' => $schedule['day_of_week'],
                 ],
-                [...$schedule, 'is_active' => true],
+                [...$schedule, 'program_id' => $programId, 'is_active' => true],
             );
         }
     }

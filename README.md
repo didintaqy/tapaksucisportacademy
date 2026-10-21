@@ -6,7 +6,7 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 
 ### Website publik
 
-- Home, About, dan Program
+- Home, About, dan Program (daftar + detail, filter cabang)
 - Galeri kegiatan
 - Blog & artikel (index dan detail, filter kategori/tag)
 - Testimoni dengan moderasi admin
@@ -22,7 +22,7 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 - **Master Data:** Siswa, Performa Siswa
 - **Keuangan:** Pembayaran, Jenis Pembayaran, generate tagihan bulanan, Rekap Pemasukan, Laporan Tunggakan, Rekonsiliasi Gateway
 - **Manajemen Akademi:** Absensi, UKT/Sabuk, Rapor Performa (PDF)
-- **Manajemen Web:** Galeri, Blog & Artikel, Kategori Artikel, Tag Artikel, Newsletter/Broadcast, Pesan Kontak, Testimoni, FAQ, Jadwal Latihan, Pendaftaran Siswa, Kegiatan
+- **Manajemen Web:** Galeri, Blog & Artikel, Kategori Artikel, Tag Artikel, Program Latihan, Newsletter/Broadcast, Pesan Kontak, Testimoni, FAQ, Jadwal Latihan, Pendaftaran Siswa, Kegiatan
 - **Pengguna:** manajemen akun admin (khusus role Administrator)
 - **Notifikasi:** notifikasi internal admin di lonceng topbar (artikel baru, kontak, pendaftaran, pembayaran, newsletter)
 - **Dashboard:** ringkasan angka, grafik pemasukan 6 bulan, tagihan yang perlu tindakan, dan ringkasan performa fisik
@@ -108,6 +108,7 @@ Buka `http://localhost:8000` untuk website dan `http://localhost:8000/admin` unt
 - `/` — Home
 - `/about` — About
 - `/program` — Program
+- `/program/{slug}` — Detail program
 - `/gallery` — Galeri
 - `/blog` — Blog
 - `/blog/{slug}` — Detail artikel

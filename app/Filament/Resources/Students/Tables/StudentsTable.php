@@ -43,6 +43,11 @@ class StudentsTable
                     ->label('Cabang')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('program.name')
+                    ->label('Program')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('phone_number')
                     ->label('Telepon')
                     ->searchable()
@@ -100,6 +105,11 @@ class StudentsTable
                         ->orderBy('branch')
                         ->pluck('branch', 'branch')
                         ->all()),
+                SelectFilter::make('program_id')
+                    ->label('Program')
+                    ->relationship('program', 'name')
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('belt_level')
                     ->label('Tingkat Sabuk')
                     ->options(BeltRank::options()),

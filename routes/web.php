@@ -21,7 +21,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/about', AboutController::class)->name('about');
-Route::get('/program', ProgramController::class)->name('program');
+Route::get('/program', [ProgramController::class, 'index'])->name('program');
+Route::get('/program/{program:slug}', [ProgramController::class, 'show'])->name('program.show');
 Route::get('/contact-us', ContactUsController::class)->name('contact-us');
 Route::post('/contact-us', [ContactUsController::class, 'store'])
     ->middleware('throttle:5,1')

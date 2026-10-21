@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\StudentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -26,6 +27,7 @@ class Student extends Model
         'education',
         'photo',
         'branch',
+        'program_id',
     ];
 
     /** @use HasFactory<StudentFactory> */
@@ -45,6 +47,11 @@ class Student extends Model
     public function performances(): HasMany
     {
         return $this->hasMany(StudentPerformance::class);
+    }
+
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(Program::class);
     }
 
     public function payments(): HasMany

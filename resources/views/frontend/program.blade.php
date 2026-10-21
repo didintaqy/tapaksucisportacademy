@@ -1,166 +1,74 @@
 @extends('layout.master')
 
+@section('hero')
+    @include('layout.herosection.page-header', ['page' => 'Program Latihan', 'breadcrumb' => 'Program'])
+@endsection
+
 @section('content')
 
     <!-- Page Programs Start -->
     <div class="page-programs">
         <div class="container">
-            <div class="row">
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-1.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Adult Karate Program</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
+            @if ($branches->isNotEmpty())
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex flex-wrap gap-2 align-items-center wow fadeInUp">
+                            <span class="text-muted me-1">Cabang:</span>
+                            <a href="{{ route('program') }}"
+                               class="btn btn-sm {{ ! $activeBranch ? 'btn-primary' : 'btn-outline-primary' }}">
+                                Semua
+                            </a>
+                            @foreach ($branches as $branch)
+                                <a href="{{ route('program', ['branch' => $branch]) }}"
+                                   class="btn btn-sm {{ $activeBranch === $branch ? 'btn-primary' : 'btn-outline-primary' }}">
+                                    {{ $branch }}
+                                </a>
+                            @endforeach
                         </div>
                     </div>
-                    <!-- Program Item End -->
                 </div>
+            @endif
 
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-2.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Kids Karate Program</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
+            @if ($programs->isEmpty())
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <p class="wow fadeInUp">Belum ada program latihan yang tersedia.</p>
                     </div>
-                    <!-- Program Item End -->
                 </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-3.png" alt="">
-                            </figure>
+            @else
+                <div class="row">
+                    @foreach ($programs as $program)
+                        <div class="col-xl-3 col-md-6">
+                            <!-- Program Item Start -->
+                            <div class="program-item wow fadeInUp" data-wow-delay="{{ min($loop->index * 0.2, 1.4) }}s">
+                                <div class="program-item-image">
+                                    <figure>
+                                        <a href="{{ route('program.show', $program->slug) }}" data-cursor-text="Lihat">
+                                            <img src="{{ $program->cover_url ?: asset('images/programs-item-image-1.png') }}"
+                                                 alt="{{ $program->name }}">
+                                        </a>
+                                    </figure>
+                                </div>
+                                <div class="program-item-content">
+                                    <span class="badge bg-primary mb-2">{{ $program->level->getLabel() }}</span>
+                                    <h2><a href="{{ route('program.show', $program->slug) }}">{{ $program->name }}</a></h2>
+                                    <p>{{ $program->short_description }}</p>
+                                    <p class="small text-muted mb-0">
+                                        {{ $program->age_range_label }} · {{ $program->duration_label }}
+                                    </p>
+                                </div>
+                                <div class="program-item-btn">
+                                    <a href="{{ route('program.show', $program->slug) }}" class="readmore-btn">Selengkapnya</a>
+                                </div>
+                            </div>
+                            <!-- Program Item End -->
                         </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Teens Martial Art Training</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
+                    @endforeach
                 </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-4.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Self-Defense Training</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="0.8s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-5.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Kata Technique Mastery</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="1s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-6.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Competition Preparation</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="1.2s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-7.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Mobility Training</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="1.4s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-8.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Martial Arts Workshops</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
-                </div>
-            </div>
+            @endif
         </div>
     </div>
-    <!-- Page Services End -->
+    <!-- Page Programs End -->
 
     <!-- How It Work Section Start -->
     <div class="how-it-work bg-section dark-section parallaxie">

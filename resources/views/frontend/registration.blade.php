@@ -120,6 +120,23 @@
                                 </div>
 
                                 <div class="form-group col-md-6 mb-4">
+                                    <label for="program_id" class="form-label">Program yang Diinginkan</label>
+                                    <select name="program_id" id="program_id"
+                                        class="form-control form-select @error('program_id') is-invalid @enderror">
+                                        <option value="" @selected(! old('program_id', request('program')))>Pilih program (opsional)</option>
+                                        @foreach ($programs as $program)
+                                            <option value="{{ $program->id }}"
+                                                @selected((string) old('program_id', request('program')) === (string) $program->id)>
+                                                {{ $program->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('program_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group col-md-6 mb-4">
                                     <label for="branch" class="form-label">Cabang yang Diinginkan</label>
                                     <input type="text" name="branch" id="branch"
                                         class="form-control @error('branch') is-invalid @enderror"

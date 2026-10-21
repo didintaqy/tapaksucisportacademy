@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentRegistrationRequest;
 use App\Mail\RegistrationReceivedMail;
+use App\Models\Program;
 use App\Models\StudentRegistration;
 
 class StudentRegistrationController extends Controller
 {
     public function index()
     {
+        $programs = Program::query()->active()->ordered()->get();
         $page = 'Pendaftaran Siswa';
 
-        return view('frontend.registration', compact('page'));
+        return view('frontend.registration', compact('programs', 'page'));
     }
 
     public function store(StoreStudentRegistrationRequest $request)
