@@ -67,6 +67,12 @@ class StudentForm
                     ->label('Cabang')
                     ->maxLength(255)
                     ->placeholder('Contoh: Cabang Pusat'),
+                Select::make('program_id')
+                    ->label('Program Latihan')
+                    ->relationship('program', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Pilih program'),
                 Select::make('education')
                     ->label('Pendidikan')
                     ->options([

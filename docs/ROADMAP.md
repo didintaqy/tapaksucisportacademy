@@ -12,7 +12,8 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 | Modul | Frontend | Admin | Status |
 |---|---|---|---|
-| Home, About, Program | ✅ | — | Selesai |
+| Home, About | ✅ | — | Selesai |
+| Program latihan | ✅ | ✅ | **Selesai** (per cabang, terhubung jadwal, pendaftaran, siswa, SPP) |
 | Galeri kegiatan | ✅ | ✅ | Selesai |
 | Blog & artikel | ✅ | ✅ | Selesai |
 | Kontak (form → database) | ✅ | ✅ | Selesai |
@@ -168,6 +169,7 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 - [x] Multi-penulis dan moderasi artikel
 - [x] Kategori dan tag artikel
 - [x] Notifikasi internal untuk admin
+- [x] Program latihan: CRUD admin, halaman daftar + detail, filter cabang, integrasi jadwal/pendaftaran/siswa/SPP
 
 ---
 

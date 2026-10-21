@@ -14,12 +14,11 @@
                             <ul class="navbar-nav mr-auto" id="menu">
                                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">Tentang Kami</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('program') }}">Programs</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('program') }}">Program</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('blog') }}">Blog</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('gallery') }}">Gallery</a></li>
                                 <li class="nav-item submenu"><a class="nav-link" href="#">Pages</a>
                                     <ul>
-                                        <li class="nav-item"><a class="nav-link" href="program-single.html">Program Details</a></li>
                                         <li class="nav-item"><a class="nav-link" href="blog-single.html">Blog Details</a></li>
                                         <li class="nav-item"><a class="nav-link" href="team.html">Our Team</a></li>
                                         <li class="nav-item"><a class="nav-link" href="team-single.html">Team Details</a></li>

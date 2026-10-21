@@ -30,6 +30,11 @@ class TrainingSchedulesTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('program.name')
+                    ->label('Program')
+                    ->placeholder('-')
+                    ->toggleable(),
+
                 TextColumn::make('branch')
                     ->label('Cabang')
                     ->searchable()
@@ -67,6 +72,12 @@ class TrainingSchedulesTable
                 SelectFilter::make('day_of_week')
                     ->label('Hari')
                     ->options(TrainingSchedule::DAYS),
+
+                SelectFilter::make('program_id')
+                    ->label('Program')
+                    ->relationship('program', 'name')
+                    ->searchable()
+                    ->preload(),
 
                 SelectFilter::make('branch')
                     ->label('Cabang')

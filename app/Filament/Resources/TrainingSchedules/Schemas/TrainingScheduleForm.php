@@ -16,6 +16,13 @@ class TrainingScheduleForm
     {
         return $schema
             ->components([
+                Select::make('program_id')
+                    ->label('Program Latihan')
+                    ->relationship('program', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Tanpa program'),
+
                 TextInput::make('class_name')
                     ->label('Nama Kelas')
                     ->required()

@@ -27,6 +27,7 @@ class TrainingSchedule extends Model
 
     protected $fillable = [
         'class_name',
+        'program_id',
         'branch',
         'day_of_week',
         'start_time',
@@ -50,6 +51,11 @@ class TrainingSchedule extends Model
     public function coach(): BelongsTo
     {
         return $this->belongsTo(User::class, 'coach_id');
+    }
+
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(Program::class);
     }
 
     public function getDayNameAttribute(): string

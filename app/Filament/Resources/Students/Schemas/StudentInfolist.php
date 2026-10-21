@@ -60,6 +60,10 @@ class StudentInfolist
                             ->label('Cabang')
                             ->badge()
                             ->placeholder('-'),
+                        TextEntry::make('program.name')
+                            ->label('Program Latihan')
+                            ->badge()
+                            ->placeholder('-'),
                         TextEntry::make('belt_level')
                             ->label('Tingkat Sabuk')
                             ->badge()

@@ -2,6 +2,7 @@
 
 namespace App\Services\Payments;
 
+use App\Enums\PaymentPeriodType;
 use App\Enums\PaymentStatus;
 use App\Models\Payment;
 use App\Models\PaymentType;
@@ -28,15 +29,20 @@ class MonthlyBillGenerator
         $skipped = $existing->count();
 
         Student::query()
+            ->with('program')
             ->whereNotIn('id', $existing)
             ->orderBy('id')
             ->each(function (Student $student) use ($type, $period, $dueDate, $description, $createdBy, &$created): void {
+                $programFee = $type->period_type === PaymentPeriodType::Monthly
+                    ? $student->program?->monthly_fee
+                    : null;
+
                 Payment::create([
                     'student_id' => $student->id,
                     'payment_type_id' => $type->id,
                     'period' => $period,
                     'description' => $description,
-                    'amount' => $type->default_amount,
+                    'amount' => $programFee ?? $type->default_amount,
                     'status' => PaymentStatus::Unpaid,
                     'due_date' => $dueDate,
                     'created_by' => $createdBy,

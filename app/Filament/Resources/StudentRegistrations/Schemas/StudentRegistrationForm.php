@@ -59,6 +59,13 @@ class StudentRegistrationForm
                     ->email()
                     ->maxLength(255),
 
+                Select::make('program_id')
+                    ->label('Program yang Diinginkan')
+                    ->relationship('program', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Belum memilih program'),
+
                 TextInput::make('branch')
                     ->label('Cabang yang Diinginkan')
                     ->maxLength(255),

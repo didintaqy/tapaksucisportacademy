@@ -129,86 +129,39 @@
             </div>
 
             <div class="row">
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-1.png" alt="">
-                            </figure>
+                @forelse ($programs->take(4) as $program)
+                    <div class="col-xl-3 col-md-6">
+                        <!-- Program Item Start -->
+                        <div class="program-item wow fadeInUp" data-wow-delay="{{ min($loop->index * 0.2, 0.6) }}s">
+                            <div class="program-item-image">
+                                <figure>
+                                    <a href="{{ route('program.show', $program->slug) }}" data-cursor-text="Lihat">
+                                        <img src="{{ $program->cover_url ?: asset('images/programs-item-image-1.png') }}"
+                                             alt="{{ $program->name }}">
+                                    </a>
+                                </figure>
+                            </div>
+                            <div class="program-item-content">
+                                <span class="badge bg-primary mb-2">{{ $program->level->getLabel() }}</span>
+                                <h2><a href="{{ route('program.show', $program->slug) }}">{{ $program->name }}</a></h2>
+                                <p>{{ $program->short_description }}</p>
+                            </div>
+                            <div class="program-item-btn">
+                                <a href="{{ route('program.show', $program->slug) }}" class="readmore-btn">Selengkapnya</a>
+                            </div>
                         </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Adult Karate Program</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
+                        <!-- Program Item End -->
                     </div>
-                    <!-- Program Item End -->
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-2.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Kids Karate Program</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
+                @empty
+                    <div class="col-lg-12 text-center">
+                        <p class="wow fadeInUp">Belum ada program latihan yang tersedia.</p>
                     </div>
-                    <!-- Program Item End -->
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-3.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Teens Martial Art Training</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- Program Item Start -->
-                    <div class="program-item wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="program-item-image">
-                            <figure>
-                                <img src="images/programs-item-image-4.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="program-item-content">
-                            <h2><a href="program-single.html">Self-Defense Training</a></h2>
-                            <p>Enhances flexibility mental clarity self-defense ability.</p>
-                        </div>
-                        <div class="program-item-btn">
-                            <a href="program-single.html" class="readmore-btn">Read More</a>
-                        </div>
-                    </div>
-                    <!-- Program Item End -->
-                </div>
+                @endforelse
 
                 <div class="col-lg-12">
                     <!-- Section Footer Text Start -->
                     <div class="section-footer-text wow fadeInUp" data-wow-delay="0.4s">
-                        <p>Explore All Training Programs Designed for Every Student - <a href="programs.html">View All Program</a></p>
+                        <p>Jelajahi semua program latihan untuk setiap tingkat kemampuan - <a href="{{ route('program') }}">Lihat Semua Program</a></p>
                         <ul>
                             <li><span class="counter">4.9</span>/5</li>
                             <li>
@@ -1352,15 +1305,12 @@
                                                                     
                                 <div class="form-group col-md-6 mb-4">
                                     <select name="program" class="form-control form-select" id="program" data-required-error="Pilih salah satu program." required>
-                                        <option value="" disabled selected>Select a Program</option>
-                                        <option value="Adult_Karate">Adult Karate Program</option>
-                                        <option value="Kids_Karate">Kids Karate Program</option>
-                                        <option value="Teens_Martial_Arts">Teens Martial Arts Training</option>
-                                        <option value="Self_Defense">Self-Defense Training</option>
-                                        <option value="Kata_Technique_Mastery">Kata Technique Mastery</option>
-                                        <option value="Competition_Preparation">Competition Preparation</option>
-                                        <option value="Mobility_Training">Mobility Training</option>
-                                        <option value="Martial_Arts_Workshops">Martial Arts Workshops</option>
+                                        <option value="" disabled selected>Pilih Program</option>
+                                        @foreach ($programs as $programOption)
+                                            <option value="{{ $programOption->id }}" @selected(old('program') == $programOption->id)>
+                                                {{ $programOption->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     <div class="help-block with-errors"></div>
                                 </div>

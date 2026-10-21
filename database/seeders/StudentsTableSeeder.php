@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Program;
 use App\Models\Student;
 use Illuminate\Database\Seeder;
 
@@ -349,9 +350,11 @@ class StudentsTableSeeder extends Seeder
         ];
 
         $branches = ['Cabang Pusat', 'Cabang Batam Kota'];
+        $programIds = Program::query()->orderBy('sort_order')->pluck('id')->all();
 
         foreach ($students as $index => $student) {
             $student['branch'] = $branches[$index % 2];
+            $student['program_id'] = $programIds === [] ? null : $programIds[$index % count($programIds)];
             $student['email'] = $student['email'] ?? 'siswa'.($index + 1).'@example.test';
             Student::updateOrCreate(
                 ['nik' => $student['nik']],

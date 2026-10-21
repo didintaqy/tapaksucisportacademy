@@ -31,6 +31,11 @@ class StudentRegistrationsTable
                     ->searchable()
                     ->copyable(),
 
+                TextColumn::make('program.name')
+                    ->label('Program')
+                    ->placeholder('-')
+                    ->toggleable(),
+
                 TextColumn::make('branch')
                     ->label('Cabang')
                     ->placeholder('-')
