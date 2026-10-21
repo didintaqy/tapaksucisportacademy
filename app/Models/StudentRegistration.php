@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RegistrationStatus;
 use Database\Factories\StudentRegistrationFactory;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +38,17 @@ class StudentRegistration extends Model
         'reviewed_by',
         'reviewed_at',
     ];
+
+    protected static function booted(): void
+    {
+        static::created(function (StudentRegistration $registration): void {
+            Notification::make()
+                ->title('Pendaftaran Siswa Baru')
+                ->body("{$registration->full_name} mendaftar sebagai siswa baru.")
+                ->icon('heroicon-o-user-plus')
+                ->sendToDatabase(User::whereIn('role', ['admin', 'operator'])->get());
+        });
+    }
 
     protected function casts(): array
     {

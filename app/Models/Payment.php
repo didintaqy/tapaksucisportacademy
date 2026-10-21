@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use Database\Factories\PaymentFactory;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -95,6 +96,15 @@ class Payment extends Model
                 'reason' => $payment->statusChangeReason ?? 'Perubahan status manual',
                 'metadata' => $payment->statusChangeMetadata ?: null,
             ]);
+
+            if ($to === PaymentStatus::Paid) {
+                Notification::make()
+                    ->title('Pembayaran Diterima')
+                    ->body("Pembayaran {$payment->invoice_number} dari {$payment->student?->full_name} telah lunas.")
+                    ->icon('heroicon-o-banknotes')
+                    ->success()
+                    ->sendToDatabase(User::whereIn('role', ['admin', 'operator'])->get());
+            }
 
             $payment->statusChangeReason = null;
             $payment->statusChangeMetadata = [];

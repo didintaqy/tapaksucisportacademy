@@ -9,12 +9,14 @@ use Filament\Support\Contracts\HasLabel;
 enum PostStatus: string implements HasColor, HasIcon, HasLabel
 {
     case Draft = 'draft';
+    case Review = 'review';
     case Published = 'published';
 
     public function getLabel(): string
     {
         return match ($this) {
             self::Draft => 'Draf',
+            self::Review => 'Diajukan Review',
             self::Published => 'Terbit',
         };
     }
@@ -23,6 +25,7 @@ enum PostStatus: string implements HasColor, HasIcon, HasLabel
     {
         return match ($this) {
             self::Draft => 'gray',
+            self::Review => 'warning',
             self::Published => 'success',
         };
     }
@@ -31,7 +34,13 @@ enum PostStatus: string implements HasColor, HasIcon, HasLabel
     {
         return match ($this) {
             self::Draft => 'heroicon-o-pencil-square',
+            self::Review => 'heroicon-o-clock',
             self::Published => 'heroicon-o-check-circle',
         };
+    }
+
+    public static function moderatable(): array
+    {
+        return [self::Review->value, self::Published->value];
     }
 }

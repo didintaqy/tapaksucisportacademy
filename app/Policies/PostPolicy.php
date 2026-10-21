@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PostStatus;
 use App\Enums\UserRole;
 use App\Models\Post;
 use App\Models\User;
@@ -25,7 +26,25 @@ class PostPolicy
 
     public function update(User $user, Post $post): bool
     {
-        return $this->viewAny($user);
+        if (! $this->viewAny($user)) {
+            return false;
+        }
+
+        // Operator tidak boleh mengubah status ke Published
+        if (! $user->isAdmin() && $post->status === PostStatus::Review) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function updateStatus(User $user, Post $post, PostStatus $status): bool
+    {
+        if (! $user->isAdmin()) {
+            return false;
+        }
+
+        return in_array($status->value, PostStatus::moderatable(), true);
     }
 
     public function delete(User $user, Post $post): bool

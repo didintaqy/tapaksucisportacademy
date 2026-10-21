@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\PostStatus;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,7 +24,6 @@ class PostFactory extends Factory
     public function definition(): array
     {
         $title = $this->faker->unique()->sentence(6);
-        $categories = ['Latihan', 'Kejuaraan', 'Tips', 'Kegiatan'];
 
         return [
             'title' => $title,
@@ -31,7 +31,7 @@ class PostFactory extends Factory
             'excerpt' => $this->faker->paragraph(),
             'content' => '<p>'.$this->faker->paragraph().'</p><p>'.$this->faker->paragraph().'</p>',
             'cover_image' => 'images/post-'.$this->faker->numberBetween(1, 6).'.jpg',
-            'category' => $this->faker->randomElement($categories),
+            'category_id' => Category::factory(),
             'author_id' => User::factory(),
             'status' => PostStatus::Published,
             'published_at' => now()->subDays($this->faker->numberBetween(0, 60)),

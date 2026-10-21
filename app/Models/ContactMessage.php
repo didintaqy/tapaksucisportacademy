@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\ContactMessageFactory;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,17 @@ class ContactMessage extends Model
         'read_by',
         'replied_by',
     ];
+
+    protected static function booted(): void
+    {
+        static::created(function (ContactMessage $message): void {
+            Notification::make()
+                ->title('Pesan Kontak Baru')
+                ->body("{$message->name} mengirim pesan melalui formulir kontak.")
+                ->icon('heroicon-o-envelope')
+                ->sendToDatabase(User::whereIn('role', ['admin', 'operator'])->get());
+        });
+    }
 
     protected function casts(): array
     {

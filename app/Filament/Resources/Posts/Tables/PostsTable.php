@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Posts\Tables;
 
 use App\Enums\PostStatus;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -32,11 +33,19 @@ class PostsTable
                     ->sortable()
                     ->wrap(),
 
-                TextColumn::make('category')
+                TextColumn::make('category.name')
                     ->label('Kategori')
                     ->badge()
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('tags.name')
+                    ->label('Tag')
+                    ->badge()
+                    ->separator(', ')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('author_name')
                     ->label('Penulis')
@@ -83,6 +92,25 @@ class PostsTable
             ])
             ->recordActions([
                 EditAction::make(),
+
+                Action::make('submitReview')
+                    ->label('Ajukan Review')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->color('warning')
+                    ->visible(fn ($record) => $record->status === PostStatus::Draft && ! auth()->user()?->isAdmin())
+                    ->requiresConfirmation()
+                    ->action(fn ($record) => $record->update(['status' => PostStatus::Review])),
+
+                Action::make('publish')
+                    ->label('Terbitkan')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn ($record) => $record->status === PostStatus::Review && auth()->user()?->isAdmin())
+                    ->requiresConfirmation()
+                    ->action(fn ($record) => $record->update([
+                        'status' => PostStatus::Published,
+                        'published_at' => $record->published_at ?? now(),
+                    ])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

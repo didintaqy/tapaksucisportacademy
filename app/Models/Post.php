@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Enums\PostStatus;
 use Database\Factories\PostFactory;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -25,7 +27,7 @@ class Post extends Model
         'excerpt',
         'content',
         'cover_image',
-        'category',
+        'category_id',
         'author_id',
         'status',
         'published_at',
@@ -50,11 +52,36 @@ class Post extends Model
                 $post->slug = Str::slug($post->title);
             }
         });
+
+        static::created(function (Post $post): void {
+            if ($post->status === PostStatus::Draft && $post->author->role !== 'admin') {
+                Notification::make()
+                    ->title('Artikel Baru Diajukan')
+                    ->body("Artikel \"{$post->title}\" menunggu review.")
+                    ->icon('heroicon-o-pencil-square')
+                    ->sendToDatabase(User::where('role', 'admin')->get());
+            }
+        });
     }
 
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function categoryRelation(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function getCategoryAttribute(): ?Category
+    {
+        return $this->categoryRelation;
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
     }
 
     /**
