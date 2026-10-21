@@ -21,8 +21,14 @@ jobs:
           extensions: mbstring, pdo_sqlite, sqlite3, dom, gd, zip, bcmath
           coverage: none
 
+      - name: Validate Composer configuration
+        run: composer validate --strict --no-interaction
+
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Audit dependencies
+        run: composer audit --no-interaction
 
       - name: Prepare environment
         run: |

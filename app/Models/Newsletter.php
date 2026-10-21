@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\NewsletterFactory;
 use Filament\Notifications\Notification;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -65,8 +66,12 @@ class Newsletter extends Model
         }
     }
 
-    public function send(): void
+    public function send(?User $actor = null): void
     {
+        if ($actor && ! $actor->can('send', $this)) {
+            throw new AuthorizationException('Anda tidak berhak mengirim newsletter ini.');
+        }
+
         if ($this->isSent()) {
             return;
         }

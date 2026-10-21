@@ -63,7 +63,7 @@ class TrainingSchedule extends Model
         return self::DAYS[$this->day_of_week] ?? '-';
     }
 
-    public function getDayAttribute(): DayOfWeek
+    public function getDayAttribute(): ?DayOfWeek
     {
         return DayOfWeek::tryFrom($this->day_of_week);
     }

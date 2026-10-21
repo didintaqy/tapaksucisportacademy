@@ -32,10 +32,10 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 | Role | Akses |
 |---|---|
 | Administrator | Semua modul, termasuk manajemen pengguna dan penghapusan data keuangan |
-| Operator | Siswa, pembayaran, laporan keuangan, konten, pesan kontak, testimoni, FAQ, jadwal, dan pendaftaran; tanpa manajemen pengguna |
-| Pelatih | Melihat siswa dan mengelola data performa fisik; tanpa akses keuangan dan konten |
+| Operator | Siswa, performa, absensi, UKT, pembayaran, laporan keuangan, konten, kategori/tag, newsletter (termasuk kirim), program, jadwal, pendaftaran, kegiatan, pesan kontak, testimoni, dan FAQ; tanpa manajemen pengguna dan tanpa hapus data tertentu |
+| Pelatih | Melihat siswa, mengelola data performa, mencatat/mengubah absensi dan UKT (tanpa hapus), serta melihat jadwal sendiri; tanpa akses keuangan, konten, newsletter, program, dan pengguna |
 
-Role disimpan di kolom `users.role` dan diatur lewat Policy Laravel.
+Role disimpan di kolom `users.role` dan diatur lewat Policy Laravel. Matriks lengkap ada di `docs/ARCHITECTURE.md`.
 
 ### Pembayaran & keuangan
 
