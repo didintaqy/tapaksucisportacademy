@@ -15,7 +15,12 @@ class AttendancePolicy
 
     public function view(User $user, Attendance $attendance): bool
     {
-        return $this->viewAny($user);
+        if ($user->isAdmin() || $user->isOperator()) {
+            return true;
+        }
+
+        return $user->isPelatih()
+            && $attendance->trainingSchedule?->coach_id === $user->id;
     }
 
     public function create(User $user): bool
@@ -25,7 +30,7 @@ class AttendancePolicy
 
     public function update(User $user, Attendance $attendance): bool
     {
-        return $this->viewAny($user);
+        return $this->view($user, $attendance);
     }
 
     public function delete(User $user, Attendance $attendance): bool

@@ -22,7 +22,7 @@ class TagResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Web';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 4;
 
     public static function getNavigationLabel(): string
     {

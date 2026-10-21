@@ -13,3 +13,9 @@ Schedule::command('payments:send-reminders --days=3')
     ->dailyAt('08:00')
     ->withoutOverlapping()
     ->onOneServer();
+
+// Bersihkan failed job yang lebih tua dari 7 hari setiap dini hari.
+Schedule::command('queue:prune-failed --hours=168')
+    ->dailyAt('03:00')
+    ->withoutOverlapping()
+    ->onOneServer();

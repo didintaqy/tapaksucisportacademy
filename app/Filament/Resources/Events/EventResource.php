@@ -24,6 +24,8 @@ class EventResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Manajemen Web';
 
+    protected static ?int $navigationSort = 8;
+
     protected static ?string $navigationLabel = 'Kalender Kegiatan';
 
     protected static ?string $pluralModelLabel = 'Kalender Kegiatan';

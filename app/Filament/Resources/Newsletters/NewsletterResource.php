@@ -24,7 +24,7 @@ class NewsletterResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Web';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 12;
 
     public static function getNavigationLabel(): string
     {

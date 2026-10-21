@@ -15,6 +15,7 @@ use App\Models\Post;
 use App\Models\Student;
 use App\Models\StudentPerformance;
 use App\Models\Tag;
+use App\Models\TrainingSchedule;
 use App\Models\User;
 use Filament\Panel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -167,7 +168,13 @@ class RolePermissionTest extends TestCase
     {
         $coach = $this->userWithRole(UserRole::Pelatih);
         $operator = $this->userWithRole(UserRole::Operator);
-        $attendance = Attendance::factory()->create();
+        $schedule = TrainingSchedule::factory()->create(['coach_id' => $coach->id]);
+        $student = Student::factory()->create(['branch' => $schedule->branch]);
+        $attendance = Attendance::factory()->create([
+            'student_id' => $student->id,
+            'training_schedule_id' => $schedule->id,
+            'recorded_by' => $coach->id,
+        ]);
 
         $this->assertTrue($coach->can('viewAny', Attendance::class));
         $this->assertTrue($coach->can('create', Attendance::class));
@@ -182,7 +189,9 @@ class RolePermissionTest extends TestCase
     {
         $coach = $this->userWithRole(UserRole::Pelatih);
         $operator = $this->userWithRole(UserRole::Operator);
-        $promotion = BeltPromotion::factory()->create();
+        $schedule = TrainingSchedule::factory()->create(['coach_id' => $coach->id]);
+        $student = Student::factory()->create(['branch' => $schedule->branch]);
+        $promotion = BeltPromotion::factory()->forStudent($student)->create();
 
         $this->assertTrue($coach->can('viewAny', BeltPromotion::class));
         $this->assertTrue($coach->can('create', BeltPromotion::class));

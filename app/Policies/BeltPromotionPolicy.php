@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Enums\UserRole;
 use App\Models\BeltPromotion;
+use App\Models\TrainingSchedule;
 use App\Models\User;
 
 class BeltPromotionPolicy
@@ -15,7 +16,18 @@ class BeltPromotionPolicy
 
     public function view(User $user, BeltPromotion $beltPromotion): bool
     {
-        return $this->viewAny($user);
+        if ($user->isAdmin() || $user->isOperator()) {
+            return true;
+        }
+
+        if (! $user->isPelatih() || ! $beltPromotion->student) {
+            return false;
+        }
+
+        return TrainingSchedule::query()
+            ->where('coach_id', $user->id)
+            ->where('branch', $beltPromotion->student->branch)
+            ->exists();
     }
 
     public function create(User $user): bool
@@ -25,7 +37,7 @@ class BeltPromotionPolicy
 
     public function update(User $user, BeltPromotion $beltPromotion): bool
     {
-        return $this->viewAny($user);
+        return $this->view($user, $beltPromotion);
     }
 
     public function delete(User $user, BeltPromotion $beltPromotion): bool

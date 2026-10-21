@@ -81,7 +81,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 ### 0.3 Kualitas Kode
 
 - [x] Jalankan `vendor/bin/pint` dan commit hasilnya
-- [ ] Samakan gaya penamaan dan struktur resource Filament
+- [x] Samakan gaya penamaan dan struktur resource Filament (label, grup, sort, `recordTitleAttribute`)
 - [x] Pindahkan validasi form kontak ke Form Request
 - [x] Hapus kode mati dan komentar yang tidak relevan
 
@@ -104,8 +104,8 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 ### 0.6 Operasional
 
 - [x] Sekarang catatan deployment, backup config (mail/driver) disediakan di `docs/DEPLOYMENT.md`
-- [ ] Aktifkan queue untuk email dan job berat
-- [ ] Siapkan logging dan error tracking
+- [ ] Aktifkan queue worker untuk email dan job berat (kode & dokumentasi siap; aktivasi Supervisor di server)
+- [x] Siapkan logging dan error tracking (logs-only + uptime alert; lihat `docs/MONITORING.md`)
 - [x] Terapkan alur git: branch per fitur, conventional commit, pull request
 
 **Definisi selesai Fase 0:**

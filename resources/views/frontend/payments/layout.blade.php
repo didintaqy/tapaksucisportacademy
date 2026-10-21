@@ -60,6 +60,7 @@
         .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
         .alert-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid #e2e8f0; }
         th { font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: #64748b; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }

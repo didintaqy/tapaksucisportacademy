@@ -10,12 +10,10 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class NewslettersTable
 {
@@ -31,15 +29,22 @@ class NewslettersTable
                     ->wrap()
                     ->limit(50),
 
-                IconColumn::make('is_draft')
+                TextColumn::make('status')
                     ->label('Status')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-pencil-square')
-                    ->falseIcon('heroicon-o-check-circle')
-                    ->trueColor('warning')
-                    ->falseColor('success')
-                    ->sortable()
-                    ->getStateUsing(fn ($record) => $record->isDraft()),
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => 'Draf',
+                        'queued' => 'Antrean',
+                        'sent' => 'Terkirim',
+                        default => $state,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'warning',
+                        'queued' => 'info',
+                        'sent' => 'success',
+                        default => 'gray',
+                    })
+                    ->sortable(),
 
                 TextColumn::make('recipients_count')
                     ->label('Penerima')
@@ -65,13 +70,13 @@ class NewslettersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('is_draft')
+                SelectFilter::make('status')
                     ->label('Status')
                     ->options([
-                        '1' => 'Draf',
-                        '0' => 'Terkirim',
-                    ])
-                    ->query(fn (Builder $query, array $data): Builder => $query->where('status', $data['value'] === '1' ? 'draft' : 'sent')),
+                        'draft' => 'Draf',
+                        'queued' => 'Antrean',
+                        'sent' => 'Terkirim',
+                    ]),
 
                 TrashedFilter::make(),
             ])
@@ -88,9 +93,15 @@ class NewslettersTable
                     ->modalDescription('Apakah Anda yakin ingin mengirim newsletter ini ke semua pelanggan? Tindakan ini tidak dapat dibatalkan.')
                     ->action(function (Newsletter $record): void {
                         $record->send(auth()->user());
+                        $record->refresh();
+
+                        $queued = $record->isQueued();
+
                         Notification::make()
-                            ->title('Newsletter terkirim')
-                            ->body("Newsletter \"{$record->subject}\" telah dikirim ke {$record->recipients_count} penerima.")
+                            ->title($queued ? 'Newsletter masuk antrean' : 'Newsletter terkirim')
+                            ->body($queued
+                                ? "Newsletter \"{$record->subject}\" sedang diproses oleh queue worker."
+                                : "Newsletter \"{$record->subject}\" telah dikirim ke {$record->recipients_count} penerima.")
                             ->success()
                             ->send();
                     }),

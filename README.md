@@ -23,6 +23,7 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 - **Keuangan:** Pembayaran, Jenis Pembayaran, generate tagihan bulanan, Rekap Pemasukan, Laporan Tunggakan, Rekonsiliasi Gateway
 - **Manajemen Akademi:** Absensi, UKT/Sabuk, Rapor Performa (PDF)
 - **Manajemen Web:** Galeri, Blog & Artikel, Kategori Artikel, Tag Artikel, Program Latihan, Newsletter/Broadcast, Pesan Kontak, Testimoni, FAQ, Jadwal Latihan, Pendaftaran Siswa, Kegiatan
+- **Newsletter:** pengiriman massal melalui queue worker (`SendNewsletterJob` + `NewsletterMail`), status draf/antrean/terkirim
 - **Pengguna:** manajemen akun admin (khusus role Administrator)
 - **Notifikasi:** notifikasi internal admin di lonceng topbar (artikel baru, kontak, pendaftaran, pembayaran, newsletter)
 - **Dashboard:** ringkasan angka, grafik pemasukan 6 bulan, tagihan yang perlu tindakan, dan ringkasan performa fisik
@@ -33,7 +34,7 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 |---|---|
 | Administrator | Semua modul, termasuk manajemen pengguna dan penghapusan data keuangan |
 | Operator | Siswa, performa, absensi, UKT, pembayaran, laporan keuangan, konten, kategori/tag, newsletter (termasuk kirim), program, jadwal, pendaftaran, kegiatan, pesan kontak, testimoni, dan FAQ; tanpa manajemen pengguna dan tanpa hapus data tertentu |
-| Pelatih | Melihat siswa, mengelola data performa, mencatat/mengubah absensi dan UKT (tanpa hapus), serta melihat jadwal sendiri; tanpa akses keuangan, konten, newsletter, program, dan pengguna |
+| Pelatih | Melihat siswa, mengelola data performa, mencatat/mengubah absensi dan UKT pada jadwal yang ia ampu (tanpa hapus), serta melihat jadwal sendiri; tanpa akses keuangan, konten, newsletter, program, dan pengguna |
 
 Role disimpan di kolom `users.role` dan diatur lewat Policy Laravel. Matriks lengkap ada di `docs/ARCHITECTURE.md`.
 

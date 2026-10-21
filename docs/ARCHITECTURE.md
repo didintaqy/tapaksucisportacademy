@@ -220,7 +220,7 @@ Role pengguna disimpan di `users.role` dan di-cast ke `App\Enums\UserRole`.
 |---|---|---|---|---|---|---|---|
 | Administrator | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD |
 | Operator | CRU (tanpa hapus) | CRUD | CRUD | CRUD | CRU (tanpa hapus) | CRU (tanpa hapus) | CRU (tanpa hapus) |
-| Pelatih | Lihat | CRU (tanpa hapus) | CRU (tanpa hapus) | CRU (tanpa hapus) | Lihat & ubah jadwal sendiri | — | — |
+| Pelatih | Lihat | CRU (tanpa hapus) | CRU (tanpa hapus)² | CRU (tanpa hapus)² | Lihat & ubah jadwal sendiri | — | — |
 
 ### Keuangan
 
@@ -239,6 +239,7 @@ Role pengguna disimpan di `users.role` dan di-cast ke `App\Enums\UserRole`.
 | Pelatih | — | — | — | — | — | — | — |
 
 ¹ Operator dapat membuat/mengubah artikel, tetapi hanya Administrator yang dapat mempublikasikan (status `Published`). Aksi **Kirim** newsletter memerlukan ability `send` pada `NewsletterPolicy`.
+² Pelatih hanya melihat/mengubah absensi pada jadwal dengan `coach_id` miliknya, dan UKT siswa pada cabang yang sama dengan jadwal yang ia ampu. Filter diterapkan di policy dan `getEloquentQuery()` resource.
 
 Policy berada di `app/Policies/` dan ditemukan otomatis oleh Laravel. Setiap model yang dipakai resource Filament wajib punya policy; `tests/Feature/PolicyCoverageTest.php` akan gagal jika ada resource baru tanpa policy. Widget dashboard yang menampilkan data keuangan disembunyikan untuk role Pelatih lewat `canView()`.
 

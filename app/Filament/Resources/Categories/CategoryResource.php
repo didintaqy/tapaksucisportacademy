@@ -24,7 +24,7 @@ class CategoryResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Web';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationLabel(): string
     {

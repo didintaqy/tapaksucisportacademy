@@ -81,8 +81,9 @@
             {{-- Grid Kalender --}}
             <div class="row">
                 <div class="col-12">
-                    <div class="calendar-grid bg-white rounded-3 p-3 shadow-sm"
-                         style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                    <div class="calendar-scroll">
+                        <div class="calendar-grid bg-white rounded-3 p-3 shadow-sm"
+                             style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
 
                         {{-- Header Hari --}}
                         @foreach(['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $day)
@@ -143,6 +144,7 @@
                                 </div>
                             </div>
                         @endfor
+                        </div>
                     </div>
                 </div>
             </div>
@@ -208,13 +210,18 @@
         background-color: #f8f9fa !important;
         border-bottom: 2px solid var(--bs-primary);
     }
+    .calendar-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
     @media (max-width: 767px) {
         .calendar-grid {
             grid-template-columns: repeat(7, 1fr) !important;
             gap: 4px !important;
+            min-width: 640px;
         }
         .calendar-day {
-            min-height: 100px !important;
+            min-height: 110px !important;
             padding: 0.5rem 0.25rem !important;
         }
         .calendar-day-header {

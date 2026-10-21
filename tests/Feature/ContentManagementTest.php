@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Enums\PaymentStatus;
 use App\Enums\PostStatus;
 use App\Enums\UserRole;
+use App\Jobs\SendNewsletterJob;
+use App\Mail\NewsletterMail;
 use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Newsletter;
@@ -19,6 +21,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -86,6 +89,87 @@ class ContentManagementTest extends TestCase
         $this->assertSame('sent', $newsletter->status);
         $this->assertNotNull($newsletter->sent_at);
         $this->assertSame(3, $newsletter->recipients_count);
+    }
+
+    #[Test]
+    public function newsletter_send_dispatches_job_when_queue_is_not_synchronous(): void
+    {
+        Queue::fake();
+
+        $admin = User::factory()->admin()->create();
+        $newsletter = Newsletter::create([
+            'subject' => 'Newsletter Antrean',
+            'content' => '<p>Isi newsletter</p>',
+            'status' => 'draft',
+            'created_by' => $admin->id,
+        ]);
+
+        $newsletter->send($admin);
+
+        $this->assertSame('queued', $newsletter->fresh()->status);
+
+        Queue::assertPushed(
+            SendNewsletterJob::class,
+            fn (SendNewsletterJob $job): bool => $job->newsletter->is($newsletter),
+        );
+    }
+
+    #[Test]
+    public function newsletter_job_queues_mail_for_each_recipient(): void
+    {
+        Mail::fake();
+
+        $admin = User::factory()->admin()->create();
+        User::factory()->create(['email' => 'user1@test.com']);
+        User::factory()->create(['email' => 'user2@test.com']);
+        Student::factory()->create(['email' => 'siswa@test.com']);
+
+        $newsletter = Newsletter::create([
+            'subject' => 'Newsletter Queue',
+            'content' => '<p>Isi newsletter</p>',
+            'status' => 'queued',
+            'created_by' => $admin->id,
+        ]);
+
+        (new SendNewsletterJob($newsletter))->handle();
+
+        $newsletter->refresh();
+        $this->assertSame('sent', $newsletter->status);
+        $this->assertSame(4, $newsletter->recipients_count);
+
+        Mail::assertQueued(NewsletterMail::class, 4);
+    }
+
+    #[Test]
+    public function failed_newsletter_job_returns_to_draft(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $newsletter = Newsletter::create([
+            'subject' => 'Newsletter Gagal',
+            'content' => '<p>Isi newsletter</p>',
+            'status' => 'queued',
+            'created_by' => $admin->id,
+        ]);
+
+        (new SendNewsletterJob($newsletter))->failed(new \RuntimeException('SMTP down'));
+
+        $this->assertSame('draft', $newsletter->fresh()->status);
+    }
+
+    #[Test]
+    public function admin_can_open_newsletter_list_with_queue_status(): void
+    {
+        $admin = User::factory()->admin()->create();
+        Newsletter::factory()->create([
+            'subject' => 'Newsletter Dalam Antrean',
+            'status' => 'queued',
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/admin/newsletters')
+            ->assertOk()
+            ->assertSee('Newsletter Dalam Antrean')
+            ->assertSee('Antrean');
     }
 
     #[Test]

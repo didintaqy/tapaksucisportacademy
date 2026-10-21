@@ -24,6 +24,8 @@ class AttendanceResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Manajemen Akademi';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationLabel = 'Absensi';
 
     protected static ?string $pluralModelLabel = 'Absensi';
@@ -56,7 +58,16 @@ class AttendanceResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->with(['student', 'trainingSchedule', 'recorder']);
+
+        if (auth()->user()?->isPelatih()) {
+            $query->whereHas(
+                'trainingSchedule',
+                fn (Builder $schedule): Builder => $schedule->where('coach_id', auth()->id()),
+            );
+        }
+
+        return $query;
     }
 }

@@ -25,7 +25,7 @@ class FaqResource extends Resource
 
     protected static ?string $pluralModelLabel = 'FAQ';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $model = Faq::class;
 
