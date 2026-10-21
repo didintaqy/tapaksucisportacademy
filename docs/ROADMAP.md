@@ -20,12 +20,16 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 | Performa fisik siswa | — | ✅ | Selesai (input manual) |
 | Pembayaran & tagihan | ✅ portal | ✅ | Selesai |
 | Generate tagihan bulanan | — | ✅ | Selesai |
+| Rekap & export laporan keuangan | — | ✅ | **Selesai** |
+| Pengingat tagihan otomatis (email) | — | ✅ | **Selesai** |
+| Rekonsiliasi payment gateway | — | ✅ | **Selesai** |
+| Audit trail status pembayaran | — | ✅ | **Selesai** |
 | Dashboard admin | — | ✅ | Selesai |
 | Pendaftaran siswa online | ✅ | ✅ | Selesai |
 | Testimoni, FAQ, jadwal | ✅ | ✅ | Selesai |
 | Absensi / kehadiran | ❌ | ✅ | **Selesai** |
 | Role & permission | — | ✅ | Selesai |
-| Notifikasi email | ❌ | ❌ | Belum |
+| Notifikasi email | ❌ | ✅ | **Selesai** |
 | SEO & analytics | ✅ | — | Selesai |
 | Kalender kegiatan | ✅ | ✅ | **Selesai** |
 | Sabuk / UKT | — | ✅ | **Selesai** |
@@ -83,11 +87,11 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 ### 0.5 Testing & CI
 
-- [x] Baseline seluruh test hijau (saat ini 72 test)
+- [x] Baseline seluruh test hijau
 - [x] Test untuk modul kontak (submit, validasi, ubah status)
 - [x] Tambah test untuk generate tagihan bulanan dan policy akses
 - [x] Buat GitHub Actions: `vendor/bin/pint --test` + `php artisan test`
-- [ ] Tetapkan target coverage minimal untuk modul keuangan
+- [x] Target pengujian modul keuangan: setiap alur kritis (tagihan, perubahan status, reminder, ekspor, rekonsiliasi) punya feature test
 
 ### 0.6 Operasional
 
@@ -118,9 +122,6 @@ Tujuan: website publik siap menjadi wajah resmi akademi.
 - [x] Halaman 404 kustom (fallback ke template)
 - [x] Analytics hook (Umami/GA4 snippet di layout)
 - [ ] Audit responsivitas mobile (Bootstrap template, verifikasi manual)
-- [ ] SEO: meta title/description per halaman, sitemap.xml, Open Graph
-- [ ] Analytics (mis. Umami/GA4) dan halaman 404 kustom
-- [ ] Audit responsivitas dan aksesibilitas halaman publik
 
 ---
 
@@ -140,12 +141,20 @@ Tujuan: admin bisa mengelola kegiatan harian, bukan hanya data master.
 
 Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 
-- [ ] Rekap pemasukan per periode dan per jenis pembayaran
-- [ ] Export laporan ke Excel/PDF
-- [ ] Reminder tagihan otomatis (email/WhatsApp)
-- [ ] Rekonsiliasi pembayaran gateway
-- [ ] Laporan tunggakan per siswa
-- [ ] Riwayat perubahan status pembayaran (audit trail)
+- [x] Rekap pemasukan per periode dan per jenis pembayaran (`/admin/income-report`)
+- [x] Export laporan ke Excel (`.xlsx`), CSV, dan PDF (`/admin/reports/*`)
+- [x] Reminder tagihan otomatis via email (`payments:send-reminders`, terjadwal harian)
+- [x] Rekonsiliasi pembayaran gateway (`/admin/gateway-reconciliation`, `payments:reconcile-gateway`)
+- [x] Laporan tunggakan per siswa (`/admin/outstanding-report`)
+- [x] Riwayat perubahan status pembayaran / audit trail (`payment_status_histories`)
+- [ ] Reminder tagihan via WhatsApp (butuh provider WhatsApp Business API)
+
+**Definisi selesai Fase 3:**
+
+- Admin dan operator dapat membuat rekap pemasukan dan tunggakan, lalu mengekspornya.
+- Setiap perubahan status pembayaran tercatat lengkap dengan aktor dan alasannya.
+- Tagihan yang mendekati/melewati jatuh tempo diingatkan otomatis tanpa duplikasi harian.
+- Status pembayaran gateway dapat diselaraskan dan hasilnya tercatat di audit trail.
 
 ---
 
@@ -174,7 +183,8 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 | Topik | Pilihan | Dampak |
 |---|---|---|
 | Role & permission | ✅ Enum `App\Enums\UserRole` + Policy | Cukup untuk 3 role saat ini; migrasi ke Spatie jika role bertambah banyak |
-| Payment gateway | Manual vs Midtrans vs Xendit | Menentukan alur checkout dan rekonsiliasi |
+| Payment gateway | ✅ Midtrans (QRIS) | Driver di `app/Services/Payments`, rekonsiliasi via payload callback; driver lain dapat ditambah lewat kontrak `PaymentGateway` |
+| Reminder WhatsApp | Belum diputuskan | Butuh provider WhatsApp Business API (biaya + verifikasi template pesan) |
 | Email provider | SMTP biasa vs layanan transaksional | Memengaruhi pengiriman notifikasi |
 | Hosting | VPS vs shared hosting | Menentukan proses deploy dan cron |
 | Database produksi | SQLite vs MySQL/MariaDB | SQLite mudah, MySQL lebih aman untuk multi-user |

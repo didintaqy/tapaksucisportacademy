@@ -14,13 +14,15 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 - Jadwal latihan per cabang dan kelas
 - Pendaftaran siswa online
 - Kontak: form tersimpan ke database, info kontak, dan peta
+- Kalender kegiatan dan pengumuman
 - Portal pembayaran siswa: cari berdasarkan ID/NIK, lihat tagihan, checkout QRIS, dan cetak kwitansi
 
 ### Panel admin (`/admin`)
 
 - **Master Data:** Siswa, Performa Siswa
-- **Keuangan:** Pembayaran, Jenis Pembayaran, generate tagihan bulanan
-- **Manajemen Web:** Galeri, Blog & Artikel, Pesan Kontak, Testimoni, FAQ, Jadwal Latihan, Pendaftaran Siswa
+- **Keuangan:** Pembayaran, Jenis Pembayaran, generate tagihan bulanan, Rekap Pemasukan, Laporan Tunggakan, Rekonsiliasi Gateway
+- **Manajemen Akademi:** Absensi, UKT/Sabuk, Rapor Performa (PDF)
+- **Manajemen Web:** Galeri, Blog & Artikel, Pesan Kontak, Testimoni, FAQ, Jadwal Latihan, Pendaftaran Siswa, Kegiatan
 - **Pengguna:** manajemen akun admin (khusus role Administrator)
 - **Dashboard:** ringkasan angka, grafik pemasukan 6 bulan, tagihan yang perlu tindakan, dan ringkasan performa fisik
 
@@ -29,16 +31,18 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 | Role | Akses |
 |---|---|
 | Administrator | Semua modul, termasuk manajemen pengguna dan penghapusan data keuangan |
-| Operator | Siswa, pembayaran, konten, pesan kontak, testimoni, FAQ, jadwal, dan pendaftaran; tanpa manajemen pengguna |
+| Operator | Siswa, pembayaran, laporan keuangan, konten, pesan kontak, testimoni, FAQ, jadwal, dan pendaftaran; tanpa manajemen pengguna |
 | Pelatih | Melihat siswa dan mengelola data performa fisik; tanpa akses keuangan dan konten |
 
 Role disimpan di kolom `users.role` dan diatur lewat Policy Laravel.
 
-### Pembayaran
+### Pembayaran & keuangan
 
-- Gateway `manual` (default), dengan konfigurasi siap untuk Midtrans dan Xendit
-- Callback/webhook gateway
+- Gateway Midtrans (QRIS) dan `manual`, dengan callback/webhook bertanda tangan
 - Generate tagihan bulanan massal untuk semua siswa per periode
+- Rekap pemasukan per periode/jenis, laporan tunggakan, export Excel/CSV/PDF
+- Pengingat tagihan otomatis via email (terjadwal harian)
+- Rekonsiliasi status pembayaran gateway dan audit trail perubahan status
 
 ## Teknologi
 
@@ -111,6 +115,7 @@ Buka `http://localhost:8000` untuk website dan `http://localhost:8000/admin` unt
 - `/jadwal` — Jadwal latihan
 - `/pendaftaran` — Pendaftaran siswa (GET dan POST)
 - `/contact-us` — Kontak (GET dan POST)
+- `/kalender` — Kalender kegiatan
 
 ### Portal pembayaran
 
@@ -122,7 +127,19 @@ Buka `http://localhost:8000` untuk website dan `http://localhost:8000/admin` unt
 ### Admin
 
 - `/admin` — Dashboard Filament
+- `/admin/income-report` — Rekap pemasukan
+- `/admin/outstanding-report` — Laporan tunggakan
+- `/admin/gateway-reconciliation` — Rekonsiliasi gateway
 - `/kwitansi/{payment}` — Kwitansi (perlu login)
+
+## Perintah Berguna
+
+```bash
+php artisan queue:work            # proses email notifikasi
+php artisan schedule:work         # jalankan scheduler (dev)
+php artisan payments:send-reminders --dry-run
+php artisan payments:reconcile-gateway
+```
 
 ## Testing
 
