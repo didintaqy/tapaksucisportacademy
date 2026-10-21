@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -16,6 +17,15 @@ class Payment extends Model
 {
     /** @use HasFactory<PaymentFactory> */
     use HasFactory, SoftDeletes;
+
+    /**
+     * Alasan & metadata sementara untuk audit trail status.
+     * Diisi sebelum menyimpan perubahan status, lalu dibersihkan.
+     */
+    public ?string $statusChangeReason = null;
+
+    /** @var array<string, mixed> */
+    public array $statusChangeMetadata = [];
 
     protected $fillable = [
         'student_id',
@@ -28,6 +38,8 @@ class Payment extends Model
         'payment_method',
         'due_date',
         'paid_at',
+        'reminded_at',
+        'reminder_count',
         'proof_file',
         'gateway_name',
         'gateway_reference',
@@ -44,6 +56,8 @@ class Payment extends Model
             'payment_method' => PaymentMethod::class,
             'due_date' => 'date',
             'paid_at' => 'datetime',
+            'reminded_at' => 'datetime',
+            'reminder_count' => 'integer',
             'gateway_payload' => 'array',
         ];
     }
@@ -54,6 +68,36 @@ class Payment extends Model
             if (blank($payment->invoice_number)) {
                 $payment->invoice_number = static::generateInvoiceNumber();
             }
+        });
+
+        static::saving(function (Payment $payment): void {
+            if ($payment->status === PaymentStatus::Paid && blank($payment->paid_at)) {
+                $payment->paid_at = now();
+            }
+        });
+
+        static::updated(function (Payment $payment): void {
+            if (! $payment->wasChanged('status')) {
+                $payment->statusChangeReason = null;
+                $payment->statusChangeMetadata = [];
+
+                return;
+            }
+
+            $from = $payment->getOriginal('status');
+            $to = $payment->status;
+
+            PaymentStatusHistory::create([
+                'payment_id' => $payment->getKey(),
+                'from_status' => $from instanceof PaymentStatus ? $from->value : $from,
+                'to_status' => $to instanceof PaymentStatus ? $to->value : $to,
+                'changed_by' => auth()->id(),
+                'reason' => $payment->statusChangeReason ?? 'Perubahan status manual',
+                'metadata' => $payment->statusChangeMetadata ?: null,
+            ]);
+
+            $payment->statusChangeReason = null;
+            $payment->statusChangeMetadata = [];
         });
     }
 
@@ -70,6 +114,11 @@ class Payment extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(PaymentStatusHistory::class)->latest('created_at');
     }
 
     public function scopePaid(Builder $query): Builder
@@ -90,13 +139,92 @@ class Payment extends Model
         return $query->where('period', $period);
     }
 
+    /**
+     * Tagihan yang perlu dikirimi pengingat: belum lunas, jatuh tempo
+     * dalam N hari ke depan (termasuk yang sudah lewat), dan belum
+     * diingatkan hari ini.
+     */
+    public function scopeDueForReminder(Builder $query, int $daysBefore = 3): Builder
+    {
+        return $query
+            ->outstanding()
+            ->whereDate('due_date', '<=', now()->addDays($daysBefore)->toDateString())
+            ->where(function (Builder $inner): void {
+                $inner->whereNull('reminded_at')
+                    ->orWhereDate('reminded_at', '<', now()->toDateString());
+            });
+    }
+
+    public function scopeWithGateway(Builder $query): Builder
+    {
+        return $query->where(function (Builder $inner): void {
+            $inner->whereNotNull('gateway_reference')
+                ->orWhereNotNull('gateway_name');
+        });
+    }
+
+    /**
+     * Status transaksi terakhir yang dilaporkan gateway (mis. Midtrans).
+     */
+    public function gatewayTransactionStatus(): ?string
+    {
+        $value = data_get($this->gateway_payload, 'last_callback.transaction_status');
+
+        return filled($value) ? (string) $value : null;
+    }
+
+    /**
+     * Status lokal yang seharusnya berdasarkan payload gateway terakhir.
+     */
+    public function expectedStatusFromGateway(): ?PaymentStatus
+    {
+        return match ($this->gatewayTransactionStatus()) {
+            'settlement', 'capture' => PaymentStatus::Paid,
+            'pending' => PaymentStatus::Pending,
+            'deny' => PaymentStatus::Failed,
+            'cancel', 'refund', 'partial_refund' => PaymentStatus::Cancelled,
+            'expire' => PaymentStatus::Expired,
+            default => null,
+        };
+    }
+
+    public function hasGatewayMismatch(): bool
+    {
+        $expected = $this->expectedStatusFromGateway();
+
+        return $expected !== null && $this->status !== $expected;
+    }
+
+    public function gatewayLastCallbackAt(): ?Carbon
+    {
+        $value = data_get($this->gateway_payload, 'last_callback.transaction_time')
+            ?? data_get($this->gateway_payload, 'last_callback.settlement_time');
+
+        return filled($value) ? Carbon::parse($value) : null;
+    }
+
+    public function markAsReminded(): void
+    {
+        $this->forceFill([
+            'reminded_at' => now(),
+            'reminder_count' => ($this->reminder_count ?? 0) + 1,
+        ])->save();
+    }
+
     public function isPaid(): bool
     {
         return $this->status === PaymentStatus::Paid;
     }
 
-    public function markAsPaid(?PaymentMethod $method = null, ?Carbon $paidAt = null): void
+    public function isOutstanding(): bool
     {
+        return in_array($this->status, PaymentStatus::outstanding(), true);
+    }
+
+    public function markAsPaid(?PaymentMethod $method = null, ?Carbon $paidAt = null, ?string $reason = null): void
+    {
+        $this->statusChangeReason = $reason ?? 'Pembayaran ditandai lunas';
+
         $this->forceFill([
             'status' => PaymentStatus::Paid,
             'payment_method' => $method ?? $this->payment_method,
@@ -104,12 +232,30 @@ class Payment extends Model
         ])->save();
     }
 
-    public function markAsPending(?PaymentMethod $method = null): void
+    public function markAsPending(?PaymentMethod $method = null, ?string $reason = null): void
     {
+        $this->statusChangeReason = $reason ?? 'Pembayaran menunggu konfirmasi';
+
         $this->forceFill([
             'status' => PaymentStatus::Pending,
             'payment_method' => $method ?? $this->payment_method,
         ])->save();
+    }
+
+    /**
+     * Ubah status pembayaran sambil mencatat audit trail.
+     *
+     * @param  array<string, mixed>  $metadata
+     */
+    public function changeStatus(PaymentStatus $status, ?string $reason = null, array $metadata = []): void
+    {
+        $this->statusChangeReason = $reason;
+        $this->statusChangeMetadata = $metadata;
+
+        $this->forceFill(['status' => $status])->save();
+
+        $this->statusChangeReason = null;
+        $this->statusChangeMetadata = [];
     }
 
     public function formattedAmount(): string

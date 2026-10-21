@@ -4,7 +4,8 @@ Dokumen ini menjelaskan langkah deploy, konfigurasi produksi, dan strategi backu
 
 ## Kebutuhan Server
 
-- PHP 8.2 dengan ekstensi: `mbstring`, `pdo`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`, dan `pdo_mysql`/`pdo_sqlite`
+- PHP 8.2 dengan ekstensi: `mbstring`, `pdo`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`, `dom`, `simplexml`, `gd`, `zip`, `fileinfo`, dan `pdo_mysql`/`pdo_sqlite`
+  - `gd`, `dom`, `zip`, dan `simplexml` dibutuhkan untuk export Excel (PhpSpreadsheet) dan PDF (DomPDF).
 - Composer 2
 - Node.js 20+ (hanya untuk build asset; bisa dilakukan di mesin lokal/CI)
 - Web server (Nginx/Apache) mengarah ke folder `public/`
@@ -84,17 +85,66 @@ php artisan db:seed --force
 
 ## Queue dan Scheduler
 
-Saat fitur notifikasi diaktifkan, jalankan worker lewat Supervisor:
+Email notifikasi (kontak, pendaftaran, dan pengingat tagihan) dikirim lewat queue. Jalankan worker lewat Supervisor:
 
 ```bash
 php artisan queue:work --sleep=3 --tries=3 --max-time=3600
 ```
 
-Tambahkan cron untuk scheduler:
+Contoh konfigurasi Supervisor (`/etc/supervisor/conf.d/tapak-suci-worker.conf`):
+
+```ini
+[program:tapak-suci-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /path/ke/project/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/path/ke/project/storage/logs/worker.log
+stopwaitsecs=3600
+```
+
+Tambahkan cron untuk scheduler (wajib agar pengingat tagihan berjalan):
 
 ```cron
 * * * * * cd /path/ke/project && php artisan schedule:run >> /dev/null 2>&1
 ```
+
+Jadwal yang terdaftar:
+
+| Waktu | Perintah | Fungsi |
+|---|---|---|
+| 08:00 setiap hari | `payments:send-reminders --days=3` | Kirim email pengingat tagihan jatuh tempo ≤ 3 hari |
+
+### Perintah Keuangan Manual
+
+```bash
+# Pratinjau tagihan yang akan diingatkan (tanpa mengirim)
+php artisan payments:send-reminders --days=3 --dry-run
+
+# Kirim pengingat sekarang
+php artisan payments:send-reminders --days=7
+
+# Periksa selisih status gateway tanpa mengubah data
+php artisan payments:reconcile-gateway
+
+# Terapkan penyelarasan status dari payload gateway
+php artisan payments:reconcile-gateway --apply
+```
+
+Semua perintah di atas aman dijalankan berulang: reminder harian tidak dikirim dua kali untuk tagihan yang sama pada hari yang sama, dan rekonsiliasi hanya mengubah baris yang tidak sinkron.
+
+## Pemeriksaan Pasca-Deploy
+
+```bash
+php artisan about
+php artisan schedule:list
+php artisan queue:work --once   # pastikan worker bisa memproses satu job
+```
+
+Buka `/admin/income-report` dan pastikan halaman rekap serta tombol export berfungsi. Uji salah satu export Excel/PDF untuk memastikan ekstensi PHP lengkap.
 
 ## Strategi Backup
 
@@ -133,4 +183,5 @@ Backup folder `storage/app/public` (foto siswa, galeri, bukti bayar).
 - [ ] Folder `storage` dan `bootstrap/cache` dapat ditulis, selain itu read-only
 - [ ] Akses langsung ke `.env` dan folder `database` diblokir web server
 - [ ] Rate limit form publik aktif (kontak: 5 permintaan/menit)
+- [ ] Queue worker berjalan (Supervisor) dan scheduler cron aktif
 - [ ] Backup otomatis berjalan

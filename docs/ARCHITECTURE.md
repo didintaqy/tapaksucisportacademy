@@ -6,14 +6,20 @@ Dokumen ini menjelaskan struktur modul dan alur utama agar pengembang berikutnya
 
 ```
 app/
+├── Console/Commands/   # Command terjadwal (reminder, rekonsiliasi)
 ├── Contracts/          # Interface gateway pembayaran
-├── Enums/              # Status & tipe (PaymentStatus, PaymentPeriodType, PostStatus, ...)
+├── Enums/              # Status & tipe (PaymentStatus, BeltRank, UserRole, ...)
 ├── Filament/
+│   ├── Pages/          # Halaman kustom (laporan, generate rapor, kalender admin)
 │   ├── Resources/      # CRUD admin per modul
 │   └── Widgets/        # Widget dashboard
-├── Http/Controllers/   # Controller frontend & portal pembayaran
+├── Http/Controllers/   # Controller frontend, portal pembayaran, export laporan
+├── Mail/               # Mailable (kontak, pendaftaran, reminder tagihan)
 ├── Models/             # Model Eloquent
-└── Services/Payments/  # Logika gateway & generate tagihan
+├── Policies/           # Otorisasi per model
+└── Services/
+    ├── Payments/       # Logika gateway & generate tagihan
+    └── Reports/        # Agregasi & export laporan keuangan
 ```
 
 ## Modul
@@ -23,7 +29,10 @@ app/
 | Siswa | `Student` | `Students/` | — |
 | Performa | `StudentPerformance` (tabel `user_performances`) | `StudentPerformances/` | — |
 | Pembayaran | `Payment` | `Payments/` | Portal pembayaran |
+| Audit status pembayaran | `PaymentStatusHistory` | Tab riwayat di detail pembayaran | — |
 | Jenis pembayaran | `PaymentType` | `PaymentTypes/` | — |
+| Laporan keuangan | agregasi `Payment` | `Pages/IncomeReport`, `OutstandingReport` | — |
+| Rekonsiliasi gateway | `Payment.gateway_payload` | `Pages/GatewayReconciliation` | — |
 | Blog | `Post` | `Posts/` | `/blog` |
 | Galeri | `Gallery` | `Galleries/` | `/gallery` |
 | Kontak | `ContactMessage` | `ContactMessages/` | `/contact-us` |
@@ -31,6 +40,9 @@ app/
 | FAQ | `Faq` | `Faqs/` | `/faq` |
 | Jadwal latihan | `TrainingSchedule` | `TrainingSchedules/` | `/jadwal` |
 | Pendaftaran siswa | `StudentRegistration` | `StudentRegistrations/` | `/pendaftaran` |
+| Kegiatan | `Event` | `Events/` | `/kalender` |
+| Absensi | `Attendance` | `Attendances/` | — |
+| UKT / sabuk | `BeltPromotion` | `BeltPromotions/` | — |
 | Pengguna | `User` | `Users/` | — |
 
 ## Alur Kontak
@@ -70,7 +82,59 @@ Status: `unread` → `read` → `replied`.
    - `manual`: status menjadi `pending` dengan payload QRIS placeholder.
    - `midtrans` / `xendit`: charge dibuat sesuai kredensial di `.env`.
 5. Callback masuk ke `POST /pembayaran/callback` (`PaymentCallbackController`), tanpa middleware CSRF.
-6. Callback memverifikasi signature, mencocokkan `order_id`, lalu menandai pembayaran `paid`.
+6. Callback memverifikasi signature, mencocokkan `order_id`, lalu memperbarui status.
+7. Setiap perubahan status dicatat ke `payment_status_histories` beserta aktor, alasan, dan metadata gateway.
+
+## Audit Trail Status Pembayaran
+
+- Model: `App\Models\PaymentStatusHistory` (tabel `payment_status_histories`).
+- Pemicu: event `updated` pada `Payment` saat atribut `status` berubah.
+- Isi: `from_status`, `to_status`, `changed_by`, `reason`, `metadata` (JSON), `created_at`.
+- Cara mengubah status:
+  - `$payment->markAsPaid($method, $paidAt, $reason)`
+  - `$payment->markAsPending($method, $reason)`
+  - `$payment->changeStatus($status, $reason, $metadata)`
+- Riwayat tampil di halaman detail pembayaran (bagian **Riwayat Perubahan Status**).
+
+## Laporan Keuangan
+
+- Service agregasi: `App\Services\Reports\FinancialReportService`
+  - `incomeSummary()`, `incomeByType()`, `incomeByMonth()`
+  - `outstandingSummary()`, `outstandingByStudent()`
+- Halaman admin (grup **Keuangan**):
+  - **Rekap Pemasukan** `/admin/income-report`
+  - **Laporan Tunggakan** `/admin/outstanding-report`
+  - **Rekonsiliasi Gateway** `/admin/gateway-reconciliation`
+- Export:
+  - Excel `.xlsx`: `App\Services\Reports\FinancialExcelExport` (multi-sheet, header berwarna, freeze pane).
+  - CSV: streaming dari `FinancialReportController`.
+  - PDF: DomPDF dengan view `resources/views/reports/*.pdf.blade.php`.
+- Route export: `/admin/reports/income/{export,excel,pdf}` dan `/admin/reports/outstanding/{export,excel,pdf}`.
+- Otorisasi: `Gate::authorize('viewAny', Payment::class)` → hanya Admin & Operator.
+
+## Pengingat Tagihan Otomatis
+
+- Mailable: `App\Mail\PaymentReminderMail` (queued) + view `emails/payment-reminder.blade.php`.
+- Command: `php artisan payments:send-reminders --days=3 [--dry-run] [--limit=0]`.
+- Scheduler: `routes/console.php` → setiap hari 08:00, `withoutOverlapping()->onOneServer()`.
+- Seleksi: status outstanding, `due_date ≤ hari ini + N`, dan belum diingatkan hari ini (`reminded_at`).
+- Setelah terkirim: `reminded_at` diisi dan `reminder_count` bertambah → mencegah duplikasi harian.
+- Penerima: `students.email`. Siswa tanpa email dilewati dan dihitung pada output command.
+- Pengingat manual juga tersedia sebagai aksi **Pengingat** (single & bulk) di tabel pembayaran.
+
+## Rekonsiliasi Gateway
+
+- Sumber kebenaran: `payments.gateway_payload.last_callback.transaction_status`.
+- Mapping status gateway → lokal:
+  - `settlement`/`capture` → `paid`
+  - `pending` → `pending`
+  - `deny` → `failed`
+  - `cancel`/`refund` → `cancelled`
+  - `expire` → `expired`
+- Helper di `Payment`: `gatewayTransactionStatus()`, `expectedStatusFromGateway()`, `hasGatewayMismatch()`, `gatewayLastCallbackAt()`.
+- Manual: halaman **Rekonsiliasi Gateway** (aksi per baris + **Selaraskan Semua**).
+- CLI: `php artisan payments:reconcile-gateway [--apply] [--limit=0]`.
+- Semua penyelarasan menulis audit trail dengan alasan `Rekonsiliasi manual…` atau `Rekonsiliasi otomatis…`.
 
 ## Generate Tagihan Bulanan
 
@@ -101,16 +165,18 @@ Widget di `app/Filament/Widgets/` dan terdaftar otomatis lewat `discoverWidgets`
 - Status pembayaran memakai enum `App\Enums\PaymentStatus`.
 - Setiap resource admin menempatkan form di `Schemas/` dan tabel di `Tables/`.
 - Periode bulanan memakai format `Y-m` (contoh `2026-10`).
+- `students.student_code` dibuat otomatis dengan format `SIS-00001` setelah record tersimpan.
+- `students.email` bersifat opsional dan dipakai sebagai tujuan pengingat tagihan.
 
 ## Role & Otorisasi
 
 Role pengguna disimpan di `users.role` dan di-cast ke `App\Enums\UserRole`.
 
-| Role | Siswa | Performa | Pembayaran | Jenis Bayar | Konten | Pesan Kontak | Pengguna |
-|---|---|---|---|---|---|---|---|
-| Administrator | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD |
-| Operator | CRUD | CRUD | CRU (tanpa hapus) | Lihat | CRUD | RU (tanpa hapus) | — |
-| Pelatih | Lihat | CRUD | — | — | — | — | — |
+| Role | Siswa | Performa | Pembayaran | Laporan & Rekonsiliasi | Jenis Bayar | Konten | Pesan Kontak | Pengguna |
+|---|---|---|---|---|---|---|---|---|
+| Administrator | CRUD | CRUD | CRUD | Lihat + export + selaraskan | CRUD | CRUD | CRUD | CRUD |
+| Operator | CRUD | CRUD | CRU (tanpa hapus) | Lihat + export + selaraskan | Lihat | CRUD | RU (tanpa hapus) | — |
+| Pelatih | Lihat | CRUD | — | — | — | — | — | — |
 
 Policy berada di `app/Policies/` dan ditemukan otomatis oleh Laravel. Widget dashboard yang menampilkan data keuangan disembunyikan untuk role Pelatih lewat `canView()`.
 

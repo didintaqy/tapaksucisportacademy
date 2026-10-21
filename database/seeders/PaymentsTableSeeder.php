@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\PaymentType;
 use App\Models\Student;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 
 class PaymentsTableSeeder extends Seeder
 {
@@ -102,6 +103,60 @@ class PaymentsTableSeeder extends Seeder
             }
         }
 
+        $this->seedGatewayPayments($students->take(6)->values(), $eventId ?? $sppId);
+
         $this->command->info('Berhasil membuat contoh data pembayaran untuk setiap siswa.');
+    }
+
+    /**
+     * Contoh transaksi payment gateway untuk simulasi rekonsiliasi.
+     * Sebagian sengaja dibuat tidak sinkron (status lokal vs gateway).
+     *
+     * @param  Collection<int, Student>  $students
+     */
+    private function seedGatewayPayments(Collection $students, ?int $paymentTypeId): void
+    {
+        if ($paymentTypeId === null) {
+            return;
+        }
+
+        $scenarios = [
+            [PaymentStatus::Paid, 'settlement'],
+            [PaymentStatus::Pending, 'settlement'], // tidak sinkron
+            [PaymentStatus::Pending, 'pending'],
+            [PaymentStatus::Paid, 'settlement'],
+            [PaymentStatus::Expired, 'expire'],
+            [PaymentStatus::Pending, 'settlement'], // tidak sinkron
+        ];
+
+        foreach ($students as $index => $student) {
+            [$localStatus, $gatewayStatus] = $scenarios[$index % count($scenarios)];
+
+            $invoice = 'INV-GW-'.$student->id.'-'.now()->format('Ym');
+
+            Payment::updateOrCreate(
+                ['invoice_number' => $invoice],
+                [
+                    'student_id' => $student->id,
+                    'payment_type_id' => $paymentTypeId,
+                    'period' => null,
+                    'description' => 'Pembayaran QRIS via Midtrans',
+                    'amount' => 150000,
+                    'status' => $localStatus,
+                    'payment_method' => PaymentMethod::Gateway,
+                    'due_date' => now()->addWeek(),
+                    'paid_at' => $localStatus === PaymentStatus::Paid ? now()->subDays($index + 1) : null,
+                    'gateway_name' => 'midtrans',
+                    'gateway_reference' => 'trx-'.$student->id.'-'.now()->format('Ymd'),
+                    'gateway_payload' => [
+                        'last_callback' => [
+                            'order_id' => $invoice,
+                            'transaction_status' => $gatewayStatus,
+                            'transaction_time' => now()->subDays($index + 1)->toDateTimeString(),
+                        ],
+                    ],
+                ],
+            );
+        }
     }
 }

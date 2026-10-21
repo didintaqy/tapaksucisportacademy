@@ -67,6 +67,22 @@ enum BeltRank: string
         ];
     }
 
+    /**
+     * Pilihan value => label untuk dropdown.
+     *
+     * @return array<string, string>
+     */
+    public static function options(): array
+    {
+        $options = [];
+
+        foreach (self::order() as $rank) {
+            $options[$rank->value] = $rank->label();
+        }
+
+        return $options;
+    }
+
     public function next(): ?self
     {
         $order = self::order();

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Payments\Tables;
 
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Mail\PaymentReminderMail;
 use App\Models\Payment;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -12,10 +13,12 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentsTable
 {
@@ -66,6 +69,11 @@ class PaymentsTable
                     ->placeholder('-')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('reminded_at')
+                    ->label('Pengingat Terakhir')
+                    ->dateTime('d M Y H:i')
+                    ->placeholder('Belum pernah')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime()
@@ -103,6 +111,25 @@ class PaymentsTable
                         $record->markAsPaid(PaymentMethod::from($data['payment_method']));
                     })
                     ->successNotificationTitle('Pembayaran ditandai lunas'),
+                Action::make('send_reminder')
+                    ->label('Pengingat')
+                    ->icon('heroicon-o-envelope')
+                    ->color('warning')
+                    ->visible(fn (Payment $record): bool => $record->isOutstanding() && filled($record->student?->email))
+                    ->requiresConfirmation()
+                    ->modalHeading('Kirim pengingat tagihan')
+                    ->modalDescription(fn (Payment $record): string => 'Kirim email pengingat ke '.$record->student->email.'?')
+                    ->action(function (Payment $record): void {
+                        Mail::to($record->student->email)
+                            ->queue(new PaymentReminderMail($record, self::daysUntilDue($record)));
+
+                        $record->markAsReminded();
+
+                        Notification::make()
+                            ->title('Pengingat tagihan dikirim')
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('receipt')
                     ->label('Kwitansi')
                     ->icon('heroicon-o-printer')
@@ -129,8 +156,50 @@ class PaymentsTable
                         })
                         ->deselectRecordsAfterCompletion()
                         ->successNotificationTitle('Pembayaran terpilih ditandai lunas'),
+                    BulkAction::make('send_reminders_bulk')
+                        ->label('Kirim Pengingat')
+                        ->icon('heroicon-o-envelope')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->action(function (Collection $records): void {
+                            $sent = 0;
+                            $skipped = 0;
+
+                            foreach ($records as $record) {
+                                if (! $record->isOutstanding() || blank($record->student?->email)) {
+                                    $skipped++;
+
+                                    continue;
+                                }
+
+                                Mail::to($record->student->email)
+                                    ->queue(new PaymentReminderMail($record, self::daysUntilDue($record)));
+
+                                $record->markAsReminded();
+
+                                $sent++;
+                            }
+
+                            Notification::make()
+                                ->title($sent.' pengingat dikirim')
+                                ->body($skipped.' dilewati (sudah lunas atau tanpa email).')
+                                ->status($sent > 0 ? 'success' : 'warning')
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private static function daysUntilDue(Payment $payment): int
+    {
+        if ($payment->due_date === null) {
+            return 0;
+        }
+
+        return (int) now()
+            ->startOfDay()
+            ->diffInDays($payment->due_date->copy()->startOfDay(), false);
     }
 }

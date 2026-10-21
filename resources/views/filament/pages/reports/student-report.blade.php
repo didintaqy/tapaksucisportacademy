@@ -244,31 +244,45 @@
 
     @if($performances->count() > 0)
     <div class="section">
-        <div class="section-title">Prestasi & Performa</div>
+        <div class="section-title">Data Performa Fisik</div>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 15%;">Tanggal</th>
-                    <th style="width: 25%;">Kegiatan</th>
-                    <th style="width: 15%;">Kategori</th>
-                    <th style="width: 15%;">Peringkat</th>
-                    <th>Keterangan</th>
+                    <th style="width: 4%;">No</th>
+                    <th style="width: 12%;">Tanggal</th>
+                    <th style="width: 11%;">TB / BB</th>
+                    <th style="width: 10%;">VO2max</th>
+                    <th style="width: 10%;">Push-up</th>
+                    <th style="width: 10%;">Sit-up</th>
+                    <th style="width: 11%;">Kelentukan</th>
+                    <th style="width: 11%;">Agility</th>
+                    <th>Stabilitas Inti</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($performances as $index => $performance)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ \Carbon\Carbon::parse($performance->date)->format('d/m/Y') }}</td>
-                    <td>{{ $performance->activity_name }}</td>
-                    <td>{{ $performance->category }}</td>
-                    <td>{{ $performance->rank ?? '-' }}</td>
-                    <td>{{ $performance->notes ?? '-' }}</td>
+                    <td>{{ $performance->created_at->format('d/m/Y') }}</td>
+                    <td>
+                        {{ $performance->height !== null ? number_format((float) $performance->height, 0, ',', '.') : '-' }}
+                        /
+                        {{ $performance->weight !== null ? number_format((float) $performance->weight, 0, ',', '.') : '-' }}
+                    </td>
+                    <td>{{ $performance->beep_test_vo2max !== null ? number_format((float) $performance->beep_test_vo2max, 1, ',', '.') : '-' }}</td>
+                    <td>{{ $performance->push_up_1_min ?? '-' }}</td>
+                    <td>{{ $performance->sit_up_2_min ?? '-' }}</td>
+                    <td>{{ $performance->sit_and_reach !== null ? number_format((float) $performance->sit_and_reach, 1, ',', '.') : '-' }}</td>
+                    <td>{{ $performance->illinois_agility !== null ? number_format((float) $performance->illinois_agility, 2, ',', '.') : '-' }}</td>
+                    <td>{{ $performance->core_stability_level ?? '-' }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
+        <p style="font-size: 8px; color: #666;">
+            TB/BB: tinggi (cm) / berat (kg); VO2max: beep test (ml/kg/min); Push-up: repetisi/menit;
+            Sit-up: repetisi/2 menit; Kelentukan: sit &amp; reach (cm); Agility: Illinois test (detik).
+        </p>
     </div>
     @endif
 
