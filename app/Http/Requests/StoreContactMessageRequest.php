@@ -33,10 +33,7 @@ class StoreContactMessageRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'message.required' => 'Pesan wajib diisi.',
+            // Honeypot: jangan ungkap alasan penolakan yang sebenarnya.
             'website.max' => 'Pesan tidak dapat diproses.',
         ];
     }

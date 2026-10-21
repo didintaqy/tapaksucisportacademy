@@ -377,45 +377,10 @@
 		}
 	});
 
-	/* Contact form validation */
-	var $contactform = $("#contactForm");
-	$contactform.validator({focus: false}).on("submit", function (event) {
-		if (!event.isDefaultPrevented()) {
-			event.preventDefault();
-			submitForm();
-		}
-	});
-
-	function submitForm(){
-		/* Ajax call to submit form */
-		$.ajax({
-			type: "POST",
-			url: "form-process.php",
-			data: $contactform.serialize(),
-			success : function(text){
-				if (text === "success"){
-					formSuccess();
-				} else {
-					submitMSG(false,text);
-				}
-			}
-		});
-	}
-
-	function formSuccess(){
-		$contactform[0].reset();
-		submitMSG(true, "Message Sent Successfully!")
-	}
-
-	function submitMSG(valid, msg){
-		if(valid){
-			var msgClasses = "h4 text-success";
-		} else {
-			var msgClasses = "h4 text-danger";
-		}
-		$("#msgSubmit").removeClass().addClass(msgClasses).text(msg);
-	}
-	/* Contact form validation end */
+	/*
+	 * Formulir kontak (#contactForm) memakai validasi HTML5 dan dikirim ke
+	 * route Laravel, sehingga tidak lagi ditangani oleh handler AJAX template.
+	 */
 
 	/* Appointment form validation */
 	var $appointmentForm = $("#appointmentForm");
@@ -444,7 +409,7 @@
 
 	function appointmentformSuccess(){
 		$appointmentForm[0].reset();
-		appointmentsubmitMSG(true, "Message Sent Successfully!")
+		appointmentsubmitMSG(true, "Pesan berhasil dikirim!")
 	}
 
 	function appointmentsubmitMSG(valid, msg){

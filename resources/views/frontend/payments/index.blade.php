@@ -24,6 +24,8 @@
                 placeholder="contoh: 1 atau 2171100903170001"
                 autofocus
                 autocomplete="off"
+                maxlength="32"
+                required
             >
             @error('student_id')
                 <div class="muted" style="color:#b91c1c; margin-top:6px;">{{ $message }}</div>

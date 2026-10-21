@@ -78,6 +78,7 @@
         .row { display: flex; gap: 10px; flex-wrap: wrap; }
     </style>
     @stack('head')
+    <script src="{{ asset('js/validation-id.js') }}" defer></script>
 </head>
 <body>
     <header class="site-header">

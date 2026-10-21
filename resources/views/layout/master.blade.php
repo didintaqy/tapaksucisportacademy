@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zxx">
+<html lang="id">
 <head>
 	<!-- Meta -->
 	<meta charset="utf-8">
@@ -103,6 +103,8 @@
     <script src="{{ asset('js/wow.min.js') }}"></script>
     <!-- Main Custom js file -->
     <script src="{{ asset('js/function.js') }}"></script>
+    <!-- Pesan validasi formulir dalam Bahasa Indonesia -->
+    <script src="{{ asset('js/validation-id.js') }}"></script>
 
     {{-- Analytics Hook (GA4 / Umami) --}}
     @if (app()->environment('production') && env('GA_MEASUREMENT_ID'))

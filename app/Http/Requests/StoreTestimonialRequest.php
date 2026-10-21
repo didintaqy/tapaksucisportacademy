@@ -33,10 +33,8 @@ class StoreTestimonialRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Nama wajib diisi.',
-            'rating.required' => 'Rating wajib dipilih.',
             'rating.between' => 'Rating harus antara 1 sampai 5.',
-            'content.required' => 'Isi testimoni wajib diisi.',
+            // Honeypot: jangan ungkap alasan penolakan yang sebenarnya.
             'website.max' => 'Testimoni tidak dapat diproses.',
         ];
     }
