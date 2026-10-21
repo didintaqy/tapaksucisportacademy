@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Enums\BeltRank;
+use App\Enums\UserRole;
 use App\Models\Attendance;
 use App\Models\BeltPromotion;
 use App\Models\Student;
@@ -13,10 +14,13 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
+use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Blade;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use UnitEnum;
 
 class GenerateReport extends Page implements HasForms
@@ -31,29 +35,36 @@ class GenerateReport extends Page implements HasForms
 
     protected static ?string $title = 'Generate Rapor Performa Siswa';
 
+    protected static ?int $navigationSort = 10;
+
     protected string $view = 'filament.pages.generate-report';
 
     public ?array $data = [];
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyRole(UserRole::Admin, UserRole::Operator) ?? false;
+    }
 
     public function mount(): void
     {
         $this->form->fill([
             'date_from' => now()->startOfMonth()->format('Y-m-d'),
             'date_to' => now()->endOfMonth()->format('Y-m-d'),
+            'format' => 'pdf',
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('student_id')
                     ->label('Siswa')
                     ->options(fn () => Student::orderBy('full_name')->pluck('full_name', 'id'))
                     ->searchable()
                     ->preload()
-                    ->required()
-                    ->live(),
+                    ->required(),
 
                 DatePicker::make('date_from')
                     ->label('Dari Tanggal')
@@ -82,11 +93,11 @@ class GenerateReport extends Page implements HasForms
             ->statePath('data');
     }
 
-    public function generateReport(): void
+    public function generateReport(): StreamedResponse|Response|null
     {
         $data = $this->form->getState();
 
-        $student = Student::with(['performances', 'payments', 'beltPromotions'])->find($data['student_id']);
+        $student = Student::find($data['student_id']);
 
         if (! $student) {
             Notification::make()
@@ -94,11 +105,11 @@ class GenerateReport extends Page implements HasForms
                 ->danger()
                 ->send();
 
-            return;
+            return null;
         }
 
-        $dateFrom = $data['date_from'];
-        $dateTo = $data['date_to'];
+        $dateFrom = Carbon::parse($data['date_from'])->toDateString();
+        $dateTo = Carbon::parse($data['date_to'])->toDateString();
 
         $attendances = Attendance::where('student_id', $student->id)
             ->whereBetween('date', [$dateFrom, $dateTo])
@@ -107,8 +118,9 @@ class GenerateReport extends Page implements HasForms
             ->get();
 
         $performances = StudentPerformance::where('student_id', $student->id)
-            ->whereBetween('date', [$dateFrom, $dateTo])
-            ->orderBy('date')
+            ->whereDate('created_at', '>=', $dateFrom)
+            ->whereDate('created_at', '<=', $dateTo)
+            ->orderBy('created_at')
             ->get();
 
         $promotions = BeltPromotion::where('student_id', $student->id)
@@ -124,9 +136,9 @@ class GenerateReport extends Page implements HasForms
         $alpaCount = $attendances->where('status', 'alpa')->count();
         $attendanceRate = $totalSessions > 0 ? round(($hadirCount / $totalSessions) * 100, 1) : 0;
 
-        $currentBelt = BeltRank::tryFrom($student->belt_level)?->label() ?? $student->belt_level;
+        $currentBelt = BeltRank::tryFrom((string) $student->belt_level)?->label() ?? $student->belt_level;
 
-        $reportData = [
+        $html = Blade::render('filament.pages.reports.student-report', [
             'student' => $student,
             'current_belt' => $currentBelt,
             'date_from' => $dateFrom,
@@ -143,9 +155,7 @@ class GenerateReport extends Page implements HasForms
                 'alpa' => $alpaCount,
                 'attendance_rate' => $attendanceRate,
             ],
-        ];
-
-        $html = Blade::render('filament.pages.reports.student-report', $reportData);
+        ]);
 
         if ($data['format'] === 'pdf') {
             $pdf = Pdf::loadHTML($html)
@@ -154,9 +164,17 @@ class GenerateReport extends Page implements HasForms
 
             $filename = 'rapor-'.$student->student_code.'-'.now()->format('Ymd').'.pdf';
 
-            $this->streamDownload($pdf->stream(), $filename);
-        } else {
-            $this->dispatch('showHtmlPreview', html: $html);
+            return response()->streamDownload(
+                function () use ($pdf): void {
+                    echo $pdf->output();
+                },
+                $filename,
+                ['Content-Type' => 'application/pdf'],
+            );
         }
+
+        $this->dispatch('showHtmlPreview', html: $html);
+
+        return null;
     }
 }

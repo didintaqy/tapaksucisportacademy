@@ -352,6 +352,7 @@ class StudentsTableSeeder extends Seeder
 
         foreach ($students as $index => $student) {
             $student['branch'] = $branches[$index % 2];
+            $student['email'] = $student['email'] ?? 'siswa'.($index + 1).'@example.test';
             Student::updateOrCreate(
                 ['nik' => $student['nik']],
                 $student,
