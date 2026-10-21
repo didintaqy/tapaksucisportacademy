@@ -31,43 +31,45 @@
         @if ($payments->isEmpty())
             <div class="alert alert-info">Belum ada tagihan untuk siswa ini.</div>
         @else
-            <table>
-                <thead>
-                    <tr>
-                        <th>No. Invoice</th>
-                        <th>Jenis</th>
-                        <th>Periode</th>
-                        <th>Nominal</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($payments as $payment)
+            <div class="table-wrap">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ $payment->invoice_number }}</td>
-                            <td>{{ $payment->paymentType?->name ?? '-' }}</td>
-                            <td>{{ $payment->period ?: '-' }}</td>
-                            <td><strong>{{ $payment->formattedAmount() }}</strong></td>
-                            <td>
-                                <span class="badge {{ $badgeClass($payment->status) }}">
-                                    {{ $payment->status->getLabel() }}
-                                </span>
-                            </td>
-                            <td>
-                                @if ($payment->isPaid())
-                                    <a class="btn btn-outline btn-sm" href="{{ route('payments.portal.receipt', $payment) }}" target="_blank">Kwitansi</a>
-                                @elseif ($payment->status->isPayable())
-                                    <form method="POST" action="{{ route('payments.portal.checkout', $payment) }}">
-                                        @csrf
-                                        <button class="btn btn-primary btn-sm" type="submit">Bayar</button>
-                                    </form>
-                                @endif
-                            </td>
+                            <th>No. Invoice</th>
+                            <th>Jenis</th>
+                            <th>Periode</th>
+                            <th>Nominal</th>
+                            <th>Status</th>
+                            <th></th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($payments as $payment)
+                            <tr>
+                                <td>{{ $payment->invoice_number }}</td>
+                                <td>{{ $payment->paymentType?->name ?? '-' }}</td>
+                                <td>{{ $payment->period ?: '-' }}</td>
+                                <td><strong>{{ $payment->formattedAmount() }}</strong></td>
+                                <td>
+                                    <span class="badge {{ $badgeClass($payment->status) }}">
+                                        {{ $payment->status->getLabel() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if ($payment->isPaid())
+                                        <a class="btn btn-outline btn-sm" href="{{ route('payments.portal.receipt', $payment) }}" target="_blank">Kwitansi</a>
+                                    @elseif ($payment->status->isPayable())
+                                        <form method="POST" action="{{ route('payments.portal.checkout', $payment) }}">
+                                            @csrf
+                                            <button class="btn btn-primary btn-sm" type="submit">Bayar</button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
     </div>
 @endsection

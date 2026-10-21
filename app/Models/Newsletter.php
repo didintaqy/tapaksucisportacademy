@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use App\Jobs\SendNewsletterJob;
 use Database\Factories\NewsletterFactory;
-use Filament\Notifications\Notification;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Mail;
 
 class Newsletter extends Model
 {
@@ -53,6 +52,11 @@ class Newsletter extends Model
         return $this->status === 'sent';
     }
 
+    public function isQueued(): bool
+    {
+        return $this->status === 'queued';
+    }
+
     public function getIsDraftAttribute(): bool
     {
         return $this->isDraft();
@@ -60,6 +64,10 @@ class Newsletter extends Model
 
     public function setIsDraftAttribute(bool $value): void
     {
+        if ($this->isQueued()) {
+            return;
+        }
+
         $this->status = $value ? 'draft' : 'sent';
         if (! $value && is_null($this->sent_at)) {
             $this->sent_at = now();
@@ -72,40 +80,13 @@ class Newsletter extends Model
             throw new AuthorizationException('Anda tidak berhak mengirim newsletter ini.');
         }
 
-        if ($this->isSent()) {
+        if ($this->isSent() || $this->isQueued()) {
             return;
         }
 
-        $emails = User::whereNotNull('email')->where('email', '!=', '')->pluck('email')
-            ->merge(Student::whereNotNull('email')->where('email', '!=', '')->pluck('email'))
-            ->unique()
-            ->values();
+        $this->update(['status' => 'queued']);
 
-        $sent = 0;
-
-        // ponytail: kirim sinkron per penerima; pindah ke queued Mailable kalau penerima > ~500.
-        foreach ($emails as $email) {
-            try {
-                Mail::html($this->content, function ($message) use ($email): void {
-                    $message->to($email)->subject($this->subject);
-                });
-                $sent++;
-            } catch (\Throwable $e) {
-                report($e);
-            }
-        }
-
-        $this->update([
-            'status' => 'sent',
-            'sent_at' => now(),
-            'recipients_count' => $sent,
-        ]);
-
-        Notification::make()
-            ->title('Newsletter terkirim')
-            ->body("{$this->subject} — {$sent} penerima.")
-            ->success()
-            ->sendToDatabase(User::where('role', 'admin')->get());
+        SendNewsletterJob::dispatch($this);
     }
 
     public function scopeOrdered(Builder $query): Builder

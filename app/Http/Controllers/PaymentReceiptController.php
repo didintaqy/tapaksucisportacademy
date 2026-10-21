@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use Illuminate\Support\Facades\Gate;
 
 class PaymentReceiptController extends Controller
 {
@@ -12,6 +13,8 @@ class PaymentReceiptController extends Controller
      */
     public function show(Payment $payment)
     {
+        Gate::authorize('view', $payment);
+
         $payment->load(['student', 'paymentType', 'creator']);
 
         return view('receipts.payment', [

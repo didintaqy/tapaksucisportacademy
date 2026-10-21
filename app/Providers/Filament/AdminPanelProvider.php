@@ -26,8 +26,10 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->navigationGroups([
                 'Master Data',
+                'Manajemen Akademi',
                 'Keuangan',
                 'Manajemen Web',
+                'Pengguna & Akses',
             ])
             ->sidebarCollapsibleOnDesktop()
             ->id('admin')

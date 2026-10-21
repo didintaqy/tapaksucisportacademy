@@ -31,6 +31,23 @@ class BeltPromotion extends Model
         'result' => PromotionResult::class,
     ];
 
+    protected static function booted(): void
+    {
+        static::saving(function (BeltPromotion $promotion): void {
+            if ($promotion->result !== PromotionResult::Lulus) {
+                return;
+            }
+
+            if (blank($promotion->certificate_number)) {
+                $promotion->certificate_number = $promotion->generateCertificateNumber();
+            }
+
+            if (blank($promotion->certificate_issued_at)) {
+                $promotion->certificate_issued_at = now();
+            }
+        });
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);

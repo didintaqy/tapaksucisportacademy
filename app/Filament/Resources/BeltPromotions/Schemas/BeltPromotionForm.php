@@ -4,12 +4,14 @@ namespace App\Filament\Resources\BeltPromotions\Schemas;
 
 use App\Enums\BeltRank;
 use App\Models\Student;
+use App\Models\TrainingSchedule;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Schemas\Schema;
 
 class BeltPromotionForm
@@ -20,12 +22,26 @@ class BeltPromotionForm
             ->components([
                 Select::make('student_id')
                     ->label('Siswa')
-                    ->options(fn () => Student::orderBy('full_name')->pluck('full_name', 'id'))
+                    ->options(function () {
+                        $query = Student::query();
+
+                        if (auth()->user()?->isPelatih()) {
+                            $branches = TrainingSchedule::query()
+                                ->where('coach_id', auth()->id())
+                                ->whereNotNull('branch')
+                                ->pluck('branch')
+                                ->unique();
+
+                            $query->whereIn('branch', $branches);
+                        }
+
+                        return $query->orderBy('full_name')->pluck('full_name', 'id');
+                    })
                     ->searchable()
                     ->preload()
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn (Get $set) => $set('current_belt', Student::find($set('student_id'))?->belt_level ?? '')),
+                    ->afterStateUpdated(fn (Get $get, Set $set) => $set('current_belt', Student::find($get('student_id'))?->belt_level ?? '')),
 
                 Select::make('current_belt')
                     ->label('Sabuk Saat Ini')
@@ -76,7 +92,7 @@ class BeltPromotionForm
                         'ditunda' => 'heroicon-o-clock',
                     ])
                     ->live()
-                    ->afterStateUpdated(fn (Get $set, $state) => $state === 'lulus' ? $set('certificate_issued_at', now()) : $set('certificate_issued_at', null)),
+                    ->afterStateUpdated(fn (Set $set, $state) => $state === 'lulus' ? $set('certificate_issued_at', now()) : $set('certificate_issued_at', null)),
 
                 Textarea::make('notes')
                     ->label('Catatan Siswa')
@@ -107,7 +123,7 @@ class BeltPromotionForm
             ]);
     }
 
-    private static function getNextBelts(string $currentBelt): array
+    private static function getNextBelts(?string $currentBelt): array
     {
         $belts = [
             'putih' => 'Putih',
@@ -122,6 +138,10 @@ class BeltPromotionForm
             'hitam_4' => 'Hitam 4 Dan',
             'hitam_5' => 'Hitam 5 Dan',
         ];
+
+        if (blank($currentBelt)) {
+            return [];
+        }
 
         $currentIndex = array_search($currentBelt, array_keys($belts), true);
         if ($currentIndex === false || $currentIndex === count($belts) - 1) {

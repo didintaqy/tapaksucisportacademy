@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\FinancialReportController;
+use App\Http\Controllers\BeltPromotionCertificateController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ContactUsController;
@@ -54,6 +55,11 @@ Route::get('/sitemap.xml', [SitemapController::class, '__invoke'])->name('sitema
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])
     ->middleware('auth')
     ->name('payments.receipt');
+
+// Sertifikat UKT (admin, operator, atau pelatih yang berhak)
+Route::get('/sertifikat-ukt/{beltPromotion}', [BeltPromotionCertificateController::class, 'show'])
+    ->middleware('auth')
+    ->name('belt-promotions.certificate');
 
 // Export laporan keuangan (admin / operator)
 Route::middleware('auth')->prefix('admin/reports')->name('admin.reports.')->group(function (): void {

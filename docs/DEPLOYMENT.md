@@ -36,6 +36,9 @@ ADMIN_EMAIL=admin@domain-anda.com
 ADMIN_PASSWORD=password-kuat
 
 LOG_CHANNEL=stack
+LOG_STACK=daily
+LOG_LEVEL=warning
+LOG_DAILY_DAYS=30
 ```
 
 Jangan pernah commit file `.env`.
@@ -112,11 +115,30 @@ Tambahkan cron untuk scheduler (wajib agar pengingat tagihan berjalan):
 * * * * * cd /path/ke/project && php artisan schedule:run >> /dev/null 2>&1
 ```
 
+Setiap selesai deploy, restart worker agar memuat kode terbaru:
+
+```bash
+php artisan queue:restart
+```
+
 Jadwal yang terdaftar:
 
 | Waktu | Perintah | Fungsi |
 |---|---|---|
 | 08:00 setiap hari | `payments:send-reminders --days=3` | Kirim email pengingat tagihan jatuh tempo ≤ 3 hari |
+| 03:00 setiap hari | `queue:prune-failed --hours=168` | Hapus failed job lebih tua dari 7 hari |
+
+### Monitoring queue
+
+```bash
+php artisan queue:monitor default --max=100
+php artisan queue:failed
+php artisan queue:retry all
+```
+
+Jika jumlah job menunggu melebihi 100 atau `failed_jobs` terus bertambah, periksa
+worker Supervisor, kredensial SMTP, dan log worker. Detail lengkap ada di
+`docs/MONITORING.md`.
 
 ### Perintah Keuangan Manual
 
@@ -142,9 +164,19 @@ Semua perintah di atas aman dijalankan berulang: reminder harian tidak dikirim d
 php artisan about
 php artisan schedule:list
 php artisan queue:work --once   # pastikan worker bisa memproses satu job
+php artisan queue:monitor default --max=100
+curl -i https://domain-anda.com/up
 ```
 
 Buka `/admin/income-report` dan pastikan halaman rekap serta tombol export berfungsi. Uji salah satu export Excel/PDF untuk memastikan ekstensi PHP lengkap.
+
+## Logging & Monitoring
+
+- Produksi memakai `LOG_CHANNEL=stack`, `LOG_STACK=daily`, `LOG_LEVEL=warning`, retensi 30 hari.
+- Endpoint health: `GET /up` (HTTP 200).
+- Pasang uptime monitor (UptimeRobot/Better Stack) ke `/up` setiap 1–5 menit.
+- Pantau `failed_jobs` dan ukuran queue secara berkala.
+- Prosedur lengkap: **`docs/MONITORING.md`**.
 
 ## Strategi Backup
 
@@ -184,4 +216,8 @@ Backup folder `storage/app/public` (foto siswa, galeri, bukti bayar).
 - [ ] Akses langsung ke `.env` dan folder `database` diblokir web server
 - [ ] Rate limit form publik aktif (kontak: 5 permintaan/menit)
 - [ ] Queue worker berjalan (Supervisor) dan scheduler cron aktif
+- [ ] `LOG_STACK=daily`, `LOG_LEVEL=warning`, retensi 30 hari
+- [ ] Uptime monitor memantau `/up` dan alert aktif
+- [ ] `queue:restart` dijalankan setiap deploy
+- [ ] `queue:prune-failed --hours=168` terjadwal
 - [ ] Backup otomatis berjalan

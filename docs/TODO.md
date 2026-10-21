@@ -71,51 +71,51 @@ Setiap item punya prioritas, bukti temuan, dan definisi selesai (acceptance crit
 
 ### P1.1 Standarisasi resource Filament
 
-- [ ] Samakan `$navigationGroup`, `$navigationSort` berurutan 1..n per grup
-- [ ] Samakan `$modelLabel` / `$pluralModelLabel` Bahasa Indonesia
-- [ ] Perbaiki `UserResource`: group, label, `recordTitleAttribute = 'name'`
-- [ ] Perbaiki label lowercase `student` / `student performance`
-- [ ] Hilangkan tabrakan sort (Program vs FAQ)
-- [ ] Seragamkan gaya label (`Newsletter / Broadcast`, `Sabuk / UKT`, `Blog & Artikel`)
-- [ ] Tambahkan test label/navigation minimum
+- [x] Samakan `$navigationGroup`, `$navigationSort` berurutan 1..n per grup
+- [x] Samakan `$modelLabel` / `$pluralModelLabel` Bahasa Indonesia
+- [x] Perbaiki `UserResource`: group, label, `recordTitleAttribute = 'name'`
+- [x] Perbaiki label lowercase `student` / `student performance`
+- [x] Hilangkan tabrakan sort (Program vs FAQ)
+- [x] Seragamkan gaya label (`Newsletter / Broadcast`, `Sabuk / UKT`, `Blog & Artikel`)
+- [x] Tambahkan test label/navigation minimum (`FilamentNavigationTest`)
 
 **Definisi selesai:** sidebar admin konsisten, tidak ada label Inggris/lowercase, urutan stabil.
 
 ### P1.2 Logging & error tracking
 
-- [ ] Produksi: `LOG_CHANNEL=daily` (atau stack + daily), `LOG_LEVEL=warning`
-- [ ] Tentukan retensi log (`LOG_DAILY_DAYS`)
-- [ ] Pasang error tracker (Sentry/Flare) **atau** sepakati logs-only + alert
-- [ ] Tambahkan exception reporting di `bootstrap/app.php` bila perlu
-- [ ] Buat `docs/MONITORING.md`: log, error tracking, uptime, alert
-- [ ] Tambahkan checklist logging ke `docs/DEPLOYMENT.md`
-- [ ] Pantau endpoint `/up` (uptime monitor)
+- [x] Produksi: `LOG_CHANNEL=stack` + `LOG_STACK=daily`, `LOG_LEVEL=warning`
+- [x] Tentukan retensi log (`LOG_DAILY_DAYS=30`)
+- [x] Sepakati logs-only + uptime alert (tanpa Sentry/Flare)
+- [x] Exception reporting default Laravel + log sudah memadai
+- [x] Buat `docs/MONITORING.md`: log, error tracking, uptime, alert
+- [x] Tambahkan checklist logging ke `docs/DEPLOYMENT.md`
+- [ ] Pasang uptime monitor eksternal ke `/up` (operasional server)
 
 **Definisi selesai:** error produksi terlihat < 5 menit, ada prosedur alert, dokumentasi lengkap.
 
 ### P1.3 Queue & job berat
 
-- [ ] Aktifkan queue worker produksi (Supervisor)
-- [ ] Jalankan `php artisan queue:restart` setiap deploy (dokumentasikan)
-- [ ] Pantau `failed_jobs` + alert
-- [ ] Jadwalkan `queue:prune-failed --hours=168`
-- [ ] Pindahkan pengiriman newsletter ke queued job/Mailable
-- [ ] Test perilaku antrean (bukan hanya `Mail::fake`)
+- [ ] Aktifkan queue worker produksi (Supervisor) — operasional server
+- [x] Jalankan `php artisan queue:restart` setiap deploy (dokumentasikan)
+- [ ] Pantau `failed_jobs` + alert — konfigurasi alert eksternal
+- [x] Jadwalkan `queue:prune-failed --hours=168`
+- [x] Pindahkan pengiriman newsletter ke queued job + Mailable
+- [x] Test perilaku antrean (bukan hanya `Mail::fake`)
 
 **Definisi selesai:** email & newsletter tidak dikirim sinkron; failed job terlihat dan bisa di-retry.
 
 ### P1.4 Audit responsivitas mobile
 
-- [ ] Verifikasi halaman publik utama di 360px, 390px, 768px
-- [ ] Perbaiki overflow/tabel/kalender
-- [ ] Catat hasil di `docs/ROADMAP.md`
+- [ ] Verifikasi visual halaman publik utama di 360px, 390px, 768px (butuh browser/device)
+- [x] Perbaiki overflow tabel pembayaran dan kalender (`.table-wrap`, `.calendar-scroll`)
+- [ ] Catat hasil verifikasi visual di `docs/ROADMAP.md`
 
 ### P1.5 Scoping data Pelatih (row-level)
 
-- [ ] Batasi Pelatih hanya melihat/mengubah absensi pada jadwal yang ia ampu
-- [ ] Batasi Pelatih hanya melihat/mengubah UKT siswa yang terkait jadwalnya
-- [ ] Tambahkan filter `getEloquentQuery()` + test akses lintas-jadwal
-- [ ] Dokumentasikan hasilnya di matriks RBAC
+- [x] Batasi Pelatih hanya melihat/mengubah absensi pada jadwal yang ia ampu
+- [x] Batasi Pelatih hanya melihat/mengubah UKT siswa yang terkait jadwalnya
+- [x] Tambahkan filter `getEloquentQuery()` + test akses lintas-jadwal
+- [x] Dokumentasikan hasilnya di matriks RBAC
 
 **Catatan:** P0 baru menutup akses berbasis role (tanpa hapus). Scoping per-jadwal
 adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
@@ -134,10 +134,10 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 
 ### P2.2 Sinkronisasi dokumentasi
 
-- [ ] Perbarui matriks RBAC di `docs/ARCHITECTURE.md` (Program, Absensi, UKT, Newsletter, Kategori/Tag, Event, Pendaftaran)
-- [ ] Perbarui tabel role di `README.md`
-- [ ] Perbarui checklist `docs/DEPLOYMENT.md` (logging, monitoring, queue)
-- [ ] Tautkan `docs/TODO.md` dari `docs/ROADMAP.md`
+- [x] Perbarui matriks RBAC di `docs/ARCHITECTURE.md` (Program, Absensi, UKT, Newsletter, Kategori/Tag, Event, Pendaftaran)
+- [x] Perbarui tabel role di `README.md`
+- [x] Perbarui checklist `docs/DEPLOYMENT.md` (logging, monitoring, queue)
+- [x] Tautkan `docs/TODO.md` dari `docs/ROADMAP.md`
 
 ### P2.3 Fitur tertunda
 
@@ -145,6 +145,7 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - [ ] Halaman `/program`: ganti section testimoni/FAQ statis dengan data dinamis atau hapus
 - [ ] Audit link mati lain di header/footer template
 - [ ] Evaluasi queue untuk export laporan besar
+- [ ] Idempotensi pengiriman newsletter per penerima (hindari duplikat saat job retry)
 
 ---
 
@@ -152,10 +153,10 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 
 | Topik | Keputusan | Tanggal | Catatan |
 |---|---|---|---|
-| Akses Absensi | Pelatih: lihat + catat/ubah; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
-| Akses UKT | Pelatih: lihat + catat/ubah; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
+| Akses Absensi | Pelatih: lihat + catat/ubah hanya jadwal sendiri; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
+| Akses UKT | Pelatih: lihat + catat/ubah hanya cabang jadwalnya; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
 | Akses Newsletter | Admin/Operator saja | 21-10-2026 | Aksi kirim butuh ability `send` |
-| Error tracking | **Belum diputuskan** | — | Sentry vs Flare vs logs-only |
+| Error tracking | **Logs-only + uptime alert** | 21-10-2026 | Tanpa Sentry/Flare; lihat `docs/MONITORING.md` |
 | Versi PHP produksi | **Belum diputuskan** | — | Menentukan matrix CI |
 
 ---
@@ -164,3 +165,4 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 
 - **21-10-2026** — Dokumen dibuat dari evaluasi Fase 0.
 - **21-10-2026** — P0 selesai: 5 policy baru + `PolicyCoverageTest`; aksi kirim newsletter ber-ability `send`; dependency upgrade (Filament 5.10.3, Laravel 12.70.0, CommonMark 2.10.4, Flysystem 3.36.0, Symfony 7.4.21); `composer audit` bersih; audit ditambahkan ke CI; `composer.json` memakai platform PHP 8.2.0 agar lock file tetap kompatibel dengan CI.
+- **21-10-2026** — P1 selesai (kecuali aktivasi server): standarisasi navigasi/label Filament; logging `daily` + `docs/MONITORING.md`; newsletter dipindah ke `SendNewsletterJob` + `NewsletterMail`; scoping Pelatih per jadwal; perbaikan route sertifikat UKT dan otorisasi kwitansi; perbaikan overflow kalender/tabel pembayaran.

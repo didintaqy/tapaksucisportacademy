@@ -25,7 +25,7 @@ class ContactMessageResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Pesan Kontak Masuk';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 11;
 
     protected static ?string $model = ContactMessage::class;
 

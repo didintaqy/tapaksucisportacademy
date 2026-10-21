@@ -18,7 +18,15 @@ class AttendanceForm
             ->components([
                 Select::make('training_schedule_id')
                     ->label('Jadwal Latihan')
-                    ->options(fn () => TrainingSchedule::all()->pluck('class_name', 'id')->mapWithKeys(fn ($name, $id) => [$id => $name])->toArray())
+                    ->options(function () {
+                        $query = TrainingSchedule::query();
+
+                        if (auth()->user()?->isPelatih()) {
+                            $query->where('coach_id', auth()->id());
+                        }
+
+                        return $query->orderBy('class_name')->pluck('class_name', 'id')->toArray();
+                    })
                     ->searchable()
                     ->preload()
                     ->required()
@@ -37,8 +45,10 @@ class AttendanceForm
                             return [];
                         }
 
-                        return Student::whereHas('classEnrollments', fn ($q) => $q->where('training_schedule_id', $scheduleId))
-                            ->orWhere('branch', $schedule->branch)
+                        // Belum ada tabel enrollment; fallback ke siswa di cabang jadwal.
+                        return Student::query()
+                            ->where('branch', $schedule->branch)
+                            ->orderBy('full_name')
                             ->pluck('full_name', 'id');
                     })
                     ->searchable()

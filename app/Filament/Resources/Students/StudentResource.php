@@ -28,6 +28,12 @@ class StudentResource extends Resource
 
     protected static ?string $navigationLabel = 'Daftar Siswa';
 
+    protected static ?string $modelLabel = 'Siswa';
+
+    protected static ?string $pluralModelLabel = 'Siswa';
+
+    protected static ?string $recordTitleAttribute = 'full_name';
+
     public static function getWidgets(): array
     {
         return [

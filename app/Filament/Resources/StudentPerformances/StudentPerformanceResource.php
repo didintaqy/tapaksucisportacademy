@@ -23,6 +23,10 @@ class StudentPerformanceResource extends Resource
 
     protected static ?string $navigationLabel = 'Performa Siswa';
 
+    protected static ?string $modelLabel = 'Performa Siswa';
+
+    protected static ?string $pluralModelLabel = 'Performa Siswa';
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $model = StudentPerformance::class;

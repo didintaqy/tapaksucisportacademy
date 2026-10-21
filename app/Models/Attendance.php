@@ -23,6 +23,15 @@ class Attendance extends Model
         'date' => 'date',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Attendance $attendance): void {
+            if (blank($attendance->recorded_by)) {
+                $attendance->recorded_by = auth()->id();
+            }
+        });
+    }
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);

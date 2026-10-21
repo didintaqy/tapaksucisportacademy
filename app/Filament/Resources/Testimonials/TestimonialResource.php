@@ -25,7 +25,7 @@ class TestimonialResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Testimoni';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 9;
 
     protected static ?string $model = Testimonial::class;
 
