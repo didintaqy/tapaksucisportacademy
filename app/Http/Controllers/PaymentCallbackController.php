@@ -56,10 +56,14 @@ class PaymentCallbackController extends Controller
 
         if ($status === PaymentStatus::Paid) {
             if (! $payment->isPaid()) {
-                $payment->markAsPaid($method, now());
+                $payment->markAsPaid($method, now(), 'Konfirmasi otomatis payment gateway');
             }
-        } else {
-            $payment->forceFill(['status' => $status])->save();
+        } elseif ($payment->status !== $status) {
+            $payment->changeStatus(
+                $status,
+                'Pembaruan status dari payment gateway',
+                ['gateway' => $payment->gateway_name, 'gateway_status' => data_get($payload, 'transaction_status')],
+            );
         }
 
         return response()->json(['status' => 'ok']);

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Payments\Schemas;
 
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -80,6 +81,34 @@ class PaymentInfolist
                             ->label('Gateway'),
                         TextEntry::make('gateway_reference')
                             ->label('Referensi'),
+                    ]),
+
+                Section::make('Riwayat Perubahan Status')
+                    ->collapsed()
+                    ->schema([
+                        RepeatableEntry::make('statusHistories')
+                            ->label('')
+                            ->placeholder('Belum ada perubahan status')
+                            ->columns(3)
+                            ->schema([
+                                TextEntry::make('created_at')
+                                    ->label('Waktu')
+                                    ->dateTime('d M Y H:i'),
+                                TextEntry::make('from_status')
+                                    ->label('Dari')
+                                    ->badge()
+                                    ->placeholder('—'),
+                                TextEntry::make('to_status')
+                                    ->label('Ke')
+                                    ->badge(),
+                                TextEntry::make('changer.name')
+                                    ->label('Oleh')
+                                    ->placeholder('Sistem'),
+                                TextEntry::make('reason')
+                                    ->label('Alasan')
+                                    ->placeholder('—')
+                                    ->columnSpan(2),
+                            ]),
                     ]),
             ]);
     }
