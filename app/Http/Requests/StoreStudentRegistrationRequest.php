@@ -41,14 +41,8 @@ class StoreStudentRegistrationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'full_name.required' => 'Nama lengkap wajib diisi.',
-            'gender.required' => 'Jenis kelamin wajib dipilih.',
-            'gender.in' => 'Jenis kelamin tidak valid.',
-            'birth_date.required' => 'Tanggal lahir wajib diisi.',
             'birth_date.before' => 'Tanggal lahir harus sebelum hari ini.',
-            'parent_name.required' => 'Nama orang tua / wali wajib diisi.',
-            'phone.required' => 'Nomor telepon wajib diisi.',
-            'address.required' => 'Alamat wajib diisi.',
+            // Honeypot: jangan ungkap alasan penolakan yang sebenarnya.
             'website.max' => 'Pendaftaran tidak dapat diproses.',
         ];
     }

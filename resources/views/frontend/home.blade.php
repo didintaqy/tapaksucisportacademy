@@ -1336,22 +1336,22 @@
                         <form id="appointmentForm" action="#" method="POST" data-toggle="validator" class="wow fadeInUp" data-wow-delay="0.2s">
                             <div class="row">                                
                                 <div class="form-group col-md-6 mb-4">
-                                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter Full Name *" required>
+                                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter Full Name *" data-required-error="Kolom ini wajib diisi." required>
                                     <div class="help-block with-errors"></div>
                                 </div>
                                 
                                 <div class="form-group col-md-6 mb-4">
-                                    <input type="email" name ="email" class="form-control" id="email" placeholder="Enter Email Address *" required>
+                                    <input type="email" name ="email" class="form-control" id="email" placeholder="Enter Email Address *" data-required-error="Kolom ini wajib diisi." data-type-error="Masukkan alamat email yang valid." required>
                                     <div class="help-block with-errors"></div>
                                 </div>
 
                                 <div class="form-group col-md-6 mb-4">
-                                    <input type="text" name="phone" class="form-control" id="phone" placeholder="Enter Phone Number *" required>
+                                    <input type="text" name="phone" class="form-control" id="phone" placeholder="Enter Phone Number *" data-required-error="Kolom ini wajib diisi." required>
                                     <div class="help-block with-errors"></div>
                                 </div>                                 
                                                                     
                                 <div class="form-group col-md-6 mb-4">
-                                    <select name="program" class="form-control form-select" id="program" required>
+                                    <select name="program" class="form-control form-select" id="program" data-required-error="Pilih salah satu program." required>
                                         <option value="" disabled selected>Select a Program</option>
                                         <option value="Adult_Karate">Adult Karate Program</option>
                                         <option value="Kids_Karate">Kids Karate Program</option>
