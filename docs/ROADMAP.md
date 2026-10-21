@@ -178,6 +178,8 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 
 ## 8. Fase 5 — Go-Live & Pemeliharaan
 
+- [x] Siapkan pipeline deploy otomatis Hostinger (GitHub Actions + SSH)
+- [ ] Isi secrets environment `production` dan jalankan deploy pertama
 - [ ] UAT bersama pengelola akademi
 - [ ] Training operator (dokumen + sesi)
 - [ ] Hardening: HTTPS, header keamanan, rate limit, permission file

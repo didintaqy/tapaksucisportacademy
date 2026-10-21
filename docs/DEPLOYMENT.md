@@ -2,6 +2,9 @@
 
 Dokumen ini menjelaskan langkah deploy, konfigurasi produksi, dan strategi backup.
 
+> Untuk deploy otomatis ke **Hostinger Premium** via GitHub Actions + SSH, lihat
+> **`docs/DEPLOYMENT-HOSTINGER.md`**.
+
 ## Kebutuhan Server
 
 - PHP 8.2 dengan ekstensi: `mbstring`, `pdo`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`, `dom`, `simplexml`, `gd`, `zip`, `fileinfo`, dan `pdo_mysql`/`pdo_sqlite`
@@ -88,7 +91,10 @@ php artisan db:seed --force
 
 ## Queue dan Scheduler
 
-Email notifikasi (kontak, pendaftaran, dan pengingat tagihan) dikirim lewat queue. Jalankan worker lewat Supervisor:
+Email notifikasi (kontak, pendaftaran, dan pengingat tagihan) dikirim lewat queue. Jalankan worker lewat Supervisor (VPS):
+
+> Untuk shared hosting Hostinger tanpa Supervisor, gunakan cron queue seperti di
+> `docs/DEPLOYMENT-HOSTINGER.md`.
 
 ```bash
 php artisan queue:work --sleep=3 --tries=3 --max-time=3600
