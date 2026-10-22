@@ -255,7 +255,7 @@ terakhir merusak data, restore dari backup Hostinger.
 | 500 Server Error | `storage/logs/laravel-*.log`, permission `shared/storage`, isi `.env`, pastikan `open_basedir` mencakup folder `laravel/` |
 | 404 asset/CSS | pastikan `public_html` berisi hasil copy `public/` dan `.htaccess` ada |
 | Admin tidak bisa login | cek `APP_URL`, session driver, dan migrasi tabel sessions |
-| SSH permission denied | cek host/port/user, public key di hPanel, private key tanpa passphrase |
+| SSH permission denied | cek host/port/user, public key di hPanel, private key tanpa passphrase; bandingkan `Deploy key fingerprint` di log dengan fingerprint key di hPanel |
 | Deploy gagal di `route:cache` | cek route closure; jalankan `php artisan route:cache` manual |
 | Queue tidak jalan | cek cron, `php artisan queue:work --once`, `failed_jobs` |
 | Upload lambat | artifact berisi `vendor`; pastikan koneksi SSH stabil |
