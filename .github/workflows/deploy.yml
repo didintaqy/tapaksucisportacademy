@@ -121,14 +121,26 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+
+          # Normalisasi CRLF agar key hasil copy-paste dari Windows tetap valid.
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+
+          if ! ssh-keygen -y -P '' -f ~/.ssh/deploy_key > ~/.ssh/deploy_key.pub 2>/tmp/ssh-key-error; then
+            echo "::error::SSH_PRIVATE_KEY tidak valid atau memiliki passphrase."
+            cat /tmp/ssh-key-error
+            exit 1
+          fi
+
+          echo "Deploy key fingerprint: $(ssh-keygen -lf ~/.ssh/deploy_key.pub | awk '{print $2}')"
           ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
 
       - name: Prepare remote directories
         run: |
           ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
             -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o IdentitiesOnly=yes -o PreferredAuthentications=publickey \
+            -o ConnectTimeout=15 \
             "$SSH_USER@$SSH_HOST" \
             "mkdir -p '$DEPLOY_PATH/releases' \
               '$DEPLOY_PATH/shared/storage/app/public' \
@@ -142,6 +154,8 @@ jobs:
         run: |
           scp -i ~/.ssh/deploy_key -P "$SSH_PORT" \
             -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o IdentitiesOnly=yes -o PreferredAuthentications=publickey \
+            -o ConnectTimeout=15 \
             "$ARCHIVE_PATH" "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/release.tar.gz"
 
       - name: Deploy on server
@@ -150,6 +164,8 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
             -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o IdentitiesOnly=yes -o PreferredAuthentications=publickey \
+            -o ConnectTimeout=15 \
             "$SSH_USER@$SSH_HOST" \
             "DEPLOY_PATH='$DEPLOY_PATH' PUBLIC_PATH='$PUBLIC_PATH' RELEASE_ID='$RELEASE_ID' PHP_BIN='$PHP_BIN' bash -s" <<'REMOTE'
           set -euo pipefail
