@@ -260,6 +260,7 @@ terakhir merusak data, restore dari backup Hostinger.
 | Queue tidak jalan | cek cron, `php artisan queue:work --once`, `failed_jobs` |
 | Upload lambat | artifact berisi `vendor`; pastikan koneksi SSH stabil |
 | `tar: file changed as we read it` | arsip harus dibuat di luar workspace (`$RUNNER_TEMP`), bukan `release.tar.gz` di root repo |
+| `Database file at path [...] does not exist` | `DB_CONNECTION` di `shared/.env` masih `sqlite`; ubah ke `mysql`, lalu `php artisan config:clear` |
 
 Perintah diagnosa:
 
