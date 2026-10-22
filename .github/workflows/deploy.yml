@@ -57,6 +57,11 @@ jobs:
 
       - name: Create release archive
         run: |
+          # Simpan arsip di luar workspace agar tar tidak membaca file yang
+          # sedang ditulisnya sendiri ("file changed as we read it").
+          ARCHIVE_PATH="$RUNNER_TEMP/tapak-suci-release.tar.gz"
+          rm -f "$ARCHIVE_PATH"
+
           tar \
             --exclude='./.git' \
             --exclude='./.github' \
@@ -72,7 +77,12 @@ jobs:
             --exclude='./database/*.sqlite' \
             --exclude='./.phpunit.result.cache' \
             --exclude='./.phpunit.cache' \
-            -czf release.tar.gz .
+            --exclude='./release.tar.gz' \
+            --exclude='./tapak-suci-release.tar.gz' \
+            -czf "$ARCHIVE_PATH" .
+
+          echo "ARCHIVE_PATH=$ARCHIVE_PATH" >> "$GITHUB_ENV"
+          ls -lh "$ARCHIVE_PATH"
 
       - name: Validate deployment secrets
         run: |
@@ -130,7 +140,7 @@ jobs:
         run: |
           scp -i ~/.ssh/deploy_key -P "$SSH_PORT" \
             -o BatchMode=yes -o StrictHostKeyChecking=yes \
-            release.tar.gz "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/release.tar.gz"
+            "$ARCHIVE_PATH" "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/release.tar.gz"
 
       - name: Deploy on server
         env:

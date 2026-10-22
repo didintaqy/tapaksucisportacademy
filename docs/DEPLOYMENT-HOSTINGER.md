@@ -259,6 +259,7 @@ terakhir merusak data, restore dari backup Hostinger.
 | Deploy gagal di `route:cache` | cek route closure; jalankan `php artisan route:cache` manual |
 | Queue tidak jalan | cek cron, `php artisan queue:work --once`, `failed_jobs` |
 | Upload lambat | artifact berisi `vendor`; pastikan koneksi SSH stabil |
+| `tar: file changed as we read it` | arsip harus dibuat di luar workspace (`$RUNNER_TEMP`), bukan `release.tar.gz` di root repo |
 
 Perintah diagnosa:
 
