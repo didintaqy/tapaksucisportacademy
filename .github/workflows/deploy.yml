@@ -85,6 +85,8 @@ jobs:
           ls -lh "$ARCHIVE_PATH"
 
       - name: Validate deployment secrets
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           missing=0
 
