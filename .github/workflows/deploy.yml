@@ -199,6 +199,12 @@ jobs:
             exit 1
           fi
 
+          if ! grep -Eq '^DB_CONNECTION=mysql[[:space:]]*$' "$APP_PATH/shared/.env"; then
+            echo "ERROR: DB_CONNECTION di $APP_PATH/shared/.env harus mysql."
+            grep -E '^DB_CONNECTION=' "$APP_PATH/shared/.env" || true
+            exit 1
+          fi
+
           mkdir -p "$APP_PATH/releases" \
             "$APP_PATH/shared/storage/app/public" \
             "$APP_PATH/shared/storage/framework/cache/data" \
@@ -225,8 +231,9 @@ jobs:
           trap '"$PHP_BIN" artisan up || true' EXIT
 
           "$PHP_BIN" artisan package:discover --ansi
+          "$PHP_BIN" artisan config:clear
+          "$PHP_BIN" artisan migrate --force --no-interaction
           "$PHP_BIN" artisan optimize:clear
-          "$PHP_BIN" artisan migrate --force
           "$PHP_BIN" artisan config:cache
           "$PHP_BIN" artisan route:cache
           "$PHP_BIN" artisan view:cache
