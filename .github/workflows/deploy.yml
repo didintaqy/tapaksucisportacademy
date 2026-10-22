@@ -74,6 +74,37 @@ jobs:
             --exclude='./.phpunit.cache' \
             -czf release.tar.gz .
 
+      - name: Validate deployment secrets
+        run: |
+          missing=0
+
+          for name in SSH_HOST SSH_USER SSH_PRIVATE_KEY DEPLOY_PATH PUBLIC_PATH; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Secret $name belum diisi."
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+          case "$DEPLOY_PATH" in
+            /home/*) ;;
+            *)
+              echo "::error::DEPLOY_PATH harus berupa path absolut di /home/."
+              exit 1
+              ;;
+          esac
+
+          case "$PUBLIC_PATH" in
+            /home/*) ;;
+            *)
+              echo "::error::PUBLIC_PATH harus berupa path absolut di /home/."
+              exit 1
+              ;;
+          esac
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -114,6 +145,22 @@ jobs:
           : "${DEPLOY_PATH:?DEPLOY_PATH belum diisi}"
           : "${PUBLIC_PATH:?PUBLIC_PATH belum diisi}"
           : "${RELEASE_ID:?RELEASE_ID belum diisi}"
+
+          case "$DEPLOY_PATH" in
+            /home/*) ;;
+            *)
+              echo "ERROR: DEPLOY_PATH harus berada di bawah /home/."
+              exit 1
+              ;;
+          esac
+
+          case "$PUBLIC_PATH" in
+            /home/*) ;;
+            *)
+              echo "ERROR: PUBLIC_PATH harus berada di bawah /home/."
+              exit 1
+              ;;
+          esac
 
           APP_PATH="$DEPLOY_PATH"
           RELEASE_ID="${RELEASE_ID:0:12}"
