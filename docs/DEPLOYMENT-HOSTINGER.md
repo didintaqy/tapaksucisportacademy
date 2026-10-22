@@ -250,6 +250,8 @@ terakhir merusak data, restore dari backup Hostinger.
 
 ## 9. Troubleshooting
 
+Catatan kasus nyata dan runbook perbaikan: [DEPLOYMENT-TROUBLESHOOTING.md](DEPLOYMENT-TROUBLESHOOTING.md).
+
 | Gejala | Pemeriksaan |
 |---|---|
 | 500 Server Error | `storage/logs/laravel-*.log`, permission `shared/storage`, isi `.env`, pastikan `open_basedir` mencakup folder `laravel/` |
