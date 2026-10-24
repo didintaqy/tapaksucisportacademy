@@ -19,3 +19,9 @@ Schedule::command('queue:prune-failed --hours=168')
     ->dailyAt('03:00')
     ->withoutOverlapping()
     ->onOneServer();
+
+// Backup database setiap hari pukul 02:00.
+Schedule::command('db:backup')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->onOneServer();

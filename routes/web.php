@@ -8,6 +8,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
@@ -21,6 +22,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/health', HealthController::class)->name('health');
 Route::get('/about', AboutController::class)->name('about');
 Route::get('/program', [ProgramController::class, 'index'])->name('program');
 Route::get('/program/{program:slug}', [ProgramController::class, 'show'])->name('program.show');
