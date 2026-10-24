@@ -13,8 +13,9 @@ class StudentRegistrationController extends Controller
     {
         $programs = Program::query()->active()->ordered()->get();
         $page = 'Pendaftaran Siswa';
+        $breadcrumb = 'Pendaftaran';
 
-        return view('frontend.registration', compact('programs', 'page'));
+        return view('frontend.registration', compact('programs', 'page', 'breadcrumb'));
     }
 
     public function store(StoreStudentRegistrationRequest $request)

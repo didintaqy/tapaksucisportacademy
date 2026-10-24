@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Services\SiteSettings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -36,7 +38,7 @@ class BlogController extends Controller
             ->ordered()
             ->get();
 
-        $page = 'Blog';
+        $page = 'Artikel & Berita';
         $breadcrumb = 'Blog';
 
         return view('frontend.blog', compact('posts', 'categories', 'activeCategory', 'activeTag', 'page', 'breadcrumb'));
@@ -45,7 +47,7 @@ class BlogController extends Controller
     /**
      * Tampilkan detail satu artikel.
      */
-    public function show(Post $post)
+    public function show(Post $post, SiteSettings $settings)
     {
         abort_unless($post->isPublished(), 404);
 
@@ -53,7 +55,19 @@ class BlogController extends Controller
         $post->load(['categoryRelation', 'tags']);
 
         $page = $post->title;
+        $seoTitle = $post->title.' — '.$settings->get('identity.name', 'Tapak Suci Sport Academy');
+        $seoDescription = Str::limit(
+            trim(strip_tags((string) ($post->excerpt ?: $post->content))),
+            160,
+        ) ?: $settings->get('seo.description');
+        $seoImage = $post->cover_url ?: null;
 
-        return view('frontend.blog-single', compact('post', 'page'));
+        return view('frontend.blog-single', compact(
+            'post',
+            'page',
+            'seoTitle',
+            'seoDescription',
+            'seoImage',
+        ));
     }
 }

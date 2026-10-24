@@ -4,7 +4,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 - **Stack:** Laravel 12.67, PHP 8.2, Filament 5, Blade + Vite, SQLite (development)
 - **Repo:** `tapaksuciacademy`
-- **Terakhir diperbarui:** 21 Oktober 2026
+- **Terakhir diperbarui:** 25 Oktober 2026
 
 ---
 
@@ -12,7 +12,9 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 | Modul | Frontend | Admin | Status |
 |---|---|---|---|
-| Home, About | ✅ | — | Selesai |
+| Home, About | ✅ | — | Selesai (konten dinamis dari pengaturan situs) |
+| Pengaturan situs | ✅ | ✅ | **Selesai** (identitas, kontak, peta, sosial, hero, about, biaya, SEO, footer) |
+| Profil pelatih publik | ✅ | ✅ | **Selesai** (tabel `coaches`, section otomatis sembunyi jika kosong) |
 | Program latihan | ✅ | ✅ | **Selesai** (per cabang, terhubung jadwal, pendaftaran, siswa, SPP) |
 | Galeri kegiatan | ✅ | ✅ | Selesai |
 | Blog & artikel | ✅ | ✅ | Selesai |
@@ -131,6 +133,23 @@ Tujuan: website publik siap menjadi wajah resmi akademi.
 - [x] Analytics hook (Umami/GA4 snippet di layout)
 - [ ] Audit responsivitas mobile (Bootstrap template, verifikasi manual)
 
+### 1.1 Data Nyata & Pengaturan Situs
+
+Milestone lengkap: **`docs/MILESTONE-DATA-REAL.md`**.
+
+- [x] Tabel `site_settings` + service `SiteSettings` (default, cache, media, peta)
+- [x] Halaman admin **Pengaturan Situs** (identitas, kontak, peta, sosial, hero, about, biaya, SEO, footer)
+- [x] Tabel `coaches` + resource **Pelatih** + policy
+- [x] Ganti seluruh konten statis di header, footer, beranda, tentang, program, kontak, pendaftaran, FAQ, jadwal, testimoni, blog, galeri, dan kalender
+- [x] Hapus tautan `.html`, video demo, alamat/telepon/email/harga/rating/nama pelatih contoh
+- [x] Sembunyikan section yang belum memiliki data nyata
+- [x] Peta Google Maps hanya dirender jika embed valid
+- [x] Statistik dan rating dihitung dari database, bukan angka statis
+- [x] Perbaiki SEO composer agar tidak menimpa meta dari controller
+- [x] ProductionSeeder menyertakan pengaturan situs tanpa konten demo
+- [x] Test service, akses admin, policy, konten dinamis, empty state, dan SEO
+- [ ] Isi data resmi akademi melalui panel admin (lihat checklist milestone)
+
 ---
 
 ## 5. Fase 2 — Operasional Akademi
@@ -204,7 +223,7 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 
 ## 10. Cara Menggunakan Dokumen Ini
 
-1. Pilih satu fase aktif. Saat ini fokus pada **Fase 5 — Go-Live & Pemeliharaan**; sisa item Fase 0–3 dikerjakan sebagai task pendamping.
+1. Pilih satu fase aktif. Saat ini fokus pada **milestone Data Nyata & Pengaturan Situs** (`docs/MILESTONE-DATA-REAL.md`), lalu lanjut **Fase 5 — Go-Live & Pemeliharaan**; sisa item Fase 0–3 dikerjakan sebagai task pendamping.
 2. Daftar tindak lanjut operasional lintas sesi ada di **`docs/TODO.md`** (prioritas P0/P1/P2, keputusan, dan acceptance criteria). Gunakan dokumen itu sebagai backlog harian.
 3. Pecah item checklist menjadi issue/task kecil.
 4. Setiap task selesai: centang di dokumen ini dan sertakan test.

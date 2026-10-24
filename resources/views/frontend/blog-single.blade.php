@@ -2,7 +2,8 @@
 
 @section('hero')
     <!-- Page Header Start -->
-    <div class="page-header bg-section dark-section parallaxie">
+    <div class="page-header bg-section dark-section parallaxie"
+         style="background-image: url('{{ $site['assets']['page_header'] }}');">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -77,10 +78,30 @@
                                         <!-- Post Social Links Start -->
                                         <div class="post-social-sharing wow fadeInUp" data-wow-delay="0.5s">
                                             <ul>
-                                                <li><a href="#"><i class="fa-brands fa-pinterest-p"></i></a></li>
-                                                <li><a href="#"><i class="fa-brands fa-x-twitter"></i></a></li>
-                                                <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
-                                                <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+                                                <li>
+                                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}"
+                                                       target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke Facebook">
+                                                        <i class="fa-brands fa-facebook-f"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($post->title) }}"
+                                                       target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke X">
+                                                        <i class="fa-brands fa-x-twitter"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://wa.me/?text={{ urlencode($post->title.' '.request()->url()) }}"
+                                                       target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke WhatsApp">
+                                                        <i class="fa-brands fa-whatsapp"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://t.me/share/url?url={{ urlencode(request()->url()) }}&text={{ urlencode($post->title) }}"
+                                                       target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke Telegram">
+                                                        <i class="fa-brands fa-telegram"></i>
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </div>
                                         <!-- Post Social Links End -->

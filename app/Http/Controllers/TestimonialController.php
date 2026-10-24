@@ -17,8 +17,9 @@ class TestimonialController extends Controller
             ->get();
 
         $page = 'Testimoni';
+        $breadcrumb = 'Testimoni';
 
-        return view('frontend.testimonials', compact('testimonials', 'page'));
+        return view('frontend.testimonials', compact('testimonials', 'page', 'breadcrumb'));
     }
 
     public function store(StoreTestimonialRequest $request)

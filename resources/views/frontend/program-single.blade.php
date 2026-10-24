@@ -2,7 +2,8 @@
 
 @section('hero')
     <!-- Page Header Start -->
-    <div class="page-header bg-section dark-section parallaxie">
+    <div class="page-header bg-section dark-section parallaxie"
+         style="background-image: url('{{ $site['assets']['page_header'] }}');">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -10,7 +11,7 @@
                         <h1 class="text-anime-style-3" data-cursor="-opaque">{{ $program->name }}</h1>
                         <nav class="wow fadeInUp">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
                                 <li class="breadcrumb-item"><a href="{{ route('program') }}">Program</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">{{ $program->name }}</li>
                             </ol>
@@ -47,7 +48,7 @@
                         <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
                             <div class="sidebar-cta-body">
                                 <div class="sidebar-cta-logo">
-                                    <img src="{{ asset('images/logo.svg') }}" alt="Tapak Suci Sport Academy">
+                                    <img src="{{ $site['assets']['logo'] }}" alt="{{ $site['identity']['name'] }}">
                                 </div>
                                 <div class="sidebar-cta-content">
                                     <h3>Siap Bergabung?</h3>
@@ -56,6 +57,11 @@
                                     <a href="{{ route('registration', ['program' => $program->id]) }}" class="btn-default btn-highlighted">
                                         Daftar Sekarang
                                     </a>
+                                    @if (filled($site['whatsapp_url'] ?? null))
+                                        <a href="{{ $site['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer" class="btn-default mt-2">
+                                            Tanya via WhatsApp
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -105,6 +111,12 @@
                                             <th scope="row">Iuran Bulanan</th>
                                             <td>{{ $program->monthly_fee_label }}</td>
                                         </tr>
+                                        @if (filled($site['registration']['fee_label'] ?? null))
+                                            <tr>
+                                                <th scope="row">Biaya Pendaftaran</th>
+                                                <td>{{ $site['registration']['fee_label'] }}</td>
+                                            </tr>
+                                        @endif
                                         <tr>
                                             <th scope="row">Cabang</th>
                                             <td>

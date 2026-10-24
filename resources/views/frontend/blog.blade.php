@@ -41,7 +41,7 @@
                                 <div class="post-featured-image">
                                     <a href="{{ route('blog.show', $post->slug) }}" data-cursor-text="View">
                                         <figure class="image-anime">
-                                            <img src="{{ $post->cover_url ?: asset('images/post-1.jpg') }}" alt="{{ $post->title }}">
+                                            <img src="{{ $post->cover_url ?: $site['assets']['page_header'] }}" alt="{{ $post->title }}">
                                         </figure>
                                     </a>
                                 </div>
@@ -70,7 +70,7 @@
 
                                     <!-- Post Readmore Button Start-->
                                     <div class="post-item-btn">
-                                        <a href="{{ route('blog.show', $post->slug) }}" class="readmore-btn">read more</a>
+                                        <a href="{{ route('blog.show', $post->slug) }}" class="readmore-btn">Baca selengkapnya</a>
                                     </div>
                                     <!-- Post Readmore Button End-->
                                 </div>

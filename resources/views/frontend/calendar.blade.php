@@ -1,9 +1,10 @@
 @extends('layout.master')
 
-@section('title', 'Kalender Kegiatan | Tapak Suci Sport Academy')
+@section('title', 'Kalender Kegiatan | '.($site['identity']['name'] ?? 'Tapak Suci Sport Academy'))
 
 @section('hero')
-    <div class="page-header bg-section dark-section parallaxie">
+    <div class="page-header bg-section dark-section parallaxie"
+         style="background-image: url('{{ $site['assets']['page_header'] }}');">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -11,7 +12,7 @@
                         <h1 class="text-anime-style-3" data-cursor="-opaque">Kalender Kegiatan</h1>
                         <nav class="wow fadeInUp">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
                                 <li class="breadcrumb-item active">Kalender</li>
                             </ol>
                         </nav>
@@ -29,8 +30,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-title text-center mb-5">
-                        <h2>Kalender Kegiatan Akademi</h2>
-                        <p>Jadwal latihan, kejuaraan, UKT, dan pengumuman resmi Tapak Suci Sport Academy</p>
+                        <h2>Kalender Kegiatan {{ $site['identity']['short_name'] }}</h2>
+                        <p>Jadwal latihan, kejuaraan, UKT, dan pengumuman resmi {{ $site['identity']['name'] }}</p>
                     </div>
                 </div>
             </div>
@@ -149,6 +150,16 @@
                 </div>
             </div>
 
+            @if ($eventsByDay->isEmpty())
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="alert alert-info text-center mb-0">
+                            Belum ada agenda yang dipublikasikan untuk bulan ini.
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Legend --}}
             <div class="row mt-5">
                 <div class="col-12">
@@ -175,7 +186,7 @@
                     <div class="card border-0 bg-primary text-white py-4">
                         <div class="card-body">
                             <h4 class="mb-2">Ingin Bergabung?</h4>
-                            <p class="mb-3 opacity-75">Lihat jadwal latihan rutin dan daftar menjadi siswa Tapak Suci Sport Academy</p>
+                            <p class="mb-3 opacity-75">Lihat jadwal latihan rutin dan daftar menjadi siswa {{ $site['identity']['name'] }}</p>
                             <a href="{{ route('registration') }}" class="btn btn-light btn-lg px-4">
                                 <i class="fas fa-user-plus me-2"></i> Daftar Sekarang
                             </a>
@@ -191,7 +202,7 @@
     <!-- Calendar Page End -->
 @endsection
 
-@push('scripts')
+@push('styles')
 <style>
     .calendar-day {
         transition: background-color 0.2s ease, transform 0.2s ease;

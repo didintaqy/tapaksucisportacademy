@@ -17,8 +17,8 @@ class GalleryController extends Controller
             ->ordered()
             ->get();
 
-        $page = 'Gallery';
-        $breadcrumb = 'Gallery';
+        $page = 'Galeri';
+        $breadcrumb = 'Galeri';
 
         return view('frontend.gallery', compact('galleries', 'page', 'breadcrumb'));
     }

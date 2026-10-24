@@ -30,7 +30,7 @@
                         <div class="sidebar-cta-box wow fadeInUp" data-wow-delay="0.25s">
                             <div class="sidebar-cta-body">
                                 <div class="sidebar-cta-logo">
-                                    <img src="{{ asset('images/logo.svg') }}" alt="Logo Tapak Suci">
+                                    <img src="{{ $site['assets']['logo'] }}" alt="{{ $site['identity']['name'] }}">
                                 </div>
 
                                 <div class="sidebar-cta-content">
@@ -41,12 +41,30 @@
                                     <a href="{{ route('contact-us') }}" class="btn-default btn-highlighted">Hubungi Kami</a>
                                 </div>
 
-                                <div class="sidebar-cta-contact-list">
-                                    <ul>
-                                        <li><img src="{{ asset('images/icon-phone-white.svg') }}" alt=""> Telepon: <a href="tel:+6281234567890">+62 812 3456 7890</a></li>
-                                        <li><img src="{{ asset('images/icon-mail-white.svg') }}" alt=""> Email: <a href="mailto:info@tapaksuci.academy">info@tapaksuci.academy</a></li>
-                                    </ul>
-                                </div>
+                                @if (filled($site['contact']['phone'] ?? null) || filled($site['contact']['email'] ?? null) || filled($site['whatsapp_url'] ?? null))
+                                    <div class="sidebar-cta-contact-list">
+                                        <ul>
+                                            @if (filled($site['contact']['phone'] ?? null))
+                                                <li>
+                                                    <img src="{{ asset('images/icon-phone-white.svg') }}" alt="">
+                                                    Telepon: <a href="tel:{{ $site['contact']['phone_href'] }}">{{ $site['contact']['phone'] }}</a>
+                                                </li>
+                                            @endif
+                                            @if (filled($site['whatsapp_url'] ?? null))
+                                                <li>
+                                                    <img src="{{ asset('images/icon-phone-white.svg') }}" alt="">
+                                                    WhatsApp: <a href="{{ $site['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer">{{ $site['contact']['whatsapp'] }}</a>
+                                                </li>
+                                            @endif
+                                            @if (filled($site['contact']['email'] ?? null))
+                                                <li>
+                                                    <img src="{{ asset('images/icon-mail-white.svg') }}" alt="">
+                                                    Email: <a href="mailto:{{ $site['contact']['email'] }}">{{ $site['contact']['email'] }}</a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <!-- Sidebar CTA Box End -->

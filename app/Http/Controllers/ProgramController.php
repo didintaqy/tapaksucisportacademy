@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Faq;
 use App\Models\Program;
+use App\Models\Testimonial;
+use App\Services\SiteSettings;
 use Illuminate\Http\Request;
 
 class ProgramController extends Controller
@@ -27,21 +30,35 @@ class ProgramController extends Controller
             ->sort()
             ->values();
 
-        $page = 'Program';
-        $seoTitle = 'Program Latihan — Tapak Suci Sport Academy';
-        $seoDescription = 'Program latihan pencak silat Tapak Suci untuk anak, remaja, dewasa, hingga jalur prestasi.';
+        $testimonials = Testimonial::query()
+            ->approved()
+            ->orderByDesc('is_featured')
+            ->latest('published_at')
+            ->limit(6)
+            ->get();
+
+        $faqs = Faq::query()
+            ->published()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->limit(6)
+            ->get();
+
+        $page = 'Program Latihan';
+        $breadcrumb = 'Program';
 
         return view('frontend.program', compact(
             'programs',
             'branches',
             'activeBranch',
+            'testimonials',
+            'faqs',
             'page',
-            'seoTitle',
-            'seoDescription',
+            'breadcrumb',
         ));
     }
 
-    public function show(Program $program)
+    public function show(Program $program, SiteSettings $settings)
     {
         abort_unless($program->is_active, 404);
 
@@ -57,9 +74,13 @@ class ProgramController extends Controller
             ->limit(6)
             ->get();
 
+        $siteName = $settings->get('identity.name', 'Tapak Suci Sport Academy');
+
         $page = $program->name;
-        $seoTitle = $program->meta_title ?: $program->name.' — Tapak Suci Sport Academy';
-        $seoDescription = $program->meta_description ?: $program->short_description;
+        $seoTitle = $program->meta_title ?: $program->name.' — '.$siteName;
+        $seoDescription = $program->meta_description
+            ?: $program->short_description
+            ?: $settings->get('seo.description');
         $seoImage = $program->cover_url ?: null;
 
         return view('frontend.program-single', compact(

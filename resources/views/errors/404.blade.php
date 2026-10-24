@@ -11,7 +11,7 @@
                         <h1 class="text-anime-style-3" data-cursor="-opaque">404</h1>
                         <nav class="wow fadeInUp">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
                                 <li class="breadcrumb-item active">Halaman Tidak Ditemukan</li>
                             </ol>
                         </nav>
@@ -35,7 +35,7 @@
 
                     <div class="row mt-4">
                         <div class="col-lg-12">
-                            <a href="{{ route('home') }}" class="btn-default btn-highlighted">Kembali ke Home</a>
+                            <a href="{{ route('home') }}" class="btn-default btn-highlighted">Kembali ke Beranda</a>
                             <a href="{{ route('faqs') }}" class="btn-default">Lihat FAQ</a>
                             <a href="{{ route('contact-us') }}" class="btn-default">Hubungi Kami</a>
                         </div>

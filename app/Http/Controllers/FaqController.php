@@ -15,7 +15,8 @@ class FaqController extends Controller
             ->get();
 
         $page = 'FAQ';
+        $breadcrumb = 'FAQ';
 
-        return view('frontend.faqs', compact('faqs', 'page'));
+        return view('frontend.faqs', compact('faqs', 'page', 'breadcrumb'));
     }
 }

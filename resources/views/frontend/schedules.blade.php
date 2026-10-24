@@ -45,6 +45,11 @@
 
             <div class="row section-row">
                 <div class="col-lg-12 text-center">
+                    @if (filled($site['whatsapp_url'] ?? null))
+                        <a href="{{ $site['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer" class="btn-default btn-highlighted me-2">
+                            Tanya Jadwal via WhatsApp
+                        </a>
+                    @endif
                     <a href="{{ route('contact-us') }}" class="btn-default">Tanya Jadwal</a>
                 </div>
             </div>

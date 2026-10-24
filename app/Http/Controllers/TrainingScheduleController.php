@@ -15,9 +15,11 @@ class TrainingScheduleController extends Controller
             ->get();
 
         $page = 'Jadwal Latihan';
+        $breadcrumb = 'Jadwal Latihan';
 
         return view('frontend.schedules', [
             'page' => $page,
+            'breadcrumb' => $breadcrumb,
             'groups' => $schedules->groupBy('day_name'),
         ]);
     }

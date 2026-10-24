@@ -3,7 +3,7 @@
 Dokumen ini adalah daftar kerja operasional yang harus ditindaklanjuti lintas sesi.
 Setiap item punya prioritas, bukti temuan, dan definisi selesai (acceptance criteria).
 
-- **Terakhir diperbarui:** 21 Oktober 2026
+- **Terakhir diperbarui:** 25 Oktober 2026 (implementasi data nyata & pengaturan situs selesai dan diuji)
 - **Branch integrasi:** `develop`
 - **Acuan strategis:** `docs/ROADMAP.md`
 - **Status:** P0 selesai (RBAC + dependency audit); lanjut P1
@@ -64,6 +64,28 @@ Setiap item punya prioritas, bukti temuan, dan definisi selesai (acceptance crit
 **Bukti temuan:** 7 advisory / 6 paket, termasuk commonmark **high** (ReDoS).
 
 **Definisi selesai:** `composer audit` bersih dan CI menolak advisory baru.
+
+### P0.5 Data publik nyata & pengaturan situs
+
+Acuan: `docs/MILESTONE-DATA-REAL.md`.
+
+- [x] Tabel `site_settings` + service `SiteSettings`
+- [x] Halaman Filament **Pengaturan Situs** (identitas, kontak, peta, sosial, hero, about, biaya, SEO, footer)
+- [x] Tabel `coaches` + resource **Pelatih** + `CoachPolicy`
+- [x] Hapus seluruh konten contoh di Blade (alamat, telepon, harga, rating, pelatih, sosial, tautan `.html`)
+- [x] Konten publik dari database/pengaturan; section kosong disembunyikan
+- [x] Statistik dan rating dihitung dari database
+- [x] Peta hanya dirender jika embed Google Maps valid
+- [x] SEO controller tidak ditimpa composer
+- [x] `ProductionSeeder` menyertakan pengaturan awal tanpa konten demo
+- [x] Test konten dinamis, empty state, akses admin, policy, SEO
+- [ ] Isi identitas resmi, alamat, telepon/WhatsApp, email, jam, link/embed peta, dan media sosial
+- [ ] Isi profil pelatih resmi
+- [ ] Verifikasi iuran program dan biaya pendaftaran
+- [ ] Unggah logo, favicon, foto hero, dan foto latar header
+- [ ] UAT visual halaman publik setelah data resmi diisi
+
+**Definisi selesai:** tidak ada placeholder kontak/identitas yang terlihat di produksi; semua section publik memakai data resmi atau tersembunyi.
 
 ---
 
@@ -146,7 +168,7 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 ### P2.3 Fitur tertunda
 
 - [ ] Reminder tagihan via WhatsApp (butuh provider WhatsApp Business API)
-- [ ] Halaman `/program`: ganti section testimoni/FAQ statis dengan data dinamis atau hapus
+- [x] Halaman `/program`: section testimoni dan FAQ kini memakai data dinamis dari database (disembunyikan jika kosong)
 - [ ] Audit link mati lain di header/footer template
 - [ ] Evaluasi queue untuk export laporan besar
 - [ ] Idempotensi pengiriman newsletter per penerima (hindari duplikat saat job retry)
@@ -171,3 +193,4 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - **21-10-2026** — P0 selesai: 5 policy baru + `PolicyCoverageTest`; aksi kirim newsletter ber-ability `send`; dependency upgrade (Filament 5.10.3, Laravel 12.70.0, CommonMark 2.10.4, Flysystem 3.36.0, Symfony 7.4.21); `composer audit` bersih; audit ditambahkan ke CI; `composer.json` memakai platform PHP 8.2.0 agar lock file tetap kompatibel dengan CI.
 - **21-10-2026** — P1 selesai (kecuali aktivasi server): standarisasi navigasi/label Filament; logging `daily` + `docs/MONITORING.md`; newsletter dipindah ke `SendNewsletterJob` + `NewsletterMail`; scoping Pelatih per jadwal; perbaikan route sertifikat UKT dan otorisasi kwitansi; perbaikan overflow kalender/tabel pembayaran.
 - **21-10-2026** — Deploy produksi Hostinger disiapkan: workflow GitHub Actions (`deploy.yml`), `ProductionSeeder`, dan panduan `docs/DEPLOYMENT-HOSTINGER.md` (SSH, shared `.env`/storage, cron queue, rollback).
+- **25-10-2026** — Milestone Data Nyata & Pengaturan Situs selesai: `site_settings`, `coaches`, halaman admin, frontend dinamis, SEO composer, `SiteSettingSeeder`, 209 test lulus, `pint` lulus.

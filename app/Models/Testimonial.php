@@ -51,6 +51,24 @@ class Testimonial extends Model
         return $query->where('is_featured', true);
     }
 
+    public function getInitialsAttribute(): string
+    {
+        $words = preg_split('/\s+/', trim((string) $this->name)) ?: [];
+        $words = array_values(array_filter($words));
+
+        if ($words === []) {
+            return 'TS';
+        }
+
+        $initials = mb_substr($words[0], 0, 1);
+
+        if (count($words) > 1) {
+            $initials .= mb_substr((string) end($words), 0, 1);
+        }
+
+        return mb_strtoupper($initials);
+    }
+
     public function approve(): void
     {
         $this->forceFill([

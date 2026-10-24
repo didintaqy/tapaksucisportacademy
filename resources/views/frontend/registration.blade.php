@@ -187,6 +187,14 @@
                 <div class="col-xl-5 order-xl-2 order-1">
                     <!-- Registration Info Start -->
                     <div class="our-appointment-content">
+                        @php
+                            $contact = $site['contact'];
+                            $requirements = collect(preg_split('/\r\n|\r|\n/', (string) ($site['registration']['requirements'] ?? '')))
+                                ->map(fn ($line) => trim($line))
+                                ->filter()
+                                ->values();
+                        @endphp
+
                         <div class="section-title">
                             <h3 class="wow fadeInUp">Bergabung Bersama Kami</h3>
                             <h2 class="text-anime-style-3" data-cursor="-opaque">Mulai perjalanan bela diri putra/putri Anda</h2>
@@ -196,27 +204,82 @@
                             </p>
                         </div>
 
-                        <div class="appointment-info-item-list wow fadeInUp" data-wow-delay="0.4s">
-                            <div class="appointment-info-item">
-                                <div class="icon-box">
-                                    <img src="{{ asset('images/icon-phone-white.svg') }}" alt="">
-                                </div>
-                                <div class="appointment-info-item-content">
-                                    <h3>Telepon / WhatsApp</h3>
-                                    <p><a href="tel:+6281234567890">+62 812 3456 7890</a></p>
-                                </div>
+                        @if (filled($site['registration']['fee_label'] ?? null) || filled($site['registration']['fee_note'] ?? null) || $requirements->isNotEmpty())
+                            <div class="p-4 rounded-3 bg-light mb-4 wow fadeInUp" data-wow-delay="0.3s">
+                                <h3 class="h5 mb-2">Biaya &amp; Persyaratan</h3>
+                                @if (filled($site['registration']['fee_label'] ?? null))
+                                    <p class="mb-2">
+                                        Biaya pendaftaran: <strong>{{ $site['registration']['fee_label'] }}</strong>
+                                    </p>
+                                @endif
+                                @if (filled($site['registration']['fee_note'] ?? null))
+                                    <p class="mb-3 text-muted">{{ $site['registration']['fee_note'] }}</p>
+                                @endif
+                                @if ($requirements->isNotEmpty())
+                                    <ul class="mb-0 ps-3">
+                                        @foreach ($requirements as $requirement)
+                                            <li>{{ $requirement }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
                             </div>
+                        @endif
 
-                            <div class="appointment-info-item">
-                                <div class="icon-box">
-                                    <img src="{{ asset('images/icon-mail-white.svg') }}" alt="">
-                                </div>
-                                <div class="appointment-info-item-content">
-                                    <h3>Email</h3>
-                                    <p><a href="mailto:info@tapaksuci.academy">info@tapaksuci.academy</a></p>
-                                </div>
+                        @if (filled($contact['phone'] ?? null) || filled($site['whatsapp_url'] ?? null) || filled($contact['email'] ?? null) || filled($contact['address'] ?? null))
+                            <div class="appointment-info-item-list wow fadeInUp" data-wow-delay="0.4s">
+                                @if (filled($contact['phone'] ?? null))
+                                    <div class="appointment-info-item">
+                                        <div class="icon-box">
+                                            <img src="{{ asset('images/icon-phone-white.svg') }}" alt="">
+                                        </div>
+                                        <div class="appointment-info-item-content">
+                                            <h3>Telepon</h3>
+                                            <p><a href="tel:{{ $contact['phone_href'] }}">{{ $contact['phone'] }}</a></p>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if (filled($site['whatsapp_url'] ?? null))
+                                    <div class="appointment-info-item">
+                                        <div class="icon-box">
+                                            <img src="{{ asset('images/icon-phone-white.svg') }}" alt="">
+                                        </div>
+                                        <div class="appointment-info-item-content">
+                                            <h3>WhatsApp</h3>
+                                            <p>
+                                                <a href="{{ $site['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer">
+                                                    {{ $contact['whatsapp'] }}
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if (filled($contact['email'] ?? null))
+                                    <div class="appointment-info-item">
+                                        <div class="icon-box">
+                                            <img src="{{ asset('images/icon-mail-white.svg') }}" alt="">
+                                        </div>
+                                        <div class="appointment-info-item-content">
+                                            <h3>Email</h3>
+                                            <p><a href="mailto:{{ $contact['email'] }}">{{ $contact['email'] }}</a></p>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if (filled($contact['address'] ?? null))
+                                    <div class="appointment-info-item">
+                                        <div class="icon-box">
+                                            <img src="{{ asset('images/icon-location-white.svg') }}" alt="">
+                                        </div>
+                                        <div class="appointment-info-item-content">
+                                            <h3>Lokasi Latihan</h3>
+                                            <p>{{ $contact['address'] }}</p>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
-                        </div>
+                        @endif
 
                         <div class="mt-4">
                             <a href="{{ route('schedules') }}" class="btn-default btn-highlighted">Lihat Jadwal Latihan</a>

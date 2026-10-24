@@ -11,8 +11,9 @@ class ContactUsController extends Controller
     public function __invoke()
     {
         $page = 'Kontak Kami';
+        $breadcrumb = 'Kontak Kami';
 
-        return view('frontend.contact-us', compact('page'));
+        return view('frontend.contact-us', compact('page', 'breadcrumb'));
     }
 
     public function store(StoreContactMessageRequest $request)

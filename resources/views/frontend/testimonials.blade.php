@@ -20,38 +20,10 @@
                 <div class="row">
                     @foreach ($testimonials as $testimonial)
                         <div class="col-xl-4 col-md-6">
-                            <!-- Testimonial Item Start -->
-                            <div class="testimonial-item wow fadeInUp" data-wow-delay="{{ ($loop->index % 3) * 0.2 }}s">
-                                <div class="testimonial-item-header">
-                                    <div class="testimonial-author">
-                                        <div class="testimonial-author-image">
-                                            <figure class="image-anime">
-                                                <img src="{{ asset('images/author-'.(($loop->index % 3) + 1).'.jpg') }}"
-                                                    alt="{{ $testimonial->name }}">
-                                            </figure>
-                                        </div>
-                                        <div class="testimonial-author-content">
-                                            <h3>{{ $testimonial->name }}</h3>
-                                            <p>{{ $testimonial->relation ?: 'Anggota Tapak Suci' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="testimonial-item-quote">
-                                        <img src="{{ asset('images/testimonial-item-quote.svg') }}" alt="">
-                                    </div>
-                                </div>
-                                <div class="testimonial-item-body">
-                                    <div class="testimonial-rating">
-                                        @for ($star = 1; $star <= 5; $star++)
-                                            <i class="fa-solid fa-star{{ $star <= $testimonial->rating ? '' : ' text-muted' }}"></i>
-                                        @endfor
-                                    </div>
-
-                                    <div class="testimonial-item-body-content">
-                                        <p>&ldquo;{{ $testimonial->content }}&rdquo;</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Testimonial Item End -->
+                            @include('frontend.partials.testimonial-card', [
+                                'testimonial' => $testimonial,
+                                'delay' => ($loop->index % 3) * 0.2,
+                            ])
                         </div>
                     @endforeach
                 </div>

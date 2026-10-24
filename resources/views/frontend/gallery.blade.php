@@ -18,7 +18,7 @@
                             <div class="photo-gallery wow fadeInUp" data-wow-delay="{{ min($loop->index * 0.2, 1.6) }}s">
                                 <a href="{{ $gallery->image_url }}" data-cursor-text="View">
                                     <figure class="image-anime">
-                                        <img src="{{ asset($gallery->image_url) }}" alt="{{ $gallery->title ?? 'Galeri Tapak Suci' }}">
+                                        <img src="{{ $gallery->image_url }}" alt="{{ $gallery->title ?? 'Galeri '.$site['identity']['name'] }}">
                                     </figure>
                                 </a>
                             </div>

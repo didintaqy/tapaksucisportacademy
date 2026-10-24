@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Filament\Resources\Coaches;
+
+use App\Filament\Resources\Coaches\Pages\CreateCoach;
+use App\Filament\Resources\Coaches\Pages\EditCoach;
+use App\Filament\Resources\Coaches\Pages\ListCoaches;
+use App\Filament\Resources\Coaches\Schemas\CoachForm;
+use App\Filament\Resources\Coaches\Tables\CoachesTable;
+use App\Models\Coach;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use UnitEnum;
+
+class CoachResource extends Resource
+{
+    protected static ?string $model = Coach::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Manajemen Web';
+
+    protected static ?int $navigationSort = 13;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Pelatih';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Pelatih';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Pelatih';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return CoachForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return CoachesTable::configure($table);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListCoaches::route('/'),
+            'create' => CreateCoach::route('/create'),
+            'edit' => EditCoach::route('/{record}/edit'),
+        ];
+    }
+}

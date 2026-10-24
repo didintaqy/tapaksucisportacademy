@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Contracts\PaymentGateway;
 use App\Services\Payments\PaymentGatewayManager;
+use App\Services\SiteSettings;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,28 +28,54 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        view()->composer('*', function ($view) {
-            $seo = [
-                'home' => ['title' => 'Tapak Suci Sport Academy', 'description' => 'Website resmi Tapak Suci Sport Academy. Profil, galeri, blog, pendaftaran siswa, dan portal pembayaran.', 'keywords' => 'pencak silat, tapak suci, latihan silat, pendaftaran silat, akademi bela diri'],
-                'about' => ['title' => 'Tentang Kami | Tapak Suci Sport Academy', 'description' => 'Sejarah, visi, misi, dan struktur organisasi Tapak Suci Sport Academy.', 'keywords' => 'tentang tapak suci, sejarah silat, visi misi'],
-                'program' => ['title' => 'Program Latihan | Tapak Suci Sport Academy', 'description' => 'Daftar program latihan pencak silat Tapak Suci untuk berbagai usia dan tingkat.', 'keywords' => 'program silat, kelas silat, latihan anak, latihan dewasa'],
-                'gallery' => ['title' => 'Galeri Kegiatan | Tapak Suci Sport Academy', 'description' => 'Foto-foto kegiatan latihan, kejuaraan, ujian kenaikan tingkat, dan pembinaan mental.', 'keywords' => 'galeri silat, foto latihan, foto kejuaraan'],
-                'blog' => ['title' => 'Artikel & Berita | Tapak Suci Sport Academy', 'description' => 'Artikel tips, berita kegiatan, dan pengumuman resmi dari Tapak Suci Sport Academy.', 'keywords' => 'artikel silat, berita silat, tips pencak silat'],
-                'contact-us' => ['title' => 'Hubungi Kami | Tapak Suci Sport Academy', 'description' => 'Kirim pesan, lihat lokasi latihan, dan hubungi admin Tapak Suci Sport Academy.', 'keywords' => 'kontak silat, alamat latihan, nomor telepon silat'],
-                'testimonials' => ['title' => 'Testimoni | Tapak Suci Sport Academy', 'description' => 'Testimoni orang tua siswa, alumni, dan peserta latihan Tapak Suci Sport Academy.', 'keywords' => 'testimoni silat, review silat, pengalaman bela diri'],
-                'faqs' => ['title' => 'FAQ | Tapak Suci Sport Academy', 'description' => 'Pertanyaan yang sering diajukan tentang pendaftaran, latihan, biaya, dan jadwal.', 'keywords' => 'faq silat, pertanyaan umum pencak silat'],
-                'schedules' => ['title' => 'Jadwal Latihan | Tapak Suci Sport Academy', 'description' => 'Jadwal latihan pencak silat per cabang dan kelas di Tapak Suci Sport Academy.', 'keywords' => 'jadwal silat, jadwal latihan, cabang silat'],
-                'registration' => ['title' => 'Pendaftaran Siswa | Tapak Suci Sport Academy', 'description' => 'Daftarkan putra/putri Anda di Tapak Suci Sport Academy. Formulir pendaftaran online cepat dan mudah.', 'keywords' => 'daftar silat, pendaftaran pencak silat, biaya silat'],
+        // Semua view publik mendapat data identitas, kontak, dan pengaturan situs.
+        View::composer('*', function ($view): void {
+            $view->with('site', app(SiteSettings::class)->viewData());
+        });
+
+        // SEO default berasal dari pengaturan situs, tetapi nilai dari controller
+        // (mis. judul detail program/artikel) selalu diutamakan.
+        View::composer('layout.master', function ($view): void {
+            $settings = app(SiteSettings::class);
+            $site = $view->getData()['site'] ?? $settings->viewData();
+
+            $name = $site['identity']['name'] ?? 'Tapak Suci Sport Academy';
+            $defaultDescription = $site['seo']['description'] ?? '';
+            $defaultKeywords = $site['seo']['keywords'] ?? '';
+            $defaultImage = $site['assets']['og_image'] ?? null;
+
+            $labels = [
+                'about' => 'Tentang Kami',
+                'program' => 'Program Latihan',
+                'gallery' => 'Galeri Kegiatan',
+                'blog' => 'Artikel & Berita',
+                'contact-us' => 'Hubungi Kami',
+                'testimonials' => 'Testimoni',
+                'faqs' => 'Pertanyaan Umum',
+                'schedules' => 'Jadwal Latihan',
+                'calendar' => 'Kalender Kegiatan',
+                'registration' => 'Pendaftaran Siswa',
+                'payments.portal' => 'Portal Pembayaran',
+                'payments.portal.bills' => 'Tagihan Pembayaran',
+                'payments.portal.checkout.show' => 'Pembayaran',
+                'payments.portal.receipt' => 'Kwitansi Pembayaran',
             ];
 
-            $currentRoute = request()->route()?->getName() ?? 'home';
-            $meta = $seo[$currentRoute] ?? $seo['home'];
+            $route = request()->route()?->getName() ?? 'home';
+            $label = $labels[$route] ?? null;
+
+            $metaTitle = $route === 'home'
+                ? ($site['seo']['title'] ?? $name)
+                : ($label ? "{$label} — {$name}" : ($site['seo']['title'] ?? $name));
+
+            $data = $view->getData();
 
             $view->with([
-                'seoTitle' => $meta['title'],
-                'seoDescription' => $meta['description'],
-                'seoKeywords' => $meta['keywords'],
-                'seoImage' => asset('images/og-default.jpg'),
+                'seoTitle' => filled($data['seoTitle'] ?? null) ? $data['seoTitle'] : $metaTitle,
+                'seoDescription' => filled($data['seoDescription'] ?? null) ? $data['seoDescription'] : $defaultDescription,
+                'seoKeywords' => filled($data['seoKeywords'] ?? null) ? $data['seoKeywords'] : $defaultKeywords,
+                'seoImage' => filled($data['seoImage'] ?? null) ? $data['seoImage'] : $defaultImage,
+                'seoSiteName' => $name,
             ]);
         });
     }

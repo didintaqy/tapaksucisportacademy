@@ -46,5 +46,8 @@ class ProductionSeeder extends Seeder
 
         // Jenis pembayaran adalah master data yang dibutuhkan modul keuangan.
         $this->call(PaymentTypeSeeder::class);
+
+        // Pengaturan situs awal; admin melengkapi data resmi lewat panel.
+        $this->call(SiteSettingSeeder::class);
     }
 }
