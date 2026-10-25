@@ -6,12 +6,11 @@ use App\Models\Attendance;
 use App\Models\Student;
 use App\Models\TrainingSchedule;
 use App\Models\User;
-use Faker\Generator as Faker;
 use Illuminate\Database\Seeder;
 
 class AttendanceSeeder extends Seeder
 {
-    public function run(Faker $faker): void
+    public function run(): void
     {
         $coaches = User::where('role', 'pelatih')->get();
         $schedules = TrainingSchedule::all();
@@ -24,6 +23,15 @@ class AttendanceSeeder extends Seeder
         }
 
         $defaultCoach = $coaches->first() ?? User::where('role', 'admin')->first();
+
+        $statusOptions = ['hadir', 'hadir', 'hadir', 'hadir', 'izin', 'sakit', 'alpa'];
+        $sentences = [
+            'Izin sakit karena demam.',
+            'Izin cuti keluarga.',
+            'Sakit flu, istirahat di rumah.',
+            'Alpa tanpa keterangan.',
+            'Izin keperluan sekolah.',
+        ];
 
         $count = 0;
         foreach ($schedules as $schedule) {
@@ -41,7 +49,7 @@ class AttendanceSeeder extends Seeder
                 }
 
                 foreach ($matchingStudents->shuffle()->take(rand(5, min(15, $matchingStudents->count()))) as $student) {
-                    $status = $faker->randomElement(['hadir', 'hadir', 'hadir', 'hadir', 'izin', 'sakit', 'alpa']); // weight hadir higher
+                    $status = $statusOptions[array_rand($statusOptions)]; // weighted towards hadir
 
                     Attendance::updateOrCreate(
                         [
@@ -51,7 +59,7 @@ class AttendanceSeeder extends Seeder
                         ],
                         [
                             'status' => $status,
-                            'notes' => in_array($status, ['izin', 'sakit']) ? $faker->sentence() : null,
+                            'notes' => in_array($status, ['izin', 'sakit']) ? $sentences[array_rand($sentences)] : null,
                             'recorded_by' => $defaultCoach?->id,
                         ]
                     );
