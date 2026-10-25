@@ -1250,12 +1250,10 @@ header.main-header .header-sticky.active{
 }
 
 .program-item-image figure img{
-	width: auto;
-	max-height: 160px;
-}
-
-.program-item-content h2{
+	width: 100%;
 	font-size: 20px;
+	overfit: cover;
+	border-radius: 20px;
 }
 
 .program-item-content h2 a{
@@ -11361,4 +11359,16 @@ header.main-header .header-sticky.active{
 	.footer-copyright-metal{
 		padding: 15px 0;
 	}
+}
+
+/* Additional image fixes for responsive sizing */
+.program-item-image figure img,
+.why-choose-item-image figure img,
+.core-feature-image figure img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.program-item-image figure img {
+    max-height: 160px;
 }
