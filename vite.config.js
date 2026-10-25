@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/custom.css',
                 'resources/js/custom.js',
+                'resources/js/images.js',
             ],
             refresh: true,
         }),
@@ -26,6 +27,7 @@ export default defineConfig({
                 }).toString();
             },
         }),
+        // TODO: add critters via vite-plugin-critters when needed
     ],
     server: {
         watch: {
