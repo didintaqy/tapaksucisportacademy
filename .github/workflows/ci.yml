@@ -51,6 +51,12 @@ jobs:
         run: |
           php artisan migrate:fresh --seed --force
 
+      - name: Clear caches before tests
+        run: |
+          php artisan view:clear
+          php artisan config:clear
+          php artisan route:clear
+
       - name: Check code style
         run: vendor/bin/pint --test
 
