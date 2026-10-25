@@ -271,6 +271,15 @@ class ManageSiteSettings extends Page implements HasForms
                                             ->schema([
                                                 TextInput::make('title')->label('Judul')->required()->maxLength(150),
                                                 Textarea::make('description')->label('Deskripsi')->rows(2)->maxLength(500),
+                                                FileUpload::make('image')
+                                                    ->label('Gambar Item')
+                                                    ->image()
+                                                    ->disk('public')
+                                                    ->directory('why-choose-items')
+                                                    ->visibility('public')
+                                                    ->maxSize(2048)
+                                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                                    ->columnSpanFull(),
                                             ])
                                             ->columns(2)
                                             ->collapsible()

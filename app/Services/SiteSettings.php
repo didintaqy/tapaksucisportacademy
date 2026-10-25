@@ -251,7 +251,18 @@ class SiteSettings
             'og_image' => $this->mediaUrl(data_get($data, 'seo.image'), asset('images/hero-bg.jpg')),
             'why_1' => asset('images/why-choose-image-1.jpg'),
             'why_2' => asset('images/why-choose-image-2.jpg'),
+            'why_item_1' => asset('images/why-choose-item-img-1.jpg'),
+            'why_item_2' => asset('images/why-choose-item-img-2.jpg'),
         ];
+
+        // Process why_items images to full URLs
+        if (isset($data['home']['why_items']) && is_array($data['home']['why_items'])) {
+            foreach ($data['home']['why_items'] as &$item) {
+                if (! empty($item['image'])) {
+                    $item['image'] = $this->mediaUrl($item['image']);
+                }
+            }
+        }
 
         $data['map_embed_url'] = $this->mapEmbedUrl();
         $data['map_url'] = $this->safeUrl(data_get($data, 'contact.maps_url'));

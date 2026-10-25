@@ -169,13 +169,13 @@
 
                             <!-- Why Choose Item List Start -->
                             <div class="why-choose-item-list wow fadeInUp" data-wow-delay="0.4s">
-                                @foreach (array_slice($home['why_items'], 0, 2) as $index => $item)
+                                @foreach (array_slice($home['why_items'], 0, 3) as $index => $item)
                                     <!-- Why Choose Item Start -->
                                     <div class="why-choose-item">
                                         <!-- Why Choose Item Image Start -->
                                         <div class="why-choose-item-image">
                                             <figure class="image-anime">
-                                                <img src="{{ $item['image'] ?? ($index === 0 ? $site['assets']['why_1'] : $site['assets']['why_2']) }}" alt="">
+                                                <img src="{{ $item['image'] ?? ($index === 0 ? $site['assets']['why_item_1'] : $site['assets']['why_item_2']) }}" alt="">
                                             </figure>
                                         </div>
                                         <!-- Why Choose Item Image End -->
