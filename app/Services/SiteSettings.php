@@ -33,6 +33,7 @@ class SiteSettings
                 'logo' => 'images/logo.svg',
                 'favicon' => 'images/favicon.png',
                 'page_header_image' => 'images/page-header-bg.jpg',
+                'years_experience' => '',
             ],
             'contact' => [
                 'address' => '',

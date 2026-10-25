@@ -186,6 +186,35 @@ class SiteSettingsTest extends TestCase
         $response->assertSee('--bg-hero:', false);
     }
 
+    public function test_years_experience_circle_only_renders_when_a_number_is_set(): void
+    {
+        $response = $this->get(route('home'));
+        $response->assertOk();
+        $response->assertDontSee('years-experience-circle', false);
+
+        $this->settings()->update([
+            'identity' => ['years_experience' => '15'],
+        ]);
+
+        $response = $this->get(route('home'));
+        $response->assertSee('years-experience-circle', false);
+        $response->assertSee('15+', false);
+        $response->assertSee('years-experience-circle-blank.svg', false);
+    }
+
+    public function test_years_experience_accepts_numeric_strings_only(): void
+    {
+        foreach (['', null, 'banyak', 'lima belas'] as $invalid) {
+            $this->settings()->update(['identity' => ['years_experience' => $invalid]]);
+
+            $this->get(route('home'))->assertDontSee('years-experience-circle', false);
+        }
+
+        $this->settings()->update(['identity' => ['years_experience' => 0]]);
+
+        $this->get(route('home'))->assertSee('years-experience-circle', false);
+    }
+
     public function test_site_setting_model_clears_the_cache_when_saved(): void
     {
         SiteSetting::query()->create(['data' => ['identity' => ['name' => 'Pertama']]]);

@@ -1532,8 +1532,11 @@ header.main-header .header-sticky.active{
 
 .years-experience-circle a{
 	display: inline-block;
+	position: relative;
 	border: 10px solid var(--bg-color);
 	border-radius: 50%;
+	/* Agar ukuran teks tengah mengikuti ukuran lingkaran di tiap breakpoint. */
+	container-type: inline-size;
 }
 
 .years-experience-circle a img{
@@ -1541,6 +1544,47 @@ header.main-header .header-sticky.active{
 	max-width: 180px;
 	border-radius: 50%;
 	animation: infiniterotate 20s infinite linear;
+}
+
+/*
+ * Template KickPro menaruh angka di dalam gambar SVG sehingga tidak bisa
+ * diubah admin. Di sini SVG dipakai tanpa teks (blank) dan angka dirender
+ * sebagai elemen HTML terpisah di tengah lingkaran putih, dengan latar
+ * yang ikut berputar bersama SVG agar posisinya tetap presisi.
+ */
+.years-experience-circle a .years-experience-circle-label{
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0;
+	text-align: center;
+	color: var(--primary-color);
+	line-height: 1;
+	/* Lingkaran putih pada SVG berjari-jari 30 dari 90 (33% lebar). */
+	width: 66%;
+	height: 66%;
+	margin: auto;
+	/* Hanya <img> yang berputar, jadi teks tetap tegak tanpa animasi balik. */
+	pointer-events: none;
+}
+
+.years-experience-circle-label strong{
+	display: block;
+	font-size: clamp(1rem, 22cqi, 1.65rem);
+	font-weight: 700;
+	letter-spacing: -.02em;
+}
+
+.years-experience-circle-label > span{
+	display: block;
+	margin-top: .1rem;
+	font-size: clamp(.5rem, 8.5cqi, .68rem);
+	font-weight: 600;
+	letter-spacing: .08em;
+	text-transform: uppercase;
 }
 
 @keyframes infiniterotate{

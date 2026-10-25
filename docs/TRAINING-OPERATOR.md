@@ -100,7 +100,7 @@ publik tanpa deploy:
 
 | Tab | Isi |
 |---|---|
-| Identitas & logo | Nama, nama pendek, tagline, logo, favicon, latar header |
+| Identitas & logo | Nama, nama pendek, tagline, logo, favicon, latar header, tahun pengalaman |
 | Kontak & lokasi | Alamat, telepon, WhatsApp, email, jam, link + embed Google Maps |
 | Media sosial | Facebook, Instagram, YouTube, TikTok, X |
 | Beranda | Hero, section, langkah, keunggulan, gambar latar section |
@@ -137,6 +137,16 @@ Simpan. Karantina dibersihkan permanen dengan `--empty-trash`.
 dihapus permanen otomatis. Batas ini diatur `SITE_MEDIA_TRASH_RETENTION_DAYS`
 di `.env` (isi `0` untuk menyimpan selamanya). Pastikan gambar yang salah
 ganti dipulihkan sebelum masa itu lewat.
+
+### 4.1.2 Lingkaran tahun pengalaman
+
+Di beranda, di atas foto section "Mengapa Memilih Kami", ada lingkaran
+merah bertuliskan jumlah tahun pengalaman. Isi **Identitas → Tahun
+Pengalaman** dengan angka (misalnya `15`) untuk menampilkannya; angka akan
+muncul sebagai "15+ Tahun".
+
+Kosongkan kolom tersebut untuk menyembunyikan lingkaran. Angka di luar
+0–100 ditolak, dan hanya angka yang diterima.
 
 ### 4.2 Menambah artikel
 

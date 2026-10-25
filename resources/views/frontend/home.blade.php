@@ -243,11 +243,18 @@
                                     <img src="{{ $site['assets']['why_2'] }}" alt="Kegiatan {{ $site['identity']['name'] }}">
                                 </figure>
 
-                                @if (filled($site['identity']['years_experience'] ?? null))
+                                @if (is_numeric($site['identity']['years_experience'] ?? null))
                                     <!-- Contact Us Circle Start -->
                                     <div class="years-experience-circle">
-                                        <a href="{{ route('contact-us') }}">
-                                            <img src="{{ asset('images/years-experience-circle.svg') }}" alt="">
+                                        <a href="{{ route('contact-us') }}" aria-label="Hubungi kami, {{ (int) $site['identity']['years_experience'] }} tahun pengalaman">
+                                            <img src="{{ asset('images/years-experience-circle-blank.svg') }}"
+                                                 alt=""
+                                                 aria-hidden="true"
+                                                 class="years-experience-circle-bg">
+                                            <span class="years-experience-circle-label" aria-hidden="true">
+                                                <strong>{{ (int) $site['identity']['years_experience'] }}+</strong>
+                                                <span>Tahun</span>
+                                            </span>
                                         </a>
                                     </div>
                                     <!-- Contact Us Circle End -->

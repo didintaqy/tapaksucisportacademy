@@ -116,6 +116,15 @@ class ManageSiteSettings extends Page implements HasForms
                                             ->maxSize(5120)
                                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                             ->helperText('Dipakai pada header halaman selain beranda. Maksimal 5 MB.'),
+
+                                        TextInput::make('identity.years_experience')
+                                            ->label('Tahun Pengalaman')
+                                            ->numeric()
+                                            ->integer()
+                                            ->minValue(0)
+                                            ->maxValue(100)
+                                            ->helperText('Angka pada lingkaran merah di beranda, misalnya 15. Kosongkan untuk menyembunyikannya.')
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
 
