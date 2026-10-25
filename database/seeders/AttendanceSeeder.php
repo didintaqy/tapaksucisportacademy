@@ -6,11 +6,12 @@ use App\Models\Attendance;
 use App\Models\Student;
 use App\Models\TrainingSchedule;
 use App\Models\User;
+use Faker\Generator as Faker;
 use Illuminate\Database\Seeder;
 
 class AttendanceSeeder extends Seeder
 {
-    public function run(): void
+    public function run(Faker $faker): void
     {
         $coaches = User::where('role', 'pelatih')->get();
         $schedules = TrainingSchedule::all();
@@ -40,7 +41,7 @@ class AttendanceSeeder extends Seeder
                 }
 
                 foreach ($matchingStudents->shuffle()->take(rand(5, min(15, $matchingStudents->count()))) as $student) {
-                    $status = fake()->randomElement(['hadir', 'hadir', 'hadir', 'hadir', 'izin', 'sakit', 'alpa']); // weight hadir higher
+                    $status = $faker->randomElement(['hadir', 'hadir', 'hadir', 'hadir', 'izin', 'sakit', 'alpa']); // weight hadir higher
 
                     Attendance::updateOrCreate(
                         [
@@ -50,7 +51,7 @@ class AttendanceSeeder extends Seeder
                         ],
                         [
                             'status' => $status,
-                            'notes' => in_array($status, ['izin', 'sakit']) ? fake()->sentence() : null,
+                            'notes' => in_array($status, ['izin', 'sakit']) ? $faker->sentence() : null,
                             'recorded_by' => $defaultCoach?->id,
                         ]
                     );
