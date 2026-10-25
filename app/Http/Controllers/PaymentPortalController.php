@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Student;
 use App\Services\Payments\PaymentGatewayManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class PaymentPortalController extends Controller
 {
@@ -23,26 +24,40 @@ class PaymentPortalController extends Controller
 
     /**
      * Cari siswa berdasarkan ID atau NIK, lalu simpan di session.
+     *
+     * Portal ini terbuka untuk umum (tanpa akun), sehingga ID/NIK saja tidak
+     * cukup: NIK mudah ditebak polanya. Tanggal lahir dipakai sebagai faktor
+     * kedua agar riwayat tagihan siswa lain tidak bisa dibuka.
      */
     public function search(Request $request)
     {
         $data = $request->validate([
             'student_id' => ['required', 'string', 'max:32'],
+            'birth_date' => ['required', 'date', 'before:today'],
         ], [], [
             'student_id' => 'ID Siswa',
+            'birth_date' => 'Tanggal Lahir',
         ]);
 
         $keyword = trim($data['student_id']);
 
         $student = Student::query()
-            ->where('id', $keyword)
-            ->orWhere('nik', $keyword)
+            ->where(function ($query) use ($keyword): void {
+                $query->where('id', $keyword)
+                    ->orWhere('nik', $keyword);
+            })
             ->first();
 
-        if (! $student) {
+        // Pesan error sengaja sama untuk "tidak ada" dan "tanggal lahir salah"
+        // agar tidak bisa dipakai menebak apakah suatu NIK terdaftar.
+        $valid = $student
+            && $student->birth_date
+            && Carbon::parse($student->birth_date)->isSameDay($data['birth_date']);
+
+        if (! $valid) {
             return back()
                 ->withInput()
-                ->with('error', 'Siswa dengan ID / NIK tersebut tidak ditemukan.');
+                ->with('error', 'Data siswa tidak ditemukan. Periksa ID/NIK dan tanggal lahir.');
         }
 
         session(['payment_portal_student_id' => $student->id]);

@@ -153,7 +153,8 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - [x] Rate limit halaman cari ID siswa (`throttle:10,1`) — cegah penebakan NID/NIK
 - [x] Rate limit webhook payment gateway (`throttle:120,1`)
 - [x] Konfirmasi rate limit login admin Filament (5 percobaan/menit) + test
-- [ ] **Keputusan bisnis:** portal pembayaran hanya memverifikasi ID/NIK tanpa faktor kedua. Siapa pun yang tahu/menebak NIK (16 digit berpola) dapat melihat riwayat tagihan dan membuka checkout pembayaran siswa lain. Perlu keputusan: tambahkan tanggal lahir + nama ibu, OTP WhatsApp, atau batasi data yang ditampilkan.
+- [x] **Keputusan bisnis:** portal pembayaran kini memverifikasi **ID/NIK + tanggal lahir** (faktor kedua). Pesan error disamakan agar tidak membocorkan apakah suatu NIK terdaftar. Rate limit 10 percobaan/menit per IP.
+- [ ] Pertimbangkan OTP WhatsApp sebagai pengganti tanggal lahir bila data siswa sering tidak akurat (butuh provider WhatsApp Business API)
 
 ### P2.1 CI hardening
 
@@ -195,7 +196,7 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 | Akses Absensi | Pelatih: lihat + catat/ubah hanya jadwal sendiri; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
 | Akses UKT | Pelatih: lihat + catat/ubah hanya cabang jadwalnya; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
 | Akses Newsletter | Admin/Operator saja | 21-10-2026 | Aksi kirim butuh ability `send` |
-| Portal pembayaran | **Belum diputuskan** | 26-10-2026 | Verifikasi hanya ID/NIK; lihat TODO P2.0 |
+| Portal pembayaran | **ID/NIK + tanggal lahir** | 26-10-2026 | Faktor kedua tanpa infrastruktur baru; OTP WhatsApp sebagai opsi lanjutan |
 | Error tracking | **Logs-only + uptime alert** | 21-10-2026 | Tanpa Sentry/Flare; lihat `docs/MONITORING.md` |
 | Versi PHP produksi | **Belum diputuskan** | — | Menentukan matrix CI |
 
@@ -212,3 +213,4 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - **26-10-2026** — Perbaikan keamanan deploy: `db:seed` dihapus dari workflow deploy; `DatabaseSeeder` hanya menjalankan `ProductionSeeder` di produksi/staging; `UsersTableSeeder` demo tidak lagi menimpa kata sandi, memakai kata sandi publik seragam, dan domain `@tapaksuci.test`; `SeederSafetyTest` ditambahkan (214 test lulus).
 - **26-10-2026** — Backup & alert: `db:backup` diperkuat (gzip, checksum `.sha256`, `--no-compress`, retensi default 14 hari, `mysqldump` tanpa argumen `--password`), perintah baru `db:restore` (`--verify` + restore SQLite/MySQL dengan pengaman `--force`), backup harian 02:00 dengan log kegagalan, `queue:monitor default:100` terjadwal 5 menit, dokumentasi backup/restore di `DEPLOYMENT.md` dan `MONITORING.md`. Uji restore SQLite end-to-end berhasil (6 user/24 siswa pulih). 222 test lulus.
 - **26-10-2026** — Hardening aplikasi: middleware `SecurityHeaders` (CSP, HSTS, nosniff, frame-ancestors, Permissions-Policy) dengan whitelist di `config/security.php`; rate limit cari ID siswa (10/menit) dan webhook gateway (120/menit); rate limit login Filament dikonfirmasi + diuji. 232 test lulus.
+- **26-10-2026** — Portal pembayaran: verifikasi ID/NIK kini wajib disertai tanggal lahir (faktor kedua); pesan error diseragamkan agar tidak membocorkan keberadaan NIK; siswa tanpa tanggal lahir ditolak. `PaymentManagementTest` diperluas. 236 test lulus.

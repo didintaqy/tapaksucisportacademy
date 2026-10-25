@@ -24,7 +24,10 @@ class RateLimitTest extends TestCase
         $statuses = [];
 
         for ($i = 0; $i < 12; $i++) {
-            $statuses[] = $this->post('/pembayaran/cari', ['student_id' => 'TIDAK-ADA'])->getStatusCode();
+            $statuses[] = $this->post('/pembayaran/cari', [
+                'student_id' => 'TIDAK-ADA',
+                'birth_date' => '2000-01-01',
+            ])->getStatusCode();
         }
 
         // Portofolio pembayaran memakai sesi; pada test session driver array

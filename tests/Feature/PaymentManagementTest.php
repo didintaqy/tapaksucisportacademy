@@ -38,10 +38,11 @@ class PaymentManagementTest extends TestCase
 
     public function test_portal_search_finds_student_by_id_and_redirects(): void
     {
-        $student = Student::factory()->create();
+        $student = Student::factory()->create(['birth_date' => '2010-05-17']);
 
         $response = $this->post(route('payments.portal.search'), [
             'student_id' => (string) $student->id,
+            'birth_date' => '2010-05-17',
         ]);
 
         $response->assertRedirect(route('payments.portal.bills'));
@@ -50,13 +51,79 @@ class PaymentManagementTest extends TestCase
 
     public function test_portal_search_by_nik(): void
     {
-        $student = Student::factory()->create(['nik' => '2171100903170001']);
+        $student = Student::factory()->create([
+            'nik' => '2171100903170001',
+            'birth_date' => '2017-03-09',
+        ]);
 
         $response = $this->post(route('payments.portal.search'), [
             'student_id' => '2171100903170001',
+            'birth_date' => '2017-03-09',
         ]);
 
         $response->assertRedirect(route('payments.portal.bills'));
+    }
+
+    public function test_portal_search_rejects_wrong_birth_date(): void
+    {
+        $student = Student::factory()->create([
+            'nik' => '2171100903170001',
+            'birth_date' => '2017-03-09',
+        ]);
+
+        $response = $this->from(route('payments.portal'))->post(route('payments.portal.search'), [
+            'student_id' => '2171100903170001',
+            'birth_date' => '2017-03-10',
+        ]);
+
+        $response->assertRedirect(route('payments.portal'));
+        $response->assertSessionHas('error');
+        $this->assertNull(session('payment_portal_student_id'));
+    }
+
+    public function test_portal_search_requires_birth_date(): void
+    {
+        $student = Student::factory()->create();
+
+        $response = $this->post(route('payments.portal.search'), [
+            'student_id' => (string) $student->id,
+        ]);
+
+        $response->assertSessionHasErrors('birth_date');
+        $this->assertNull(session('payment_portal_student_id'));
+    }
+
+    public function test_portal_search_gives_same_message_for_unknown_and_wrong_date(): void
+    {
+        $student = Student::factory()->create(['birth_date' => '2010-05-17']);
+
+        $wrongDate = $this->from(route('payments.portal'))->post(route('payments.portal.search'), [
+            'student_id' => (string) $student->id,
+            'birth_date' => '1999-01-01',
+        ]);
+
+        $unknown = $this->from(route('payments.portal'))->post(route('payments.portal.search'), [
+            'student_id' => '999999999',
+            'birth_date' => '1999-01-01',
+        ]);
+
+        $this->assertSame(
+            $wrongDate->getSession()->get('error'),
+            $unknown->getSession()->get('error'),
+            'Pesan error tidak boleh membocorkan apakah suatu ID/NIK terdaftar.',
+        );
+    }
+
+    public function test_portal_search_rejects_student_without_birth_date(): void
+    {
+        $student = Student::factory()->create(['birth_date' => null]);
+
+        $this->from(route('payments.portal'))->post(route('payments.portal.search'), [
+            'student_id' => (string) $student->id,
+            'birth_date' => '2010-05-17',
+        ])->assertRedirect(route('payments.portal'));
+
+        $this->assertNull(session('payment_portal_student_id'));
     }
 
     public function test_portal_bills_page_lists_student_payment(): void
