@@ -154,6 +154,10 @@ chmod 600 ~/domains/tapaksucisportacademy.com/laravel/shared/.env
 
 ## 5. Deploy pertama
 
+> **Penting:** deploy **tidak** menjalankan seeder apa pun. Migrasi berjalan
+> otomatis, tetapi data awal (`ProductionSeeder`) harus dijalankan manual sekali
+> (bagian 6). Ini mencegah deploy rutin menimpa akun atau menyisipkan data demo.
+
 1. Merge perubahan ke `main`.
 2. Buka **GitHub → Actions → Deploy Production**.
 3. Workflow akan:
@@ -164,7 +168,7 @@ chmod 600 ~/domains/tapaksucisportacademy.com/laravel/shared/.env
    - upload ke server lewat SCP,
    - ekstrak ke `laravel/releases/<commit>`,
    - symlink `laravel/current`,
-   - jalankan migrasi dan cache Laravel,
+   - jalankan migrasi dan cache Laravel (tanpa seeder),
    - menyalin file publik ke `public_html`,
    - membuat `index.php` yang mengarah ke `laravel/current`.
 

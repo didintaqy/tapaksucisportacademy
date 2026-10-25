@@ -78,6 +78,11 @@ Respons yang diharapkan: `HTTP/2 200` dengan body `OK`.
 
 Newsletter, email kontak, pendaftaran, dan pengingat tagihan diproses queue worker.
 
+`routes/console.php` menjadwalkan `queue:monitor default:100` setiap 5 menit:
+bila ada lebih dari 100 job menunggu, Laravel mengirim notifikasi ke alamat pada
+`MAIL_ALERT_ADDRESS` (biasanya email admin). Ini penanda paling awal bahwa
+cron queue worker mati. Pastikan `MAIL_ALERT_ADDRESS` terisi di `.env` produksi.
+
 ```bash
 # Jumlah job menunggu di queue default
 php artisan queue:monitor default --max=100
@@ -93,6 +98,8 @@ php artisan queue:retry all
 ```
 
 - Worker Supervisor harus berjalan; lihat `docs/DEPLOYMENT.md`.
+- Worker di Hostinger dijalankan lewat cron setiap menit (`docs/DEPLOYMENT-HOSTINGER.md`).
+- Monitoring: `queue:monitor default:100` setiap 5 menit; alert dikirim ke `MAIL_ALERT_ADDRESS` bila antrean menumpuk.
 - Setiap deploy, jalankan `php artisan queue:restart` agar worker memuat kode baru.
 - `queue:prune-failed --hours=168` berjalan otomatis setiap pukul 03:00.
 - Jika `failed_jobs` bertambah terus, periksa kredensial SMTP dan log worker.
@@ -124,7 +131,7 @@ dipanggil setiap menit. Buat check dengan periode 1 menit dan grace 5 menit.
 | Frekuensi | Tindakan |
 |---|---|
 | Setiap hari | Cek alert uptime, error log, failed job |
-| Setiap minggu | Cek disk, ukuran database, backup terakhir |
+| Setiap minggu | Cek disk, ukuran database, backup terakhir, jalankan `db:restore --verify` |
 | Setiap bulan | Uji restore backup, review akses admin, update dependency |
 | Setiap deploy | `queue:restart`, cek `/up`, cek log 15 menit pertama |
 

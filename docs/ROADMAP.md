@@ -2,9 +2,11 @@
 
 Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai go-live dan pemeliharaan. Setiap fase harus selesai, lulus test, dan bisa di-deploy sebelum lanjut ke fase berikutnya.
 
-- **Stack:** Laravel 12.67, PHP 8.2, Filament 5, Blade + Vite, SQLite (development)
+- **Stack:** Laravel 12.70, PHP 8.2 (platform Composer), Filament 5.10.3, Blade + Vite, SQLite (development)
 - **Repo:** `tapaksuciacademy`
-- **Terakhir diperbarui:** 25 Oktober 2026
+- **Branch integrasi:** `main` (`develop` sudah di-merge)
+- **Backlog harian:** `docs/TODO.md` — dokumen ini mengikuti status di TODO
+- **Terakhir diperbarui:** 25 Oktober 2026 (disinkronkan dengan `docs/TODO.md`)
 
 ---
 
@@ -42,7 +44,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 | Kategori & tag artikel | ✅ | ✅ | **Selesai** |
 | Multi-penulis & moderasi artikel | — | ✅ | **Selesai** |
 | Notifikasi internal admin | — | ✅ | **Selesai** |
-| Deployment & backup | — | — | Dokumen siap, belum dieksekusi |
+| Deployment & backup | — | — | **Pipeline siap & deploy pertama berjalan** (Hostinger + SSH); backup otomatis + uji restore belum |
 
 ---
 
@@ -56,7 +58,7 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 
 ---
 
-## 3. Fase 0 — Fondasi (selesai, kecuali item operasional)
+## 3. Fase 0 — Fondasi (selesai; sisa item operasional ada di TODO)
 
 **Tujuan:** aplikasi aman, konsisten, terdokumentasi, dan siap dikembangkan lebih lanjut oleh siapa pun.
 
@@ -106,8 +108,9 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 ### 0.6 Operasional
 
 - [x] Sekarang catatan deployment, backup config (mail/driver) disediakan di `docs/DEPLOYMENT.md`
-- [ ] Aktifkan queue worker untuk email dan job berat (kode & dokumentasi siap; aktivasi Supervisor di server)
+- [ ] Aktifkan queue worker untuk email dan job berat (kode & dokumentasi siap; aktivasi Supervisor di server — TODO P1.3)
 - [x] Siapkan logging dan error tracking (logs-only + uptime alert; lihat `docs/MONITORING.md`)
+  - Sisa: pasang uptime monitor eksternal ke `/up` (TODO P1.2)
 - [x] Terapkan alur git: branch per fitur, conventional commit, pull request
 
 **Definisi selesai Fase 0:**
@@ -131,11 +134,11 @@ Tujuan: website publik siap menjadi wajah resmi akademi.
 - [x] SEO: meta title/description per halaman, sitemap.xml, Open Graph (metatags & sitemap)
 - [x] Halaman 404 kustom (fallback ke template)
 - [x] Analytics hook (Umami/GA4 snippet di layout)
-- [ ] Audit responsivitas mobile (Bootstrap template, verifikasi manual)
+- [ ] Audit responsivitas mobile (Bootstrap template, verifikasi manual 360px/390px/768px — TODO P1.4)
 
 ### 1.1 Data Nyata & Pengaturan Situs
 
-Milestone lengkap: **`docs/MILESTONE-DATA-REAL.md`**.
+Milestone lengkap: **`docs/MILESTONE-DATA-REAL.md`** — **selesai** (data resmi sudah diisi melalui panel admin produksi).
 
 - [x] Tabel `site_settings` + service `SiteSettings` (default, cache, media, peta)
 - [x] Halaman admin **Pengaturan Situs** (identitas, kontak, peta, sosial, hero, about, biaya, SEO, footer)
@@ -148,7 +151,8 @@ Milestone lengkap: **`docs/MILESTONE-DATA-REAL.md`**.
 - [x] Perbaiki SEO composer agar tidak menimpa meta dari controller
 - [x] ProductionSeeder menyertakan pengaturan situs tanpa konten demo
 - [x] Test service, akses admin, policy, konten dinamis, empty state, dan SEO
-- [ ] Isi data resmi akademi melalui panel admin (lihat checklist milestone)
+- [x] Isi data resmi akademi melalui panel admin (identitas, kontak, pelatih, biaya, media) — milestone **selesai**
+- [ ] UAT visual mobile 360px/390px/768px (TODO P1.4)
 
 ---
 
@@ -198,12 +202,14 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 ## 8. Fase 5 — Go-Live & Pemeliharaan
 
 - [x] Siapkan pipeline deploy otomatis Hostinger (GitHub Actions + SSH)
-- [ ] Isi secrets environment `production` dan jalankan deploy pertama
+- [x] Isi secrets environment `production` dan jalankan deploy pertama
 - [ ] UAT bersama pengelola akademi
 - [ ] Training operator (dokumen + sesi)
 - [ ] Hardening: HTTPS, header keamanan, rate limit, permission file
-- [ ] Backup otomatis + uji restore
-- [ ] Monitoring uptime dan error
+- [x] Backup otomatis + uji restore — `db:backup` harian 02:00 (retensi 14 hari, checksum) + `db:restore --verify`; **sisa:** salin backup ke luar server & uji restore penuh ke database terpisah
+- [x] Hardening aplikasi: header keamanan (CSP/HSTS/nosniff/frame-ancestors) + rate limit login admin, cari ID siswa, dan webhook
+- [ ] Hardening server: HTTPS, permission file, blokir akses `.env`/`database` (hPanel + .htaccess)
+- [ ] Monitoring uptime dan error (sisa: pasang uptime monitor eksternal ke `/up`; logging, retensi log, dan alert antrean `queue:monitor` sudah selesai)
 - [ ] Rencana pemeliharaan bulanan
 
 ---
@@ -214,16 +220,16 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 |---|---|---|
 | Role & permission | ✅ Enum `App\Enums\UserRole` + Policy | Cukup untuk 3 role saat ini; migrasi ke Spatie jika role bertambah banyak |
 | Payment gateway | ✅ Midtrans (QRIS) | Driver di `app/Services/Payments`, rekonsiliasi via payload callback; driver lain dapat ditambah lewat kontrak `PaymentGateway` |
-| Reminder WhatsApp | Belum diputuskan | Butuh provider WhatsApp Business API (biaya + verifikasi template pesan) |
-| Email provider | SMTP biasa vs layanan transaksional | Memengaruhi pengiriman notifikasi |
-| Hosting | VPS vs shared hosting | Menentukan proses deploy dan cron |
-| Database produksi | SQLite vs MySQL/MariaDB | SQLite mudah, MySQL lebih aman untuk multi-user |
+| Reminder WhatsApp | Belum diputuskan | Butuh provider WhatsApp Business API (biaya + verifikasi template pesan) — TODO P2.3 |
+| Email provider | ✅ SMTP produksi terkonfigurasi | Notifikasi & reminder berjalan lewat queue + `SendNewsletterJob`/`NewsletterMail` |
+| Hosting | ✅ Hostinger Premium (SSH + GitHub Actions) | Lihat `docs/DEPLOYMENT-HOSTINGER.md` |
+| Database produksi | ✅ MySQL/MariaDB di Hostinger | Diwajibkan `DB_CONNECTION=mysql` di `shared/.env`; SQLite hanya untuk development |
 
 ---
 
 ## 10. Cara Menggunakan Dokumen Ini
 
-1. Pilih satu fase aktif. Saat ini fokus pada **milestone Data Nyata & Pengaturan Situs** (`docs/MILESTONE-DATA-REAL.md`), lalu lanjut **Fase 5 — Go-Live & Pemeliharaan**; sisa item Fase 0–3 dikerjakan sebagai task pendamping.
+1. Pilih satu fase aktif. Saat ini fokus pada **Fase 5 — Go-Live & Pemeliharaan** (UAT, training operator, hardening, backup/restore, monitoring); sisa item Fase 0–3 dikerjakan sebagai task pendamping. Milestone **Data Nyata & Pengaturan Situs** sudah selesai (`docs/MILESTONE-DATA-REAL.md`).
 2. Daftar tindak lanjut operasional lintas sesi ada di **`docs/TODO.md`** (prioritas P0/P1/P2, keputusan, dan acceptance criteria). Gunakan dokumen itu sebagai backlog harian.
 3. Pecah item checklist menjadi issue/task kecil.
 4. Setiap task selesai: centang di dokumen ini dan sertakan test.

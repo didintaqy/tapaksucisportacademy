@@ -117,7 +117,7 @@ Status: `unread` → `read` → `replied`.
 
 ## Alur Pembayaran
 
-1. Siswa/orang tua mencari data di `/pembayaran` berdasarkan ID siswa atau NIK.
+1. Siswa/orang tua mencari data di `/pembayaran` dengan **ID siswa atau NIK + tanggal lahir**. Tanggal lahir adalah faktor kedua karena portal bersifat publik; pesan error diseragamkan agar keberadaan NIK tidak bisa ditebak. Route dibatasi `throttle:10,1`.
 2. Data siswa disimpan di session (`payment_portal_student_id`).
 3. `/pembayaran/tagihan` menampilkan tagihan milik siswa tersebut.
 4. Checkout memanggil gateway melalui `PaymentGatewayManager`.
