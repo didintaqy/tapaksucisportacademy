@@ -27,6 +27,8 @@
 	<meta name="twitter:description" content="{{ $seoDescription ?? $site['seo']['description'] }}">
 	<meta name="twitter:image" content="{{ $seoImage ?? $site['assets']['og_image'] }}">
 
+	{{-- JSON-LD Structured Data (included per page) --}}
+
 	<!-- Favicon Icon -->
 	<link rel="shortcut icon" type="image/x-icon" href="{{ $site['assets']['favicon'] }}">
 

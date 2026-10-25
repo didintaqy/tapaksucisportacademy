@@ -1,6 +1,7 @@
 @extends('layout.master')
 
 @section('content')
+    @include('partials.seo-json-ld')
     @php
         $home = $site['home'];
         $about = $site['about'];

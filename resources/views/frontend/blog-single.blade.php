@@ -26,6 +26,7 @@
 @endsection
 
 @section('content')
+    @include('partials.seo-json-ld', ['post' => $post])
     <!-- Page Single Post Start -->
     <div class="page-single-post">
         <div class="container">
