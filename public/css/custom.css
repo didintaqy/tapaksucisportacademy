@@ -11374,7 +11374,7 @@ header.main-header .header-sticky.active{
 }
 
 /* Badge styling: use accent color for all badges */
-.badge {
+.badge .bg-primary {
     background-color: var(--accent-color) !important;
     color: var(--white-color);
 }

@@ -10,10 +10,12 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImageDeliveryController;
 use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TestimonialController;
@@ -52,6 +54,14 @@ Route::post('/pendaftaran', [StudentRegistrationController::class, 'store'])
 
 // Sitemap (SEO)
 Route::get('/sitemap.xml', [SitemapController::class, '__invoke'])->name('sitemap');
+
+// robots.txt
+Route::get('/robots.txt', RobotsController::class)->name('robots');
+
+// On-demand optimized image variants (webp/avif)
+Route::get('/images/{model}/{id}/{variant}', ImageDeliveryController::class)
+    ->where('variant', 'webp|avif')
+    ->name('images.variant');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])

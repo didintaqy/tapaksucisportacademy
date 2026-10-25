@@ -25,6 +25,7 @@
 @endsection
 
 @section('content')
+    @include('partials.seo-json-ld', ['program' => $program])
     <!-- Page Program Single Start -->
     <div class="page-program-single">
         <div class="container">

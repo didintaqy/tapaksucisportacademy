@@ -40,6 +40,35 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
+      - name: Install image optimization binaries
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y optipng pngquant gifsicle jpegoptim
+          # svgo is a node tool; install via npm globally
+          npm install -g svgo
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Setup database & seed
+        run: |
+          php artisan migrate:fresh --seed --force
+
+      - name: Clear caches before tests
+        run: |
+          php artisan view:clear
+          php artisan config:clear
+          php artisan route:clear
+
       - name: Check code style
         run: vendor/bin/pint --test
 
@@ -48,7 +77,6 @@ jobs:
 
       - name: Smoke test application bootstrap
         run: |
-          php artisan migrate:fresh --seed
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
