@@ -395,7 +395,7 @@ a:focus{
 
 .dark-section{
 	background-color: var(--primary-color);
-	background-image: url('../images/dark-section-bg-shape.png');
+	background-image: var(--bg-dark-section, url('../images/dark-section-bg-shape.png'));
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
@@ -770,7 +770,7 @@ header.main-header .header-sticky.active{
 
 .hero{
 	position: relative;
-	background-image: url('../images/hero-bg.jpg');
+	background-image: var(--bg-hero, url('../images/hero-bg.jpg'));
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
@@ -1910,7 +1910,7 @@ header.main-header .header-sticky.active{
 
 .core-feature-image{
 	position: relative;
-	background: url('../images/core-feature-image-bg.png') no-repeat;
+	background: var(--bg-core-feature, url('../images/core-feature-image-bg.png')) no-repeat;
 	background-position: center center;
 	background-size: 100% 100%;
 	align-content: end;
@@ -2081,7 +2081,7 @@ header.main-header .header-sticky.active{
 
 .our-testimonials{
 	position: relative;
-	background: url('../images/testimonial-bg.jpg') no-repeat;
+	background: var(--bg-testimonials, url('../images/testimonial-bg.jpg')) no-repeat;
 	background-position: center center;
 	background-size: cover;
 	padding: 100px 0;
@@ -2533,7 +2533,8 @@ header.main-header .header-sticky.active{
 
 .main-footer{
 	position: relative;
-	background: url('../images/footer-bg.jpg') no-repeat;
+	background: var(--bg-footer, url('../images/footer-bg.jpg')) no-repeat;
+	background-color: var(--primary-color);
 	background-position: center center;
 	background-size: cover;
 	padding: 100px 0 0;
@@ -2758,7 +2759,7 @@ header.main-header .header-sticky.active{
 
 .page-header{
     position: relative;
-    background: url('../images/page-header-bg.jpg') no-repeat;
+    background: var(--bg-page-header, url('../images/page-header-bg.jpg')) no-repeat;
     background-position: center center;
     background-size: cover;
 	padding: 265px 0 150px;

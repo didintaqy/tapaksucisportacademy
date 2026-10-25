@@ -20,6 +20,13 @@ Schedule::command('queue:prune-failed --hours=168')
     ->withoutOverlapping()
     ->onOneServer();
 
+// Hapus gambar Pengaturan Situs yang tidak lagi dipakai. Jaring pengaman
+// bila berkas yatim muncul dari seeder atau perubahan data manual.
+Schedule::command('site-settings:prune-media')
+    ->dailyAt('03:15')
+    ->withoutOverlapping()
+    ->onOneServer();
+
 // Backup database setiap hari pukul 02:00. Kegagalan dicatat ke log agar
 // terlihat di pemeriksaan harian (LOG_LEVEL=warning).
 Schedule::command('db:backup')

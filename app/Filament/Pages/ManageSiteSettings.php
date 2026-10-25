@@ -266,6 +266,24 @@ class ManageSiteSettings extends Page implements HasForms
                                     ->schema([
                                         TextInput::make('home.why_heading')->label('Judul Section')->maxLength(255),
                                         TextInput::make('home.why_description')->label('Deskripsi')->maxLength(500),
+                                        FileUpload::make('home.why_image_1')
+                                            ->label('Foto Utama Section Keunggulan')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('why-choose')
+                                            ->visibility('public')
+                                            ->maxSize(5120)
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                            ->helperText('Foto besar pertama di sisi kanan. Maksimal 5 MB.'),
+                                        FileUpload::make('home.why_image_2')
+                                            ->label('Foto Kedua Section Keunggulan')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('why-choose')
+                                            ->visibility('public')
+                                            ->maxSize(5120)
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                            ->helperText('Foto kedua di sisi kanan. Maksimal 5 MB.'),
                                         Repeater::make('home.why_items')
                                             ->label('Daftar Keunggulan')
                                             ->schema([
@@ -279,11 +297,13 @@ class ManageSiteSettings extends Page implements HasForms
                                                     ->visibility('public')
                                                     ->maxSize(2048)
                                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                                    ->helperText('Tampil sebagai ikon kecil di samping judul. Maksimal 2 MB.')
                                                     ->columnSpanFull(),
                                             ])
                                             ->columns(2)
                                             ->collapsible()
                                             ->reorderable()
+                                            ->orderColumn('sort')
                                             ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
                                             ->addActionLabel('Tambah keunggulan')
                                             ->columnSpanFull(),
@@ -350,6 +370,42 @@ class ManageSiteSettings extends Page implements HasForms
                                         TextInput::make('home.blog_description')->label('Deskripsi Blog')->maxLength(500),
                                         TextInput::make('home.cta_heading')->label('Judul CTA')->maxLength(255),
                                         TextInput::make('home.cta_description')->label('Deskripsi CTA')->maxLength(500),
+                                    ]),
+
+                                Section::make('Gambar Latar Section')
+                                    ->description('Gambar dekoratif di belakang section. Kosongkan untuk memakai gambar bawaan tema.')
+                                    ->columns(2)
+                                    ->schema([
+                                        FileUpload::make('home.testimonials_background')
+                                            ->label('Latar Section Testimoni')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('backgrounds')
+                                            ->visibility('public')
+                                            ->maxSize(8192)
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                            ->helperText('Beranda & halaman program.'),
+
+                                        FileUpload::make('home.dark_section_background')
+                                            ->label('Pola Latar Section Gelap')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('backgrounds')
+                                            ->visibility('public')
+                                            ->maxSize(5120)
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                            ->helperText('Dipakai di semua section berlatar gelap.'),
+
+                                        FileUpload::make('home.core_feature_background')
+                                            ->label('Latar Ilustrasi Section Keunggulan')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('backgrounds')
+                                            ->visibility('public')
+                                            ->maxSize(5120)
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                            ->helperText('Kotak di belakang foto section keunggulan. Gunakan PNG transparan.')
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
 
@@ -452,6 +508,20 @@ class ManageSiteSettings extends Page implements HasForms
                                         TextInput::make('footer.cta_description')->label('Deskripsi CTA Footer')->maxLength(500),
                                         TextInput::make('footer.cta_label')->label('Label Tombol CTA')->maxLength(100),
                                         TextInput::make('footer.copyright')->label('Teks Hak Cipta')->maxLength(255)->helperText('Tahun dan nama situs ditambahkan otomatis.'),
+                                    ]),
+
+                                Section::make('Latar Footer')
+                                    ->description('Gambar latar yang tampil di seluruh footer situs.')
+                                    ->schema([
+                                        FileUpload::make('footer.background_image')
+                                            ->label('Foto Latar Footer')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('backgrounds')
+                                            ->visibility('public')
+                                            ->maxSize(8192)
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                            ->helperText('Disarankan rasio lebar, minimal 1920px. Maksimal 8 MB.'),
                                     ]),
                             ]),
                     ])

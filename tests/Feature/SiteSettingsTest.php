@@ -126,6 +126,66 @@ class SiteSettingsTest extends TestCase
         $this->assertSame('instagram', $data['social_links'][0]['key']);
     }
 
+    public function test_why_choose_images_follow_the_uploaded_settings(): void
+    {
+        $settings = $this->settings();
+
+        $this->assertStringEndsWith('/images/why-choose-image-1.jpg', $settings->viewData()['assets']['why_1']);
+
+        $settings->update([
+            'home' => [
+                'why_image_1' => 'why-choose/utama.jpg',
+                'why_image_2' => 'https://cdn.example.com/kedua.jpg',
+                'why_items' => [
+                    ['title' => 'Satu', 'image' => 'why-choose-items/satu.jpg'],
+                    ['title' => 'Dua', 'image' => ''],
+                ],
+            ],
+        ]);
+
+        $assets = $this->settings()->viewData()['assets'];
+
+        $this->assertStringContainsString('/storage/why-choose/utama.jpg', $assets['why_1']);
+        $this->assertSame('https://cdn.example.com/kedua.jpg', $assets['why_2']);
+        $this->assertStringContainsString('/storage/why-choose-items/satu.jpg', $assets['why_item_1']);
+        $this->assertStringEndsWith('/images/why-choose-item-img-2.jpg', $assets['why_item_2']);
+    }
+
+    public function test_background_variables_use_uploaded_images_and_skip_empty_ones(): void
+    {
+        $settings = $this->settings();
+
+        $this->assertStringEndsWith('/images/footer-bg.jpg', $settings->viewData()['assets']['footer_bg']);
+
+        $settings->update([
+            'footer' => ['background_image' => 'backgrounds/footer.jpg'],
+            'home' => [
+                'testimonials_background' => 'https://cdn.example.com/testimoni.jpg',
+                'dark_section_background' => 'backgrounds/pola.png',
+            ],
+        ]);
+
+        $assets = $this->settings()->viewData()['assets'];
+
+        $this->assertStringContainsString('/storage/backgrounds/footer.jpg', $assets['footer_bg']);
+        $this->assertSame('https://cdn.example.com/testimoni.jpg', $assets['testimonials_bg']);
+        $this->assertStringContainsString('/storage/backgrounds/pola.png', $assets['dark_section_bg']);
+        $this->assertStringEndsWith('/images/core-feature-image-bg.png', $assets['core_feature_bg']);
+    }
+
+    public function test_layout_renders_background_css_variables(): void
+    {
+        $this->settings()->update([
+            'footer' => ['background_image' => 'backgrounds/footer.jpg'],
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('--bg-footer:', false);
+        $response->assertSee('--bg-hero:', false);
+    }
+
     public function test_site_setting_model_clears_the_cache_when_saved(): void
     {
         SiteSetting::query()->create(['data' => ['identity' => ['name' => 'Pertama']]]);

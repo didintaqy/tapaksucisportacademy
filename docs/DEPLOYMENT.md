@@ -138,6 +138,7 @@ Jadwal yang terdaftar:
 |---|---|---|
 | 08:00 setiap hari | `payments:send-reminders --days=3` | Kirim email pengingat tagihan jatuh tempo ≤ 3 hari |
 | 03:00 setiap hari | `queue:prune-failed --hours=168` | Hapus failed job lebih tua dari 7 hari |
+| 03:15 setiap hari | `site-settings:prune-media` | Karantina gambar Pengaturan Situs yang tidak dipakai lagi, retensi 30 hari |
 
 ### Monitoring queue
 
@@ -300,6 +301,9 @@ terenkripsi tidak dapat dibuka).
 - [ ] Uptime monitor memantau `/up` dan alert aktif
 - [ ] `queue:restart` dijalankan setiap deploy
 - [ ] `queue:prune-failed --hours=168` terjadwal
+- [ ] `site-settings:prune-media` terjadwal dan karantina gambar dipantau
+- [ ] `SITE_MEDIA_TRASH_RETENTION_DAYS` disesuaikan dengan kapasitas disk
+- [ ] `storage/app/private/site-media-trash` disertakan dalam backup berkas
 - [x] Backup otomatis berjalan (`db:backup` terjadwal 02:00, retensi 14 hari)
 - [ ] Salinan backup disimpan di luar server
 - [ ] Uji restore penuh ke database terpisah

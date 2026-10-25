@@ -53,6 +53,8 @@
 	<!-- Main Custom Css (Vite) -->
 	@vite(['resources/css/custom.css'])
 
+	@include('layout.partials.background-variables')
+
 	<style>
 		.avatar-initials {
 			display: flex;

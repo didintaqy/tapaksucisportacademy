@@ -6,6 +6,7 @@ use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Throwable;
 
 class SiteSettings
 {
@@ -134,6 +135,11 @@ class SiteSettings
                 'cta_heading' => 'Siap Memulai Latihan?',
                 'cta_description' => 'Hubungi admin atau isi formulir pendaftaran untuk mengetahui jadwal dan program yang tersedia.',
                 'feature_image' => 'images/cour-feature-image.png',
+                'why_image_1' => 'images/why-choose-image-1.jpg',
+                'why_image_2' => 'images/why-choose-image-2.jpg',
+                'testimonials_background' => 'images/testimonial-bg.jpg',
+                'dark_section_background' => 'images/dark-section-bg-shape.png',
+                'core_feature_background' => 'images/core-feature-image-bg.png',
             ],
             'about' => [
                 'eyebrow' => 'Tentang Kami',
@@ -178,6 +184,7 @@ class SiteSettings
                 'cta_description' => 'Bergabunglah bersama siswa lain dan temukan manfaat latihan pencak silat yang terarah.',
                 'cta_label' => 'Daftar Sekarang',
                 'copyright' => 'Seluruh hak cipta dilindungi.',
+                'background_image' => 'images/footer-bg.jpg',
             ],
         ];
     }
@@ -217,6 +224,16 @@ class SiteSettings
         );
 
         $this->flush();
+
+        // Data baru sudah tersimpan sebelum berkas lama dihapus, sehingga
+        // kegagalan penghapusan tidak pernah membuat data menunjuk ke
+        // gambar yang sudah hilang. Kegagalan filesystem juga tidak boleh
+        // menggagalkan penyimpanan pengaturan.
+        try {
+            app(SiteSettingMedia::class)->prune();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     public function flush(): void
@@ -249,10 +266,14 @@ class SiteSettings
             'contact' => $this->mediaUrl(data_get($data, 'contact.image'), asset('images/contact-us-img.jpg')),
             'feature' => $this->mediaUrl(data_get($data, 'home.feature_image'), asset('images/cour-feature-image.png')),
             'og_image' => $this->mediaUrl(data_get($data, 'seo.image'), asset('images/hero-bg.jpg')),
-            'why_1' => asset('images/why-choose-image-1.jpg'),
-            'why_2' => asset('images/why-choose-image-2.jpg'),
-            'why_item_1' => asset('images/why-choose-item-img-1.jpg'),
-            'why_item_2' => asset('images/why-choose-item-img-2.jpg'),
+            'why_1' => $this->mediaUrl(data_get($data, 'home.why_image_1'), asset('images/why-choose-image-1.jpg')),
+            'why_2' => $this->mediaUrl(data_get($data, 'home.why_image_2'), asset('images/why-choose-image-2.jpg')),
+            'why_item_1' => $this->mediaUrl(data_get($data, 'home.why_items.0.image'), asset('images/why-choose-item-img-1.jpg')),
+            'why_item_2' => $this->mediaUrl(data_get($data, 'home.why_items.1.image'), asset('images/why-choose-item-img-2.jpg')),
+            'footer_bg' => $this->mediaUrl(data_get($data, 'footer.background_image'), asset('images/footer-bg.jpg')),
+            'testimonials_bg' => $this->mediaUrl(data_get($data, 'home.testimonials_background'), asset('images/testimonial-bg.jpg')),
+            'dark_section_bg' => $this->mediaUrl(data_get($data, 'home.dark_section_background'), asset('images/dark-section-bg-shape.png')),
+            'core_feature_bg' => $this->mediaUrl(data_get($data, 'home.core_feature_background'), asset('images/core-feature-image-bg.png')),
         ];
 
         // Process why_items images to full URLs

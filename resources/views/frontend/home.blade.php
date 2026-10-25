@@ -176,7 +176,7 @@
                                         <!-- Why Choose Item Image Start -->
                                         <div class="why-choose-item-image">
                                             <figure class="image-anime">
-                                                <img src="{{ $item['image'] ?? ($index === 0 ? $site['assets']['why_item_1'] : $site['assets']['why_item_2']) }}" alt="">
+                                                <img src="{{ filled($item['image'] ?? null) ? $item['image'] : ($index === 0 ? $site['assets']['why_item_1'] : $site['assets']['why_item_2']) }}" alt="{{ $item['title'] ?? '' }}">
                                             </figure>
                                         </div>
                                         <!-- Why Choose Item Image End -->
@@ -232,7 +232,7 @@
                             <!-- Why Choose Image 1 Start -->
                             <div class="why-choose-img-1">
                                 <figure class="image-anime">
-                                    <img src="{{ $site['assets']['why_1'] }}" alt="">
+                                    <img src="{{ $site['assets']['why_1'] }}" alt="Latihan {{ $site['identity']['name'] }}">
                                 </figure>
                             </div>
                             <!-- Why Choose Image 1 End -->
@@ -240,7 +240,7 @@
                             <!-- Why Choose Image 2 Start -->
                             <div class="why-choose-img-2">
                                 <figure class="image-anime">
-                                    <img src="{{ $site['assets']['why_2'] }}" alt="">
+                                    <img src="{{ $site['assets']['why_2'] }}" alt="Kegiatan {{ $site['identity']['name'] }}">
                                 </figure>
 
                                 @if (filled($site['identity']['years_experience'] ?? null))

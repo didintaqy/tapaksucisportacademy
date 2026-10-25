@@ -103,11 +103,11 @@ publik tanpa deploy:
 | Identitas & logo | Nama, nama pendek, tagline, logo, favicon, latar header |
 | Kontak & lokasi | Alamat, telepon, WhatsApp, email, jam, link + embed Google Maps |
 | Media sosial | Facebook, Instagram, YouTube, TikTok, X |
-| Beranda | Hero, section, langkah, keunggulan |
+| Beranda | Hero, section, langkah, keunggulan, gambar latar section |
 | Tentang kami | Sejarah, visi, misi, nilai |
 | Program & biaya | Iuran bulanan, biaya pendaftaran, catatan biaya |
 | SEO | Judul dan deskripsi default untuk mesin pencari |
-| Footer | Deskripsi dan tautan footer |
+| Footer | Deskripsi, tautan footer, gambar latar footer |
 
 **Aturan penting:** bagian yang kosong **tidak ditampilkan** di situs. Ini
 disengaja agar tidak ada konten contoh. Jika section hilang dari situs, biasanya
@@ -116,6 +116,27 @@ datanya kosong.
 **Embed Google Maps:** tempel seluruh kode `<iframe>` dari Google Maps, atau URL
 `https://www.google.com/maps/embed?...`. Tautan `maps.app.goo.gl` saja **tidak**
 bisa ditampilkan sebagai peta.
+
+### 4.1.1 Mengganti gambar
+
+Setiap gambar punya kolom unggah sendiri. Setelah memilih berkas, tekan
+**Simpan** — gambar lama otomatis dipindahkan ke karantina, bukan langsung
+dihapus, sehingga masih bisa dipulihkan.
+
+Memulihkan gambar yang salah ganti (khusus teknis):
+
+```bash
+php artisan site-settings:prune-media --list                    # lihat isi karantina
+php artisan site-settings:prune-media --restore=site/logo.png   # kembalikan berkas
+```
+
+Setelah dipulihkan, unggah ulang berkas tersebut di kolom yang benar, lalu
+Simpan. Karantina dibersihkan permanen dengan `--empty-trash`.
+
+**Batas simpan:** gambar di karantina hanya bertahan **30 hari**, setelah itu
+dihapus permanen otomatis. Batas ini diatur `SITE_MEDIA_TRASH_RETENTION_DAYS`
+di `.env` (isi `0` untuk menyimpan selamanya). Pastikan gambar yang salah
+ganti dipulihkan sebelum masa itu lewat.
 
 ### 4.2 Menambah artikel
 
