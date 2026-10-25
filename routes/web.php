@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TestimonialController;
@@ -52,6 +53,9 @@ Route::post('/pendaftaran', [StudentRegistrationController::class, 'store'])
 
 // Sitemap (SEO)
 Route::get('/sitemap.xml', [SitemapController::class, '__invoke'])->name('sitemap');
+
+// robots.txt
+Route::get('/robots.txt', RobotsController::class)->name('robots');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])
