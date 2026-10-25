@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
+import { imagetools } from 'vite-imagetools';
 
 export default defineConfig({
     plugins: [
@@ -14,6 +15,17 @@ export default defineConfig({
             refresh: true,
         }),
         tailwindcss(),
+        imagetools({
+            // Default directives for all images imported via Vite
+            defaultDirectives: (url) => {
+                // Generate responsive widths and modern formats
+                return new URLSearchParams({
+                    w: '400,800,1200',
+                    format: 'webp,avif',
+                    as: 'picture',
+                }).toString();
+            },
+        }),
     ],
     server: {
         watch: {
