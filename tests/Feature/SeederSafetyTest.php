@@ -13,6 +13,14 @@ class SeederSafetyTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function tearDown(): void
+    {
+        $this->setEnv('ADMIN_EMAIL', null);
+        $this->setEnv('ADMIN_PASSWORD', null);
+
+        parent::tearDown();
+    }
+
     /**
      * Deploy produksi tidak boleh menjalankan seeder data demo.
      */
@@ -36,8 +44,8 @@ class SeederSafetyTest extends TestCase
     {
         $this->app->detectEnvironment(fn (): string => 'production');
 
-        putenv('ADMIN_EMAIL=admin@example.test');
-        putenv('ADMIN_PASSWORD=rahasia-sekali');
+        $this->setEnv('ADMIN_EMAIL', 'admin@example.test');
+        $this->setEnv('ADMIN_PASSWORD', 'rahasia-sekali');
 
         $this->artisan('db:seed', ['--force' => true])->assertExitCode(0);
 
@@ -56,8 +64,8 @@ class SeederSafetyTest extends TestCase
      */
     public function test_demo_seeder_does_not_overwrite_existing_passwords(): void
     {
-        putenv('ADMIN_EMAIL=admin@tapaksuci.test');
-        putenv('ADMIN_PASSWORD=kata-sandi-baru');
+        $this->setEnv('ADMIN_EMAIL', 'admin@tapaksuci.test');
+        $this->setEnv('ADMIN_PASSWORD', 'kata-sandi-baru');
 
         $admin = User::factory()->create([
             'email' => 'admin@tapaksuci.test',
@@ -84,5 +92,19 @@ class SeederSafetyTest extends TestCase
         $this->assertStringNotContainsString('pelatih123', $source);
         $this->assertStringNotContainsString('adminadmin', $source);
         $this->assertStringNotContainsString('@tapaksuci.ac.id', $source);
+    }
+
+    private function setEnv(string $key, ?string $value): void
+    {
+        if ($value === null) {
+            putenv($key);
+            unset($_ENV[$key], $_SERVER[$key]);
+
+            return;
+        }
+
+        putenv("{$key}={$value}");
+        $_ENV[$key] = $value;
+        $_SERVER[$key] = $value;
     }
 }
