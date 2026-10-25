@@ -53,8 +53,8 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Upgrade npm to latest (fixes occasional `edgesOut` bug)
-        run: npm install -g npm@latest
+      - name: Upgrade npm to a compatible latest 10.x (fixes occasional `edgesOut` bug)
+        run: npm install -g npm@10
 
       - name: Install frontend dependencies
         run: npm ci
