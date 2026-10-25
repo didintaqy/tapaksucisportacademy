@@ -163,9 +163,7 @@
                             <div class="section-title">
                                 <h3 class="wow fadeInUp">{{ $home['why_heading'] }}</h3>
                                 <h2 class="text-anime-style-3" data-cursor="-opaque">{{ $home['why_description'] }}</h2>
-                                @if (filled(data_get($home, 'why_subdescription')))
-                                    <p class="wow fadeInUp" data-wow-delay="0.2s">{{ data_get($home, 'why_subdescription') }}</p>
-                                @endif
+                                <p class="wow fadeInUp" data-wow-delay="0.2s">{{ $home['why_subdescription'] ?? '' }}</p>
                             </div>
                             <!-- Section Title End -->
 
