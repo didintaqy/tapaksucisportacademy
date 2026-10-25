@@ -22,6 +22,27 @@ class BeltPromotionSeeder extends Seeder
         }
 
         $beltOrder = ['putih', 'kuning', 'hijau', 'biru', 'merah', 'coklat', 'hitam_1'];
+        $results = [
+            PromotionResult::Lulus,
+            PromotionResult::Lulus,
+            PromotionResult::Lulus,
+            PromotionResult::TidakLulus,
+            PromotionResult::Ditunda,
+        ];
+        $notesOptions = [
+            'Lulus dengan baik.',
+            'Perlu perbaikan teknik.',
+            'Ditunda hingga bulan depan.',
+            'Tidak lulus, coba lagi.',
+            'Prestasi gemilang.',
+        ];
+        $examinerNotesOptions = [
+            'Teknik bagus.',
+            'Perlu latihan lebih.',
+            'Sikap baik.',
+            'Kurang fokus.',
+        ];
+
         $count = 0;
 
         foreach ($students as $student) {
@@ -30,31 +51,29 @@ class BeltPromotionSeeder extends Seeder
                 continue; // Already at max belt or belt not in order
             }
 
-            // Randomly decide if this student has a promotion record
-            if (fake()->boolean(70)) { // 70% chance
+            // 70% chance
+            if (random_int(1, 100) <= 70) {
                 $targetBelt = $beltOrder[$currentBeltIndex + 1];
-                $result = fake()->randomElement([
-                    PromotionResult::Lulus,
-                    PromotionResult::Lulus,
-                    PromotionResult::Lulus,
-                    PromotionResult::TidakLulus,
-                    PromotionResult::Ditunda,
-                ]);
+                $result = $results[array_rand($results)];
 
-                $examDate = fake()->dateTimeBetween('-12 months', 'now');
+                // random date between -12 months and now
+                $now = time();
+                $twelveMonthsAgo = strtotime('-12 months', $now);
+                $examTimestamp = random_int($twelveMonthsAgo, $now);
+                $examDate = date('Y-m-d', $examTimestamp);
 
                 $promotion = BeltPromotion::create([
                     'student_id' => $student->id,
                     'examined_by' => $coaches->random()->id,
-                    'exam_date' => $examDate->format('Y-m-d'),
+                    'exam_date' => $examDate,
                     'current_belt' => $student->belt_level,
                     'target_belt' => $targetBelt,
                     'result' => $result,
-                    'notes' => fake()->optional()->paragraph(),
-                    'examiner_notes' => fake()->optional()->sentence(),
-                    'certificate_issued_at' => $result === PromotionResult::Lulus ? $examDate->format('Y-m-d') : null,
+                    'notes' => (random_int(0, 1) ? $notesOptions[array_rand($notesOptions)] : null),
+                    'examiner_notes' => (random_int(0, 1) ? $examinerNotesOptions[array_rand($examinerNotesOptions)] : null),
+                    'certificate_issued_at' => $result === PromotionResult::Lulus ? $examDate : null,
                     'certificate_number' => $result === PromotionResult::Lulus
-                        ? 'UKT-'.$examDate->format('Y').'-'.str_pad($count + 1, 4, '0', STR_PAD_LEFT)
+                        ? 'UKT-'.date('Y', $examTimestamp).'-'.str_pad($count + 1, 4, '0', STR_PAD_LEFT)
                         : null,
                 ]);
 
