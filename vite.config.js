@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { imagetools } from 'vite-imagetools';
+import { beasties } from 'vite-plugin-beasties';
 
 export default defineConfig({
     plugins: [
@@ -27,7 +28,10 @@ export default defineConfig({
                 }).toString();
             },
         }),
-        // TODO: add critters via vite-plugin-critters when needed
+        // Inline critical CSS for faster LCP
+        beasties({
+            // default options are fine; you can customise if needed
+        }),
     ],
     server: {
         watch: {
