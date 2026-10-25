@@ -11378,3 +11378,9 @@ header.main-header .header-sticky.active{
     background-color: var(--accent-color) !important;
     color: var(--white-color);
 }
+
+/* Fix why-choose image aspect ratio & radius to avoid vertical ellipse */
+.why-choose-img-2 figure img {
+    aspect-ratio: 1 / 1.105;
+    border-radius: 20px;
+}
