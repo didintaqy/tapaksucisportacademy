@@ -233,6 +233,7 @@ jobs:
           "$PHP_BIN" artisan package:discover --ansi
           "$PHP_BIN" artisan config:clear
           "$PHP_BIN" artisan migrate --force --no-interaction
+          "$PHP_BIN" artisan db:seed --force --no-interaction
           "$PHP_BIN" artisan optimize:clear
           "$PHP_BIN" artisan config:cache
           "$PHP_BIN" artisan route:cache
@@ -285,6 +286,10 @@ jobs:
 
           "$PHP_BIN" artisan queue:restart || true
           "$PHP_BIN" artisan up || true
+
+          # Post-deploy health check
+          curl -fsS --retry 3 --retry-delay 2 "https://tapaksucisportacademy.com/health" || { echo "Health check failed"; exit 1; }
+
           trap - EXIT
 
           cd "$APP_PATH/releases"
