@@ -50,8 +50,8 @@
 	<link rel="stylesheet" href="{{ asset('css/magnific-popup.css') }}">
 	<!-- Mouse Cursor Css File -->
 	<link rel="stylesheet" href="{{ asset('css/mousecursor.css') }}">
-	<!-- Main Custom Css -->
-	<link href="{{ asset('css/custom.css') }}" rel="stylesheet" media="screen">
+	<!-- Main Custom Css (Vite) -->
+	@vite(['resources/css/custom.css'])
 
 	<style>
 		.avatar-initials {
@@ -163,8 +163,8 @@
 	<script src="{{ asset('js/jquery.mb.YTPlayer.min.js') }}"></script>
 	<!-- Wow js file -->
 	<script src="{{ asset('js/wow.min.js') }}"></script>
-	<!-- Main Custom js file -->
-	<script src="{{ asset('js/function.js') }}"></script>
+	<!-- Main Custom js file (Vite) -->
+	@vite(['resources/js/custom.js'])
 	<!-- Pesan validasi formulir dalam Bahasa Indonesia -->
 	<script src="{{ asset('js/validation-id.js') }}"></script>
 
