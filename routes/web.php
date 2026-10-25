@@ -87,6 +87,7 @@ Route::middleware('auth')->prefix('admin/reports')->name('admin.reports.')->grou
 Route::get('/pembayaran', [PaymentPortalController::class, 'index'])
     ->name('payments.portal');
 Route::post('/pembayaran/cari', [PaymentPortalController::class, 'search'])
+    ->middleware('throttle:10,1')
     ->name('payments.portal.search');
 Route::get('/pembayaran/tagihan', [PaymentPortalController::class, 'bills'])
     ->name('payments.portal.bills');
@@ -102,4 +103,5 @@ Route::get('/pembayaran/keluar', [PaymentPortalController::class, 'logout'])
 // Callback / webhook dari payment gateway (tanpa CSRF)
 Route::post('/pembayaran/callback', [PaymentCallbackController::class, 'handle'])
     ->withoutMiddleware([VerifyCsrfToken::class])
+    ->middleware('throttle:120,1')
     ->name('payments.callback');

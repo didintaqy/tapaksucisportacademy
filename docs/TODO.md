@@ -3,10 +3,10 @@
 Dokumen ini adalah daftar kerja operasional yang harus ditindaklanjuti lintas sesi.
 Setiap item punya prioritas, bukti temuan, dan definisi selesai (acceptance criteria).
 
-- **Terakhir diperbarui:** 25 Oktober 2026 (implementasi data nyata & pengaturan situs selesai dan diuji)
-- **Branch integrasi:** `develop`
+- **Terakhir diperbarui:** 25 Oktober 2026 (milestone data nyata selesai; fokus berikutnya Fase 5 — Go-Live & Pemeliharaan)
+- **Branch integrasi:** `main`
 - **Acuan strategis:** `docs/ROADMAP.md`
-- **Status:** P0 selesai (RBAC + dependency audit); lanjut P1
+- **Status:** P0 & P1 selesai kecuali item operasional server (uptime monitor, queue worker, alert `failed_jobs`) dan audit mobile; lanjut Fase 5
 
 ## Cara pakai
 
@@ -119,7 +119,7 @@ Acuan: `docs/MILESTONE-DATA-REAL.md`.
 
 - [ ] Aktifkan queue worker produksi (Supervisor) — operasional server
 - [x] Jalankan `php artisan queue:restart` setiap deploy (dokumentasikan)
-- [ ] Pantau `failed_jobs` + alert — konfigurasi alert eksternal
+- [x] Pantau `failed_jobs` + alert — `queue:monitor default:100` terjadwal 5 menit, alert ke `MAIL_ALERT_ADDRESS`
 - [x] Jadwalkan `queue:prune-failed --hours=168`
 - [x] Pindahkan pengiriman newsletter ke queued job + Mailable
 - [x] Test perilaku antrean (bukan hanya `Mail::fake`)
@@ -146,6 +146,15 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 
 ## P2 — Hardening & kebersihan
 
+### P2.0 Hardening keamanan aplikasi
+
+- [x] Middleware `SecurityHeaders`: CSP, HSTS (hanya HTTPS), `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, COOP
+- [x] Whitelist sumber eksternal CSP di `config/security.php` (Google Maps iframe, analytics)
+- [x] Rate limit halaman cari ID siswa (`throttle:10,1`) — cegah penebakan NID/NIK
+- [x] Rate limit webhook payment gateway (`throttle:120,1`)
+- [x] Konfirmasi rate limit login admin Filament (5 percobaan/menit) + test
+- [ ] **Keputusan bisnis:** portal pembayaran hanya memverifikasi ID/NIK tanpa faktor kedua. Siapa pun yang tahu/menebak NIK (16 digit berpola) dapat melihat riwayat tagihan dan membuka checkout pembayaran siswa lain. Perlu keputusan: tambahkan tanggal lahir + nama ibu, OTP WhatsApp, atau batasi data yang ditampilkan.
+
 ### P2.1 CI hardening
 
 - [x] Tambahkan `migrate:fresh --seed` sebagai smoke test
@@ -157,6 +166,7 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - [x] Tambahkan `ProductionSeeder` (admin + jenis pembayaran, tanpa data demo)
 - [x] Dokumentasikan setup Hostinger, cron, queue, dan rollback
 - [x] Isi environment/secrets GitHub dan jalankan deploy pertama (operasional)
+- [x] Perbaiki langkah deploy yang menjalankan `db:seed` tanpa `--class` (risiko data demo & reset kata sandi admin)
 
 ### P2.2 Sinkronisasi dokumentasi
 
@@ -167,6 +177,9 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 
 ### P2.3 Fitur tertunda
 
+- [x] Hapus `db:seed` dari langkah deploy; `db:seed` tanpa `--class` hanya menjalankan `ProductionSeeder` di produksi
+- [x] Seeder demo tidak menimpa kata sandi akun dan tidak memakai kredensial/domain produksi
+- [x] `SeederSafetyTest` mencegah regresi seeder di jalur deploy
 - [ ] Reminder tagihan via WhatsApp (butuh provider WhatsApp Business API)
 - [x] Halaman `/program`: section testimoni dan FAQ kini memakai data dinamis dari database (disembunyikan jika kosong)
 - [x] Audit link mati lain di header/footer template
@@ -182,6 +195,7 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 | Akses Absensi | Pelatih: lihat + catat/ubah hanya jadwal sendiri; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
 | Akses UKT | Pelatih: lihat + catat/ubah hanya cabang jadwalnya; tanpa hapus | 21-10-2026 | Admin/Operator dapat hapus |
 | Akses Newsletter | Admin/Operator saja | 21-10-2026 | Aksi kirim butuh ability `send` |
+| Portal pembayaran | **Belum diputuskan** | 26-10-2026 | Verifikasi hanya ID/NIK; lihat TODO P2.0 |
 | Error tracking | **Logs-only + uptime alert** | 21-10-2026 | Tanpa Sentry/Flare; lihat `docs/MONITORING.md` |
 | Versi PHP produksi | **Belum diputuskan** | — | Menentukan matrix CI |
 
@@ -193,4 +207,8 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - **21-10-2026** — P0 selesai: 5 policy baru + `PolicyCoverageTest`; aksi kirim newsletter ber-ability `send`; dependency upgrade (Filament 5.10.3, Laravel 12.70.0, CommonMark 2.10.4, Flysystem 3.36.0, Symfony 7.4.21); `composer audit` bersih; audit ditambahkan ke CI; `composer.json` memakai platform PHP 8.2.0 agar lock file tetap kompatibel dengan CI.
 - **21-10-2026** — P1 selesai (kecuali aktivasi server): standarisasi navigasi/label Filament; logging `daily` + `docs/MONITORING.md`; newsletter dipindah ke `SendNewsletterJob` + `NewsletterMail`; scoping Pelatih per jadwal; perbaikan route sertifikat UKT dan otorisasi kwitansi; perbaikan overflow kalender/tabel pembayaran.
 - **21-10-2026** — Deploy produksi Hostinger disiapkan: workflow GitHub Actions (`deploy.yml`), `ProductionSeeder`, dan panduan `docs/DEPLOYMENT-HOSTINGER.md` (SSH, shared `.env`/storage, cron queue, rollback).
-- **25-10-2026** — Milestone Data Nyata & Pengaturan Situs selesai: `site_settings`, `coaches`, halaman admin, frontend dinamis, SEO composer, `SiteSettingSeeder`, 209 test lulus, `pint` lulus.
+- **25-10-2026** — Milestone Data Nyata & Pengaturan Situs selesai: `site_settings`, `coaches`, halaman admin, frontend dinamis, SEO composer, `SiteSettingSeeder`, 209 test lulus, `pint` lulus. Data resmi sudah diisi pengelola melalui panel admin produksi.
+- **25-10-2026** — Sinkronisasi dokumen: `ROADMAP.md` dan `MILESTONE-DATA-REAL.md` disamakan dengan status TODO (versi stack, branch `main`, deploy pertama, keputusan hosting/email/MySQL).
+- **26-10-2026** — Perbaikan keamanan deploy: `db:seed` dihapus dari workflow deploy; `DatabaseSeeder` hanya menjalankan `ProductionSeeder` di produksi/staging; `UsersTableSeeder` demo tidak lagi menimpa kata sandi, memakai kata sandi publik seragam, dan domain `@tapaksuci.test`; `SeederSafetyTest` ditambahkan (214 test lulus).
+- **26-10-2026** — Backup & alert: `db:backup` diperkuat (gzip, checksum `.sha256`, `--no-compress`, retensi default 14 hari, `mysqldump` tanpa argumen `--password`), perintah baru `db:restore` (`--verify` + restore SQLite/MySQL dengan pengaman `--force`), backup harian 02:00 dengan log kegagalan, `queue:monitor default:100` terjadwal 5 menit, dokumentasi backup/restore di `DEPLOYMENT.md` dan `MONITORING.md`. Uji restore SQLite end-to-end berhasil (6 user/24 siswa pulih). 222 test lulus.
+- **26-10-2026** — Hardening aplikasi: middleware `SecurityHeaders` (CSP, HSTS, nosniff, frame-ancestors, Permissions-Policy) dengan whitelist di `config/security.php`; rate limit cari ID siswa (10/menit) dan webhook gateway (120/menit); rate limit login Filament dikonfirmasi + diuji. 232 test lulus.

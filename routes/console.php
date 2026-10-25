@@ -20,8 +20,17 @@ Schedule::command('queue:prune-failed --hours=168')
     ->withoutOverlapping()
     ->onOneServer();
 
-// Backup database setiap hari pukul 02:00.
+// Backup database setiap hari pukul 02:00. Kegagalan dicatat ke log agar
+// terlihat di pemeriksaan harian (LOG_LEVEL=warning).
 Schedule::command('db:backup')
     ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->onFailure(fn (): mixed => logger()->error('Backup database harian gagal dijalankan.'));
+
+// Alert bila antrean menumpuk di atas 100 job (worker mungkin mati).
+// Perintah ini mengirim notifikasi ke MAIL_ALERT_ADDRESS.
+Schedule::command('queue:monitor default:100')
+    ->everyFiveMinutes()
     ->withoutOverlapping()
     ->onOneServer();

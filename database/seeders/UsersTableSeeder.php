@@ -7,6 +7,13 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Akun demo untuk development/testing.
+ *
+ * JANGAN dipakai di produksi: seeder ini membuat akun dengan kata sandi
+ * publik dan menimpa kata sandi akun yang emailnya sama. Produksi memakai
+ * ProductionSeeder.
+ */
 class UsersTableSeeder extends Seeder
 {
     /**
@@ -14,63 +21,62 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::updateOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'didintaqy@gmail.com')],
+        $adminEmail = env('ADMIN_EMAIL', 'admin@tapaksuci.test');
+        $adminPassword = env('ADMIN_PASSWORD', 'password');
+
+        // firstOrCreate agar kata sandi akun yang sudah ada tidak ditimpa
+        // setiap kali seeder dijalankan ulang.
+        $user = User::firstOrCreate(
+            ['email' => $adminEmail],
             [
                 'name' => env('ADMIN_NAME', 'Admin'),
-                'password' => Hash::make(env('ADMIN_PASSWORD', 'adminadmin')),
+                'password' => Hash::make($adminPassword),
                 'role' => UserRole::Admin,
             ],
         );
 
-        $this->command->info("Admin user ready: {$user->email}");
+        $this->command?->info("Admin user ready: {$user->email}");
 
-        // Create operator users
-        $operators = [
+        $users = [
             [
                 'name' => 'Operator Pusat',
-                'email' => 'operator.pusat@tapaksuci.ac.id',
-                'password' => Hash::make('operator123'),
+                'email' => 'operator.pusat@tapaksuci.test',
+                'password' => Hash::make('password'),
                 'role' => UserRole::Operator,
             ],
             [
                 'name' => 'Operator Batam',
-                'email' => 'operator.batam@tapaksuci.ac.id',
-                'password' => Hash::make('operator123'),
+                'email' => 'operator.batam@tapaksuci.test',
+                'password' => Hash::make('password'),
                 'role' => UserRole::Operator,
             ],
-        ];
-
-        foreach ($operators as $operator) {
-            $op = User::updateOrCreate(['email' => $operator['email']], $operator);
-            $this->command->info("Operator user ready: {$op->email}");
-        }
-
-        // Create pelatih (coach) users
-        $coaches = [
             [
                 'name' => 'Pelatih Budi Santoso',
-                'email' => 'pelatih.budi@tapaksuci.ac.id',
-                'password' => Hash::make('pelatih123'),
+                'email' => 'pelatih.budi@tapaksuci.test',
+                'password' => Hash::make('password'),
                 'role' => UserRole::Pelatih,
             ],
             [
                 'name' => 'Pelatih Siti Rahayu',
-                'email' => 'pelatih.siti@tapaksuci.ac.id',
-                'password' => Hash::make('pelatih123'),
+                'email' => 'pelatih.siti@tapaksuci.test',
+                'password' => Hash::make('password'),
                 'role' => UserRole::Pelatih,
             ],
             [
                 'name' => 'Pelatih Ahmad Wijaya',
-                'email' => 'pelatih.ahmad@tapaksuci.ac.id',
-                'password' => Hash::make('pelatih123'),
+                'email' => 'pelatih.ahmad@tapaksuci.test',
+                'password' => Hash::make('password'),
                 'role' => UserRole::Pelatih,
             ],
         ];
 
-        foreach ($coaches as $coach) {
-            $c = User::updateOrCreate(['email' => $coach['email']], $coach);
-            $this->command->info("Pelatih user ready: {$c->email}");
+        foreach ($users as $attributes) {
+            $created = User::firstOrCreate(
+                ['email' => $attributes['email']],
+                $attributes,
+            );
+
+            $this->command?->info("Demo user ready: {$created->email}");
         }
     }
 }

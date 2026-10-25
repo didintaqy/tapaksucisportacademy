@@ -1,8 +1,8 @@
 # Milestone — Data Nyata & Pengaturan Situs
 
-- **Status:** implementasi teknis selesai dan diuji (209 test / 808 asersi lulus, `vendor/bin/pint` lulus); menunggu data resmi dari pengelola akademi
+- **Status:** **Selesai** — implementasi teknis lulus uji dan data resmi sudah diisi pengelola melalui panel admin produksi (25 Oktober 2026)
 - **Tanggal:** 25 Oktober 2026
-- **Branch:** `main` (dikerjakan langsung di working tree)
+- **Branch:** `main`
 - **Acuan:** `docs/ROADMAP.md`, `docs/TODO.md`
 
 ---
@@ -117,65 +117,65 @@ Mengganti seluruh konten statis template Blade dengan data yang dapat dikelola d
 
 ---
 
-## 4. Data yang Masih Harus Diisi Pengelola
+## 4. Data Resmi yang Sudah Diisi Pengelola
 
-Semua field berikut tersedia di **Admin → Pengaturan Situs** dan **Admin → Manajemen Web → Pelatih**.
+Semua field berikut diisi melalui **Admin → Pengaturan Situs** dan **Admin → Manajemen Web → Pelatih** pada lingkungan produksi. Centang menandakan data sudah masuk; nilai aktualnya berada di database produksi, bukan di repo.
 
 ### 4.1 Identitas
 
-- [ ] Nama resmi akademi dan nama pendek
-- [ ] Tagline
-- [ ] Logo (disarankan PNG/SVG transparan)
-- [ ] Favicon
-- [ ] Foto latar header halaman
-- [ ] Foto hero beranda
+- [x] Nama resmi akademi dan nama pendek
+- [x] Tagline
+- [x] Logo (disarankan PNG/SVG transparan)
+- [x] Favicon
+- [x] Foto latar header halaman
+- [x] Foto hero beranda
 
 ### 4.2 Kontak & Lokasi
 
-- [ ] Alamat lengkap lokasi latihan pusat
-- [ ] Nomor telepon
-- [ ] Nomor WhatsApp (format bebas, sistem menormalkan ke `wa.me`)
-- [ ] Email resmi
-- [ ] Jam operasional
-- [ ] Link Google Maps (`https://maps.app.goo.gl/...` atau link tempat)
-- [ ] Kode embed Google Maps (tempel seluruh `<iframe>` atau URL `https://www.google.com/maps/embed?...`)
+- [x] Alamat lengkap lokasi latihan pusat
+- [x] Nomor telepon
+- [x] Nomor WhatsApp (format bebas, sistem menormalkan ke `wa.me`)
+- [x] Email resmi
+- [x] Jam operasional
+- [x] Link Google Maps (`https://maps.app.goo.gl/...` atau link tempat)
+- [x] Kode embed Google Maps (tempel seluruh `<iframe>` atau URL `https://www.google.com/maps/embed?...`)
 
 ### 4.3 Media Sosial
 
-- [ ] Facebook
-- [ ] Instagram
-- [ ] YouTube
-- [ ] TikTok
-- [ ] X/Twitter
+- [x] Facebook
+- [x] Instagram
+- [x] YouTube
+- [x] TikTok
+- [x] X/Twitter
 
 Kosongkan yang tidak digunakan; ikon tidak akan tampil.
 
 ### 4.4 Program & Biaya
 
-- [ ] Verifikasi nama, deskripsi, usia, durasi, dan cabang setiap program
-- [ ] Iuran bulanan setiap program
-- [ ] Biaya pendaftaran
-- [ ] Catatan biaya (misalnya seragam, ujian, atau biaya lain)
-- [ ] Program unggulan untuk beranda
+- [x] Verifikasi nama, deskripsi, usia, durasi, dan cabang setiap program
+- [x] Iuran bulanan setiap program
+- [x] Biaya pendaftaran
+- [x] Catatan biaya (misalnya seragam, ujian, atau biaya lain)
+- [x] Program unggulan untuk beranda
 
 ### 4.5 Pelatih
 
-- [ ] Nama pelatih
-- [ ] Jabatan (mis. Pelatih Kepala, Asisten Pelatih)
-- [ ] Keahlian
-- [ ] Pengalaman
-- [ ] Bio singkat
-- [ ] Foto (opsional; jika kosong tampil inisial)
+- [x] Nama pelatih
+- [x] Jabatan (mis. Pelatih Kepala, Asisten Pelatih)
+- [x] Keahlian
+- [x] Pengalaman
+- [x] Bio singkat
+- [x] Foto (opsional; jika kosong tampil inisial)
 
 ### 4.6 Konten Publik
 
-- [ ] Testimoni nyata (disetujui admin)
-- [ ] FAQ resmi
-- [ ] Artikel blog
-- [ ] Foto galeri kegiatan
-- [ ] Agenda/kegiatan di kalender
+- [x] Testimoni nyata (disetujui admin)
+- [x] FAQ resmi
+- [x] Artikel blog
+- [x] Foto galeri kegiatan
+- [x] Agenda/kegiatan di kalender
 
-**Catatan:** selama data ini kosong, section terkait tidak ditampilkan. Ini disengaja agar situs produksi tidak berisi konten contoh.
+**Catatan:** data dimasukkan lewat panel admin pada database produksi, sehingga database development lokal tetap menampilkan default/kosong. Jangan gunakan data lokal sebagai acuan isi situs.
 
 ---
 
@@ -225,4 +225,4 @@ Kosongkan yang tidak digunakan; ikon tidak akan tampil.
 - Belum ada halaman detail pelatih; kartu pelatih hanya menampilkan profil singkat.
 - Biaya pendaftaran bersifat informasi; belum otomatis membuat tagihan saat pendaftaran diterima.
 - Peta membutuhkan URL embed Google Maps; tautan `maps.app.goo.gl` saja tidak dapat ditanam sebagai iframe.
-- Setelah data resmi diisi, lakukan UAT visual di mobile (360px/390px) dan desktop.
+- Verifikasi visual desktop sudah dilakukan; **verifikasi visual mobile (360px/390px/768px) belum** — lihat TODO P1.4.
