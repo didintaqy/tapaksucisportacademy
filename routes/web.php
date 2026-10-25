@@ -10,6 +10,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImageDeliveryController;
 use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentPortalController;
 use App\Http\Controllers\PaymentReceiptController;
@@ -56,6 +57,11 @@ Route::get('/sitemap.xml', [SitemapController::class, '__invoke'])->name('sitema
 
 // robots.txt
 Route::get('/robots.txt', RobotsController::class)->name('robots');
+
+// On-demand optimized image variants (webp/avif)
+Route::get('/images/{model}/{id}/{variant}', ImageDeliveryController::class)
+    ->where('variant', 'webp|avif')
+    ->name('images.variant');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])
