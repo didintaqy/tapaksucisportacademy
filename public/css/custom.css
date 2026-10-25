@@ -11372,3 +11372,9 @@ header.main-header .header-sticky.active{
 .program-item-image figure img {
     max-height: 160px;
 }
+
+/* Badge styling: use accent color for all badges */
+.badge {
+    background-color: var(--accent-color) !important;
+    color: var(--white-color);
+}
