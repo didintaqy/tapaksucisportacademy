@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -11,43 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // programs
-        Schema::table('programs', function (Blueprint $table) {
-            $table->index(['is_active', 'sort_order'], 'programs_active_sort_index');
-        });
+        $this->safeCreateIndex('programs', ['is_active', 'sort_order'], 'programs_active_sort_index');
+        $this->safeCreateIndex('coaches', ['is_active', 'sort_order'], 'coaches_active_sort_index');
+        $this->safeCreateIndex('testimonials', ['status', 'is_featured', 'published_at'], 'testimonials_status_featured_published_index');
+        $this->safeCreateIndex('faqs', ['is_published', 'sort_order'], 'faqs_published_sort_index');
+        $this->safeCreateIndex('posts', ['status', 'published_at', 'category_id'], 'posts_status_published_category_index');
 
-        // coaches
-        Schema::table('coaches', function (Blueprint $table) {
-            $table->index(['is_active', 'sort_order'], 'coaches_active_sort_index');
-        });
-
-        // testimonials
-        Schema::table('testimonials', function (Blueprint $table) {
-            $table->index(['status', 'is_featured', 'published_at'], 'testimonials_status_featured_published_index');
-        });
-
-        // faqs
-        Schema::table('faqs', function (Blueprint $table) {
-            $table->index(['is_published', 'sort_order'], 'faqs_published_sort_index');
-        });
-
-        // posts
-        Schema::table('posts', function (Blueprint $table) {
-            $table->index(['status', 'published_at', 'category_id'], 'posts_status_published_category_index');
-        });
-
-        // students (common filters) - only if status column exists
         if (Schema::hasColumn('students', 'status')) {
-            Schema::table('students', function (Blueprint $table) {
-                $table->index(['branch', 'status'], 'students_branch_status_index');
-            });
+            $this->safeCreateIndex('students', ['branch', 'status'], 'students_branch_status_index');
         }
-
-        // attendances already has unique constraint, but add index for date lookups - only if status column exists
         if (Schema::hasColumn('attendances', 'status')) {
-            Schema::table('attendances', function (Blueprint $table) {
-                $table->index(['date', 'status'], 'attendances_date_status_index');
-            });
+            $this->safeCreateIndex('attendances', ['date', 'status'], 'attendances_date_status_index');
         }
     }
 
@@ -56,30 +31,44 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('programs', function (Blueprint $table) {
-            $table->dropIndex('programs_active_sort_index');
-        });
-        Schema::table('coaches', function (Blueprint $table) {
-            $table->dropIndex('coaches_active_sort_index');
-        });
-        Schema::table('testimonials', function (Blueprint $table) {
-            $table->dropIndex('testimonials_status_featured_published_index');
-        });
-        Schema::table('faqs', function (Blueprint $table) {
-            $table->dropIndex('faqs_published_sort_index');
-        });
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropIndex('posts_status_published_category_index');
-        });
+        $this->safeDropIndex('programs', 'programs_active_sort_index');
+        $this->safeDropIndex('coaches', 'coaches_active_sort_index');
+        $this->safeDropIndex('testimonials', 'testimonials_status_featured_published_index');
+        $this->safeDropIndex('faqs', 'faqs_published_sort_index');
+        $this->safeDropIndex('posts', 'posts_status_published_category_index');
         if (Schema::hasColumn('students', 'status')) {
-            Schema::table('students', function (Blueprint $table) {
-                $table->dropIndex('students_branch_status_index');
-            });
+            $this->safeDropIndex('students', 'students_branch_status_index');
         }
         if (Schema::hasColumn('attendances', 'status')) {
-            Schema::table('attendances', function (Blueprint $table) {
-                $table->dropIndex('attendances_date_status_index');
+            $this->safeDropIndex('attendances', 'attendances_date_status_index');
+        }
+    }
+
+    private function safeCreateIndex(string $table, array $columns, string $indexName): void
+    {
+        try {
+            Schema::table($table, function (Blueprint $table) use ($columns, $indexName) {
+                $table->index($columns, $indexName);
             });
+        } catch (QueryException $e) {
+            // 1061 = Duplicate key name
+            if ($e->errorInfo[1] !== 1061) {
+                throw $e;
+            }
+        }
+    }
+
+    private function safeDropIndex(string $table, string $indexName): void
+    {
+        try {
+            Schema::table($table, function (Blueprint $table) use ($indexName) {
+                $table->dropIndex($indexName);
+            });
+        } catch (QueryException $e) {
+            // 1091 = Can't DROP 'index'; check that it exists
+            if ($e->errorInfo[1] !== 1091) {
+                throw $e;
+            }
         }
     }
 };
