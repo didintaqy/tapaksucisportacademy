@@ -157,49 +157,106 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-xl-6">
+                        <!-- Why Choose Us Content Start -->
                         <div class="why-choose-us-content">
+                            <!-- Section Title Start -->
                             <div class="section-title">
                                 <h3 class="wow fadeInUp">{{ $home['why_heading'] }}</h3>
                                 <h2 class="text-anime-style-3" data-cursor="-opaque">{{ $home['why_description'] }}</h2>
+                                @if (filled(data_get($home, 'why_subdescription')))
+                                    <p class="wow fadeInUp" data-wow-delay="0.2s">{{ data_get($home, 'why_subdescription') }}</p>
+                                @endif
                             </div>
+                            <!-- Section Title End -->
 
+                            <!-- Why Choose Item List Start -->
                             <div class="why-choose-item-list wow fadeInUp" data-wow-delay="0.4s">
-                                @foreach ($home['why_items'] as $item)
+                                @foreach (array_slice($home['why_items'], 0, 2) as $index => $item)
+                                    <!-- Why Choose Item Start -->
                                     <div class="why-choose-item">
+                                        <!-- Why Choose Item Image Start -->
                                         <div class="why-choose-item-image">
                                             <figure class="image-anime">
-                                                <img src="{{ $loop->even ? $site['assets']['why_2'] : $site['assets']['why_1'] }}" alt="">
+                                                <img src="{{ $item['image'] ?? ($index === 0 ? $site['assets']['why_1'] : $site['assets']['why_2']) }}" alt="">
                                             </figure>
                                         </div>
+                                        <!-- Why Choose Item Image End -->
+
+                                        <!-- Why Choose Item Content Start -->
                                         <div class="why-choose-item-content">
                                             <h3>{{ $item['title'] ?? '' }}</h3>
                                             <p>{{ $item['description'] ?? '' }}</p>
                                         </div>
+                                        <!-- Why Choose Item Content End -->
                                     </div>
+                                    <!-- Why Choose Item End -->
                                 @endforeach
                             </div>
+                            <!-- Why Choose Item List End -->
 
+                            <!-- Why Choose Us Footer Start -->
                             <div class="why-choose-us-footer wow fadeInUp" data-wow-delay="0.6s">
+                                <!-- Why Choose Us Button Start -->
                                 <div class="why-choose-btn">
-                                    <a href="{{ route('registration') }}" class="btn-default">Daftar Sekarang</a>
+                                    <a href="{{ route('registration') }}" class="btn-default">{{ $home['why_cta_label'] ?? 'Daftar Sekarang' }}</a>
                                 </div>
+                                <!-- Why Choose Us Button End -->
+
+                                @if (filled(data_get($home, 'why_video_url')))
+                                    <!-- Why Choose Intro Video Start -->
+                                    <div class="why-choose-intro-video">
+                                        <!-- Video Play Button Start -->
+                                        <div class="video-play-button">
+                                            <a href="{{ data_get($home, 'why_video_url') }}" class="popup-video" data-cursor-text="Putar">
+                                                <i class="fa-solid fa-play"></i>
+                                            </a>
+                                        </div>
+                                        <!-- Video Play Button End -->
+
+                                        <!-- Why Choose Intro Video Content Start -->
+                                        <div class="why-choose-intro-video-content">
+                                            <h3>{{ $home['why_video_label'] ?? 'Intro Video' }}</h3>
+                                        </div>
+                                        <!-- Why Choose Intro Video Content End -->
+                                    </div>
+                                    <!-- Why Choose Intro Video End -->
+                                @endif
                             </div>
+                            <!-- Why Choose Us Footer End -->
                         </div>
+                        <!-- Why Choose Us Content End -->
                     </div>
 
                     <div class="col-xl-6">
+                        <!-- Why Choose Images Start -->
                         <div class="why-choose-images wow fadeInUp" data-wow-delay="0.2s">
+                            <!-- Why Choose Image 1 Start -->
                             <div class="why-choose-img-1">
                                 <figure class="image-anime">
                                     <img src="{{ $site['assets']['why_1'] }}" alt="">
                                 </figure>
                             </div>
+                            <!-- Why Choose Image 1 End -->
+
+                            <!-- Why Choose Image 2 Start -->
                             <div class="why-choose-img-2">
                                 <figure class="image-anime">
                                     <img src="{{ $site['assets']['why_2'] }}" alt="">
                                 </figure>
+
+                                @if (filled($site['identity']['years_experience'] ?? null))
+                                    <!-- Contact Us Circle Start -->
+                                    <div class="years-experience-circle">
+                                        <a href="{{ route('contact-us') }}">
+                                            <img src="{{ asset('images/years-experience-circle.svg') }}" alt="">
+                                        </a>
+                                    </div>
+                                    <!-- Contact Us Circle End -->
+                                @endif
                             </div>
+                            <!-- Why Choose Image 2 End -->
                         </div>
+                        <!-- Why Choose Images End -->
                     </div>
                 </div>
             </div>
