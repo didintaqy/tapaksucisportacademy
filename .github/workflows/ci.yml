@@ -40,6 +40,10 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
+      - name: Setup database & seed
+        run: |
+          php artisan migrate:fresh --seed --force
+
       - name: Check code style
         run: vendor/bin/pint --test
 
@@ -48,7 +52,6 @@ jobs:
 
       - name: Smoke test application bootstrap
         run: |
-          php artisan migrate:fresh --seed
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
