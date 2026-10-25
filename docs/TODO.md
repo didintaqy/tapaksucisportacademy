@@ -79,11 +79,11 @@ Acuan: `docs/MILESTONE-DATA-REAL.md`.
 - [x] SEO controller tidak ditimpa composer
 - [x] `ProductionSeeder` menyertakan pengaturan awal tanpa konten demo
 - [x] Test konten dinamis, empty state, akses admin, policy, SEO
-- [ ] Isi identitas resmi, alamat, telepon/WhatsApp, email, jam, link/embed peta, dan media sosial
-- [ ] Isi profil pelatih resmi
-- [ ] Verifikasi iuran program dan biaya pendaftaran
-- [ ] Unggah logo, favicon, foto hero, dan foto latar header
-- [ ] UAT visual halaman publik setelah data resmi diisi
+- [x] Isi identitas resmi, alamat, telepon/WhatsApp, email, jam, link/embed peta, dan media sosial
+- [x] Isi profil pelatih resmi
+- [x] Verifikasi iuran program dan biaya pendaftaran
+- [x] Unggah logo, favicon, foto hero, dan foto latar header
+- [x] UAT visual halaman publik setelah data resmi diisi
 
 **Definisi selesai:** tidak ada placeholder kontak/identitas yang terlihat di produksi; semua section publik memakai data resmi atau tersembunyi.
 
@@ -148,15 +148,15 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 
 ### P2.1 CI hardening
 
-- [ ] Tambahkan `migrate:fresh --seed` sebagai smoke test
-- [ ] Tambahkan `php artisan config:cache && route:cache && view:cache`
-- [ ] Tambahkan Composer cache + `concurrency` cancel-in-progress
-- [ ] Pertimbangkan matrix PHP 8.2/8.3/8.4 (sesuai versi produksi)
+- [x] Tambahkan `migrate:fresh --seed` sebagai smoke test
+- [x] Tambahkan `php artisan config:cache && route:cache && view:cache`
+- [x] Tambahkan Composer cache + `concurrency` cancel-in-progress
+- [x] Pertimbangkan matrix PHP 8.2/8.3/8.4 (sesuai versi produksi)
 - [x] Tambahkan `composer validate --strict` (sudah aktif di CI)
 - [x] Siapkan workflow deploy produksi Hostinger via SSH (`deploy.yml`)
 - [x] Tambahkan `ProductionSeeder` (admin + jenis pembayaran, tanpa data demo)
 - [x] Dokumentasikan setup Hostinger, cron, queue, dan rollback
-- [ ] Isi environment/secrets GitHub dan jalankan deploy pertama (operasional)
+- [x] Isi environment/secrets GitHub dan jalankan deploy pertama (operasional)
 
 ### P2.2 Sinkronisasi dokumentasi
 
@@ -169,7 +169,7 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 
 - [ ] Reminder tagihan via WhatsApp (butuh provider WhatsApp Business API)
 - [x] Halaman `/program`: section testimoni dan FAQ kini memakai data dinamis dari database (disembunyikan jika kosong)
-- [ ] Audit link mati lain di header/footer template
+- [x] Audit link mati lain di header/footer template
 - [ ] Evaluasi queue untuk export laporan besar
 - [ ] Idempotensi pengiriman newsletter per penerima (hindari duplikat saat job retry)
 
