@@ -40,6 +40,13 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
+      - name: Install image optimization binaries
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y optipng pngquant gifsicle jpegoptim
+          # svgo is a node tool; install via npm globally
+          npm install -g svgo
+
       - name: Setup database & seed
         run: |
           php artisan migrate:fresh --seed --force
