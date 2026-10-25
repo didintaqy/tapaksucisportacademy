@@ -15,7 +15,7 @@ Website resmi Tapak Suci Sport Academy: profil akademi, konten kegiatan, dan por
 - Pendaftaran siswa online
 - Kontak: form tersimpan ke database, info kontak, dan peta
 - Kalender kegiatan dan pengumuman
-- Portal pembayaran siswa: cari berdasarkan ID/NIK, lihat tagihan, checkout QRIS, dan cetak kwitansi
+- Portal pembayaran siswa: cari berdasarkan ID/NIK **+ tanggal lahir**, lihat tagihan, checkout QRIS, dan cetak kwitansi
 
 ### Panel admin (`/admin`)
 
@@ -153,9 +153,13 @@ php artisan test
 ## Dokumentasi
 
 - [Roadmap pengembangan](docs/ROADMAP.md) — rencana dari fondasi sampai go-live
+- [TODO & tindak lanjut](docs/TODO.md) — backlog harian berprioritas
 - [Panduan pengembangan](docs/ARCHITECTURE.md) — struktur modul dan alur utama
 - [Panduan deployment](docs/DEPLOYMENT.md) — konfigurasi produksi dan backup
 - [Deploy otomatis ke Hostinger](docs/DEPLOYMENT-HOSTINGER.md) — GitHub Actions + SSH, cron, dan rollback
+- [Monitoring & logging](docs/MONITORING.md) — log, uptime, antrean, dan respons insiden
+- [Panduan operator](docs/TRAINING-OPERATOR.md) — cara memakai panel admin + checklist pelatihan
+- [Pemeliharaan bulanan](docs/MAINTENANCE.md) — jadwal perawatan rutin dan eskalasi
 
 ## Lisensi
 

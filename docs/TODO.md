@@ -112,6 +112,7 @@ Acuan: `docs/MILESTONE-DATA-REAL.md`.
 - [x] Buat `docs/MONITORING.md`: log, error tracking, uptime, alert
 - [x] Tambahkan checklist logging ke `docs/DEPLOYMENT.md`
 - [ ] Pasang uptime monitor eksternal ke `/up` (operasional server)
+- [x] Panduan operator + checklist pelatihan (`docs/TRAINING-OPERATOR.md`)
 
 **Definisi selesai:** error produksi terlihat < 5 menit, ada prosedur alert, dokumentasi lengkap.
 
@@ -187,6 +188,12 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - [ ] Evaluasi queue untuk export laporan besar
 - [ ] Idempotensi pengiriman newsletter per penerima (hindari duplikat saat job retry)
 
+### P2.4 Pemeliharaan
+
+- [x] Rencana pemeliharaan bulanan (`docs/MAINTENANCE.md`): harian, mingguan, bulanan, triwulanan, log pemeliharaan
+- [ ] Isi nama & kontak penanggung jawab teknis di `docs/MAINTENANCE.md` §7
+- [ ] Jadwalkan sesi pelatihan operator pertama
+
 ---
 
 ## Keputusan
@@ -214,3 +221,4 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - **26-10-2026** — Backup & alert: `db:backup` diperkuat (gzip, checksum `.sha256`, `--no-compress`, retensi default 14 hari, `mysqldump` tanpa argumen `--password`), perintah baru `db:restore` (`--verify` + restore SQLite/MySQL dengan pengaman `--force`), backup harian 02:00 dengan log kegagalan, `queue:monitor default:100` terjadwal 5 menit, dokumentasi backup/restore di `DEPLOYMENT.md` dan `MONITORING.md`. Uji restore SQLite end-to-end berhasil (6 user/24 siswa pulih). 222 test lulus.
 - **26-10-2026** — Hardening aplikasi: middleware `SecurityHeaders` (CSP, HSTS, nosniff, frame-ancestors, Permissions-Policy) dengan whitelist di `config/security.php`; rate limit cari ID siswa (10/menit) dan webhook gateway (120/menit); rate limit login Filament dikonfirmasi + diuji. 232 test lulus.
 - **26-10-2026** — Portal pembayaran: verifikasi ID/NIK kini wajib disertai tanggal lahir (faktor kedua); pesan error diseragamkan agar tidak membocorkan keberadaan NIK; siswa tanpa tanggal lahir ditolak. `PaymentManagementTest` diperluas. 236 test lulus.
+- **26-10-2026** — Dokumentasi operasional: `docs/TRAINING-OPERATOR.md` (panduan panel admin, rutinitas harian, aturan privasi, checklist pelatihan) dan `docs/MAINTENANCE.md` (jadwal harian–tahunan, log pemeliharaan, kontak darurat, eskalasi). README dan ROADMAP diperbarui.

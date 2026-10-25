@@ -204,13 +204,13 @@ Tujuan: pengelolaan keuangan lengkap dan dapat diaudit.
 - [x] Siapkan pipeline deploy otomatis Hostinger (GitHub Actions + SSH)
 - [x] Isi secrets environment `production` dan jalankan deploy pertama
 - [ ] UAT bersama pengelola akademi
-- [ ] Training operator (dokumen + sesi)
+- [x] Training operator (dokumen + sesi) — panduan: `docs/TRAINING-OPERATOR.md`; **sesi pelatihan belum dijadwalkan**
 - [ ] Hardening: HTTPS, header keamanan, rate limit, permission file
 - [x] Backup otomatis + uji restore — `db:backup` harian 02:00 (retensi 14 hari, checksum) + `db:restore --verify`; **sisa:** salin backup ke luar server & uji restore penuh ke database terpisah
 - [x] Hardening aplikasi: header keamanan (CSP/HSTS/nosniff/frame-ancestors) + rate limit login admin, cari ID siswa, dan webhook
 - [ ] Hardening server: HTTPS, permission file, blokir akses `.env`/`database` (hPanel + .htaccess)
 - [ ] Monitoring uptime dan error (sisa: pasang uptime monitor eksternal ke `/up`; logging, retensi log, dan alert antrean `queue:monitor` sudah selesai)
-- [ ] Rencana pemeliharaan bulanan
+- [x] Rencana pemeliharaan bulanan — `docs/MAINTENANCE.md` (harian, mingguan, bulanan, triwulanan)
 
 ---
 
