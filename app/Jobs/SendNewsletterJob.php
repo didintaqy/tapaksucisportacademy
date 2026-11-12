@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\NewsletterMail;
 use App\Models\Newsletter;
+use App\Models\NewsletterDelivery;
 use App\Models\Student;
 use App\Models\User;
 use Filament\Notifications\Notification;
@@ -35,22 +36,52 @@ class SendNewsletterJob implements ShouldQueue
 
         $emails = User::whereNotNull('email')->where('email', '!=', '')->pluck('email')
             ->merge(Student::whereNotNull('email')->where('email', '!=', '')->pluck('email'))
+            ->map(fn ($email) => strtolower(trim((string) $email)))
+            ->filter()
             ->unique()
             ->values();
 
+        $alreadyDelivered = NewsletterDelivery::query()
+            ->where('newsletter_id', $newsletter->id)
+            ->pluck('email')
+            ->map(fn ($email) => strtolower(trim((string) $email)))
+            ->all();
+
+        $alreadyDeliveredLookup = array_flip($alreadyDelivered);
+
         foreach ($emails as $email) {
-            Mail::to($email)->queue(new NewsletterMail($newsletter));
+            if (isset($alreadyDeliveredLookup[$email])) {
+                continue;
+            }
+
+            $delivery = NewsletterDelivery::firstOrCreate(
+                [
+                    'newsletter_id' => $newsletter->id,
+                    'email' => $email,
+                ],
+                [
+                    'sent_at' => now(),
+                ],
+            );
+
+            if ($delivery->wasRecentlyCreated) {
+                Mail::to($email)->queue(new NewsletterMail($newsletter));
+            }
         }
+
+        $totalDelivered = NewsletterDelivery::query()
+            ->where('newsletter_id', $newsletter->id)
+            ->count();
 
         $newsletter->update([
             'status' => 'sent',
             'sent_at' => now(),
-            'recipients_count' => $emails->count(),
+            'recipients_count' => $totalDelivered,
         ]);
 
         Notification::make()
             ->title('Newsletter terkirim')
-            ->body($newsletter->subject.' — '.$emails->count().' penerima.')
+            ->body($newsletter->subject.' — '.$totalDelivered.' penerima.')
             ->success()
             ->sendToDatabase(User::where('role', 'admin')->get());
     }

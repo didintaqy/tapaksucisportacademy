@@ -4,10 +4,12 @@ namespace App\Filament\Pages;
 
 use App\Enums\BeltRank;
 use App\Enums\UserRole;
+use App\Models\Achievement;
 use App\Models\Attendance;
 use App\Models\BeltPromotion;
 use App\Models\Student;
 use App\Models\StudentPerformance;
+use App\Services\Fitness\PerformanceAnalysisService;
 use BackedEnum;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\DatePicker;
@@ -129,6 +131,16 @@ class GenerateReport extends Page implements HasForms
             ->orderBy('exam_date')
             ->get();
 
+        $achievements = Achievement::where('student_id', $student->id)
+            ->whereBetween('event_date', [$dateFrom, $dateTo])
+            ->orderBy('event_date')
+            ->get();
+
+        $latestPerformance = $performances->last();
+        $fitnessAnalysis = $latestPerformance
+            ? app(PerformanceAnalysisService::class)->analyze($latestPerformance, $student)
+            : null;
+
         $totalSessions = $attendances->count();
         $hadirCount = $attendances->where('status', 'hadir')->count();
         $izinCount = $attendances->where('status', 'izin')->count();
@@ -147,6 +159,8 @@ class GenerateReport extends Page implements HasForms
             'attendances' => $attendances,
             'performances' => $performances,
             'promotions' => $promotions,
+            'achievements' => $achievements,
+            'fitness_analysis' => $fitnessAnalysis,
             'stats' => [
                 'total_sessions' => $totalSessions,
                 'hadir' => $hadirCount,

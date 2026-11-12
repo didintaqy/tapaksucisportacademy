@@ -58,4 +58,19 @@ class Student extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(Achievement::class);
+    }
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function beltPromotions(): HasMany
+    {
+        return $this->hasMany(BeltPromotion::class);
+    }
 }

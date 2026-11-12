@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\PaymentMethod;
 use App\Http\Controllers\Controller;
+use App\Jobs\ExportFinancialReportJob;
 use App\Models\Payment;
 use App\Services\Reports\FinancialExcelExport;
 use App\Services\Reports\FinancialReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
@@ -168,6 +170,28 @@ class FinancialReportController extends Controller
             ->setWarnings(false);
 
         return $pdf->download('laporan-tunggakan-'.now()->format('Ymd').'.pdf');
+    }
+
+    public function queueExport(Request $request): RedirectResponse
+    {
+        Gate::authorize('viewAny', Payment::class);
+
+        $validated = $request->validate([
+            'report_type' => ['required', 'in:income,outstanding'],
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date'],
+            'type' => ['nullable', 'integer'],
+            'method' => ['nullable', 'string'],
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        ExportFinancialReportJob::dispatch(
+            (int) $request->user()->id,
+            $validated['report_type'],
+            $validated,
+        );
+
+        return back()->with('status', 'Export laporan sedang diproses di antrean dan akan dikirim ke notifikasi Anda.');
     }
 
     /**

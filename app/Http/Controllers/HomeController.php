@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Achievement;
 use App\Models\Coach;
 use App\Models\Faq;
 use App\Models\Post;
@@ -50,6 +51,13 @@ class HomeController extends Controller
                 ->limit(3)
                 ->get();
 
+            $achievements = Achievement::query()
+                ->published()
+                ->with('student')
+                ->orderByDesc('event_date')
+                ->limit(6)
+                ->get();
+
             $stats = [
                 'students' => Student::query()->count(),
                 'programs' => $programs->count(),
@@ -57,7 +65,7 @@ class HomeController extends Controller
                 'testimonials' => $testimonials->count(),
             ];
 
-            return compact('programs', 'coaches', 'testimonials', 'faqs', 'posts', 'stats');
+            return compact('programs', 'coaches', 'testimonials', 'faqs', 'posts', 'achievements', 'stats');
         });
 
         return view('frontend.home', $data);
