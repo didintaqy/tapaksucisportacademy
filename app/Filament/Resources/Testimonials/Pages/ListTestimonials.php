@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources\Testimonials\Pages;
 
+use App\Filament\Exports\TestimonialExporter;
+use App\Filament\Imports\TestimonialImporter;
 use App\Filament\Resources\Testimonials\TestimonialResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ImportAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListTestimonials extends ListRecords
@@ -19,6 +23,10 @@ class ListTestimonials extends ListRecords
     {
         return [
             CreateAction::make()->label('Tambah Testimoni'),
+            ImportAction::make()
+                ->importer(TestimonialImporter::class),
+            ExportAction::make()
+                ->exporter(TestimonialExporter::class),
         ];
     }
 }
