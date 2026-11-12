@@ -58,7 +58,7 @@ class SiteSettings
                 'description' => 'Latihan pencak silat Tapak Suci untuk anak, remaja, dan dewasa dengan bimbingan pelatih, program yang terstruktur, dan suasana latihan yang suportif.',
                 'primary_label' => 'Daftar Sekarang',
                 'secondary_label' => 'Lihat Program',
-                'video_url' => '',
+                'video_url' => 'https://www.youtube.com/watch?v=DqGgYgbCGBo',
                 'image' => 'images/hero-bg.jpg',
             ],
             'home' => [
@@ -166,7 +166,7 @@ class SiteSettings
                 ],
                 'image' => 'images/about-us-image.jpg',
                 'video_image' => 'images/about-us-video-image.jpg',
-                'video_url' => '',
+                'video_url' => 'https://www.youtube.com/watch?v=DqGgYgbCGBo',
             ],
             'registration' => [
                 'fee' => '',
