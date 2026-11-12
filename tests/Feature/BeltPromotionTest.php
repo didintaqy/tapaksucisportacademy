@@ -42,8 +42,8 @@ class BeltPromotionTest extends TestCase
             'student_id' => $student->id,
             'examined_by' => $user->id,
             'exam_date' => now()->format('Y-m-d'),
-            'current_belt' => 'putih',
-            'target_belt' => 'kuning',
+            'current_belt' => 'siswa_dasar',
+            'target_belt' => 'siswa_melati_1',
             'result' => PromotionResult::Lulus,
             'notes' => 'Test promotion',
             'examiner_notes' => 'Good performance',
@@ -61,13 +61,13 @@ class BeltPromotionTest extends TestCase
     public function test_belt_promotion_accessors(): void
     {
         $promotion = BeltPromotion::factory()->make([
-            'current_belt' => 'putih',
-            'target_belt' => 'kuning',
+            'current_belt' => 'siswa_dasar',
+            'target_belt' => 'siswa_melati_1',
             'result' => PromotionResult::Lulus,
         ]);
 
-        $this->assertEquals('Putih', $promotion->current_belt_label);
-        $this->assertEquals('Kuning', $promotion->target_belt_label);
+        $this->assertEquals('Siswa Dasar', $promotion->current_belt_label);
+        $this->assertEquals('Siswa Melati 1', $promotion->target_belt_label);
         $this->assertEquals('Lulus', $promotion->result_label);
         $this->assertEquals('success', $promotion->result_color);
         $this->assertEquals('heroicon-o-check-circle', $promotion->result_icon);
@@ -85,19 +85,19 @@ class BeltPromotionTest extends TestCase
 
     public function test_belt_rank_enum(): void
     {
-        $this->assertEquals('Putih', BeltRank::Putih->label());
-        $this->assertEquals('Kuning', BeltRank::Kuning->label());
-        $this->assertEquals('Hitam 1 Dan', BeltRank::Hitam1->label());
-        $this->assertEquals('gray', BeltRank::Putih->color());
-        $this->assertEquals('warning', BeltRank::Kuning->color());
-        $this->assertEquals('dark', BeltRank::Hitam1->color());
+        $this->assertEquals('Siswa Dasar', BeltRank::SiswaDasar->label());
+        $this->assertEquals('Siswa Melati 1', BeltRank::SiswaMelati1->label());
+        $this->assertEquals('Pendekar Besar', BeltRank::PendekarBesar->label());
+        $this->assertEquals('warning', BeltRank::SiswaDasar->color());
+        $this->assertEquals('info', BeltRank::KaderDasar->color());
+        $this->assertEquals('gray', BeltRank::PendekarMuda->color());
 
-        $this->assertEquals(BeltRank::Kuning, BeltRank::Putih->next());
-        $this->assertEquals(BeltRank::Hijau, BeltRank::Kuning->next());
-        $this->assertNull(BeltRank::Hitam5->next());
+        $this->assertEquals(BeltRank::SiswaMelati1, BeltRank::SiswaDasar->next());
+        $this->assertEquals(BeltRank::SiswaMelati2, BeltRank::SiswaMelati1->next());
+        $this->assertNull(BeltRank::PendekarBesar->next());
 
-        $this->assertFalse(BeltRank::Putih->isBlackBelt());
-        $this->assertTrue(BeltRank::Hitam1->isBlackBelt());
+        $this->assertFalse(BeltRank::SiswaDasar->isBlackBelt());
+        $this->assertTrue(BeltRank::PendekarMuda->isBlackBelt());
     }
 
     public function test_promotion_result_enum(): void

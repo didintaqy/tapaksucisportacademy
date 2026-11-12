@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\BeltRank;
 use App\Enums\PromotionResult;
 use App\Models\BeltPromotion;
 use App\Models\Student;
@@ -21,7 +22,14 @@ class BeltPromotionSeeder extends Seeder
             return;
         }
 
-        $beltOrder = ['putih', 'kuning', 'hijau', 'biru', 'merah', 'coklat', 'hitam_1'];
+        $beltOrder = [
+            BeltRank::SiswaDasar->value,
+            BeltRank::SiswaMelati1->value,
+            BeltRank::SiswaMelati2->value,
+            BeltRank::SiswaMelati3->value,
+            BeltRank::SiswaMelati4->value,
+            BeltRank::KaderDasar->value,
+        ];
         $results = [
             PromotionResult::Lulus,
             PromotionResult::Lulus,

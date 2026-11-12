@@ -185,8 +185,11 @@ adalah hardening tambahan agar Pelatih tidak bisa mengubah data jadwal lain.
 - [ ] Reminder tagihan via WhatsApp (butuh provider WhatsApp Business API)
 - [x] Halaman `/program`: section testimoni dan FAQ kini memakai data dinamis dari database (disembunyikan jika kosong)
 - [x] Audit link mati lain di header/footer template
-- [ ] Evaluasi queue untuk export laporan besar
-- [ ] Idempotensi pengiriman newsletter per penerima (hindari duplikat saat job retry)
+- [x] Evaluasi queue untuk export laporan besar (`ExportFinancialReportJob` + notifikasi unduhan)
+- [x] Idempotensi pengiriman newsletter per penerima (`newsletter_deliveries`, hindari duplikat saat job retry)
+- [x] Modul Prestasi & Kejuaraan Atlet (`Achievement`, resource Filament, halaman publik `/prestasi`, integrasi rapor PDF)
+- [x] Analisis Performa & Benchmark Kebugaran Dinamis (REMAJA: `FitnessComponent`, `FitnessTestItem`, `FitnessBenchmark` usia/gender, `ScoreCategory`, `PerformanceAnalysisService`)
+- [x] Portal Siswa Lengkap (`/portal-siswa`: profil kebugaran REMAJA, radar benchmark, grafik perkembangan antar sesi, kehadiran, prestasi, UKT/sertifikat, dan cetak rapor PDF)
 
 ### P2.4 Pemeliharaan
 

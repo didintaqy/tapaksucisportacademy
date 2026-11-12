@@ -17,137 +17,30 @@
         @php
             $perf = $this->record;
             $student = $perf->student;
+            $analysis = app(\App\Services\Fitness\PerformanceAnalysisService::class)->analyze($perf, $student);
 
-            // 1. Antropometri
-            $heightM = $perf->height ? (float) $perf->height : null;
-            $weightKg = $perf->weight ? (float) $perf->weight : null;
-            $bmi = ($heightM && $weightKg && $heightM > 0) ? round($weightKg / ($heightM * $heightM), 1) : null;
-            
-            $bmiCategory = 'Normal';
-            $bmiBadgeColor = 'text-success-600 bg-success-500/10 border-success-500/20';
-            if ($bmi) {
-                if ($bmi < 18.5) {
-                    $bmiCategory = 'Kurus';
-                    $bmiBadgeColor = 'text-warning-600 bg-warning-500/10 border-warning-500/20';
-                } elseif ($bmi >= 23 && $bmi < 25) {
-                    $bmiCategory = 'Kelebihan';
-                    $bmiBadgeColor = 'text-warning-600 bg-warning-500/10 border-warning-500/20';
-                } elseif ($bmi >= 25) {
-                    $bmiCategory = 'OBESITAS';
-                    $bmiBadgeColor = 'text-danger-600 bg-danger-500/10 border-danger-500/20';
-                }
-            }
+            $bmi = $analysis['bmi'];
+            $bmiCategory = $analysis['bmi_category'];
+            $bmiBadgeColor = match ($bmiCategory) {
+                'KURANG BERAT', 'KURUS', 'KELEBIHAN BB' => 'text-warning-600 bg-warning-500/10 border-warning-500/20',
+                'OBESITAS' => 'text-danger-600 bg-danger-500/10 border-danger-500/20',
+                default => 'text-success-600 bg-success-500/10 border-success-500/20',
+            };
 
-            // 2. Denyut Nadi
-            $rhr = $perf->resting_heart_rate ?? 0;
-            $mhr = $perf->max_heart_rate ?? 205;
-            $thr = $perf->training_heart_rate ?? 0;
+            $rhr = $analysis['heart_rate']['resting'];
+            $mhr = $analysis['heart_rate']['max'];
+            $thr = $analysis['heart_rate']['training'];
+            $rhrPercent = $analysis['heart_rate']['resting_pct'];
+            $thrPercent = $analysis['heart_rate']['training_pct'];
 
-            $rhrPercent = $mhr > 0 ? round(($rhr / $mhr) * 100) : 0;
-            $thrPercent = $mhr > 0 ? round(($thr / $mhr) * 100) : 0;
+            $chartLabels = $analysis['chart_labels'];
+            $chartScores = $analysis['chart_scores'];
+            $pillarScores = $analysis['pillar_scores'];
+            $overallScore = $analysis['overall_score'];
+            $scoreCategory = $analysis['score_category'];
+            $studentAge = $analysis['age'] ?? '-';
 
-            // 3. Benchmark Data
-            $tests = [
-                'Sit & Reach (Cm)' => [
-                    'category' => 'Flexibility',
-                    'target' => 28,
-                    'result' => (float) ($perf->sit_and_reach ?? 0),
-                    'unit' => 'cm',
-                    'inverted' => false,
-                ],
-                'Push Up 1 Menit' => [
-                    'category' => 'Strength',
-                    'target' => 24,
-                    'result' => (int) ($perf->push_up_1_min ?? 0),
-                    'unit' => 'rep',
-                    'inverted' => false,
-                ],
-                'Sit Up 2 Menit' => [
-                    'category' => 'Strength',
-                    'target' => 45,
-                    'result' => (int) ($perf->sit_up_2_min ?? 0),
-                    'unit' => 'rep',
-                    'inverted' => false,
-                ],
-                'Core Stability 12 Level' => [
-                    'category' => 'Strength',
-                    'target' => 12,
-                    'result' => (int) ($perf->core_stability_level ?? 0),
-                    'unit' => 'lvl',
-                    'inverted' => false,
-                ],
-                'Triple Hop Kanan' => [
-                    'category' => 'Power',
-                    'target' => 4.0,
-                    'result' => (float) ($perf->triple_hop_right ?? 0),
-                    'unit' => 'm',
-                    'inverted' => false,
-                ],
-                'Triple Hop Kiri' => [
-                    'category' => 'Power',
-                    'target' => 4.0,
-                    'result' => (float) ($perf->triple_hop_left ?? 0),
-                    'unit' => 'm',
-                    'inverted' => false,
-                ],
-                'Illinois Agility Test' => [
-                    'category' => 'Agility',
-                    'target' => 19.0,
-                    'result' => (float) ($perf->illinois_agility ?? 0),
-                    'unit' => 'dtk',
-                    'inverted' => true,
-                ],
-                'RAST - Average Power' => [
-                    'category' => 'Endurance',
-                    'target' => 275,
-                    'result' => (float) ($perf->rast_average_power ?? 0),
-                    'unit' => 'W',
-                    'inverted' => false,
-                ],
-                'RAST - Fatigue Index' => [
-                    'category' => 'Endurance',
-                    'target' => 5.0,
-                    'result' => (float) ($perf->rast_fatigue_index ?? 0),
-                    'unit' => 'W',
-                    'inverted' => true,
-                ],
-                'Beep Test VO2Max' => [
-                    'category' => 'Endurance',
-                    'target' => 45.0,
-                    'result' => (float) ($perf->beep_test_vo2max ?? 0),
-                    'unit' => 'ml/kg/min',
-                    'inverted' => false,
-                ],
-            ];
-
-            $chartLabels = [];
-            $chartScores = [];
-            $categoryScores = [];
-
-            foreach ($tests as $key => &$item) {
-                $chartLabels[] = $key;
-                if ($item['inverted']) {
-                    $pct = $item['result'] > 0 ? round(($item['target'] / $item['result']) * 100) : 0;
-                } else {
-                    $pct = $item['target'] > 0 ? round(($item['result'] / $item['target']) * 100) : 0;
-                }
-                $pctCapped = min($pct, 100);
-                $item['pct'] = $pct;
-                $chartScores[] = $pctCapped;
-                $categoryScores[$item['category']][] = $pctCapped;
-            }
-            unset($item);
-
-            $pillarScores = [
-                'Flexibility' => isset($categoryScores['Flexibility']) ? round(array_sum($categoryScores['Flexibility']) / count($categoryScores['Flexibility'])) : 0,
-                'Strength' => isset($categoryScores['Strength']) ? round(array_sum($categoryScores['Strength']) / count($categoryScores['Strength'])) : 0,
-                'Power' => isset($categoryScores['Power']) ? round(array_sum($categoryScores['Power']) / count($categoryScores['Power'])) : 0,
-                'Agility' => isset($categoryScores['Agility']) ? round(array_sum($categoryScores['Agility']) / count($categoryScores['Agility'])) : 0,
-                'Endurance' => isset($categoryScores['Endurance']) ? round(array_sum($categoryScores['Endurance']) / count($categoryScores['Endurance'])) : 0,
-            ];
-
-            $overallScore = round(array_sum($pillarScores) / 5);
-            $studentAge = $student?->birth_date ? \Carbon\Carbon::parse($student->birth_date)->age : '-';
+            $coaches = \App\Models\Coach::query()->where('is_active', true)->orderBy('sort_order')->take(3)->get();
         @endphp
 
         {{-- HEADER & BIODATA SISWA --}}
@@ -168,7 +61,7 @@
                             <span class="inline-flex items-center rounded-md bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 ring-1 ring-inset ring-primary-700/10 dark:bg-primary-500/10 dark:text-primary-400">
                                 TAPAK SUCI SPORT ACADEMY
                             </span>
-                            <span class="text-xs text-gray-500">ID: AT-{{ str_pad($student?->id ?? 0, 4, '0', STR_PAD_LEFT) }}</span>
+                            <span class="text-xs text-gray-500">ID: {{ $student?->student_code ?? 'AT-'.str_pad($student?->id ?? 0, 4, '0', STR_PAD_LEFT) }}</span>
                         </div>
                         <h1 class="mt-1 text-2xl font-black tracking-tight text-gray-950 dark:text-white uppercase">
                             {{ $student?->full_name ?? 'NAMA SISWA' }}
@@ -247,7 +140,7 @@
         {{-- VISUAL SUMMARY: RADIAL + RADAR --}}
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Profil Fisik Atlet</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Profil Fisik Atlet (REMAJA)</span>
                 <div class="relative my-4 flex h-36 w-36 items-center justify-center">
                     <svg class="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
                         <path class="text-gray-100 dark:text-gray-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -255,15 +148,15 @@
                     </svg>
                     <div class="absolute flex flex-col items-center">
                         <span class="text-3xl font-black text-gray-900 dark:text-white">{{ $overallScore }}%</span>
-                        <span class="text-[10px] font-medium text-gray-400">Rata-rata</span>
+                        <span class="text-[10px] font-bold uppercase" style="color: {{ $scoreCategory['color'] }}">{{ $scoreCategory['label'] }}</span>
                     </div>
                 </div>
-                <p class="text-center text-xs text-gray-500">Skor agregat 5 komponen kebugaran silat</p>
+                <p class="text-center text-xs font-medium text-gray-600 dark:text-gray-300">{{ $scoreCategory['description'] ?: 'Skor agregat 5 komponen kebugaran silat' }}</p>
             </div>
 
             <div class="col-span-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-gray-900 lg:col-span-2">
                 <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Diagram Persentase Hasil Tes Fisik</span>
-                <div 
+                <div
                     x-data="{
                         chart: null,
                         init() {
@@ -316,7 +209,7 @@
                                         }
                                     },
                                     plugins: {
-                                        legend: { 
+                                        legend: {
                                             position: 'bottom',
                                             labels: { boxWidth: 12, font: { size: 11 } }
                                         }
@@ -349,7 +242,7 @@
         <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
             <div class="border-b border-gray-200 px-6 py-4 dark:border-white/10 flex items-center justify-between">
                 <h3 class="font-bold text-base text-gray-900 dark:text-white">D. Rincian Uji Komponen Fisik</h3>
-                <span class="text-xs text-gray-400">Satuan terstandar TSSA</span>
+                <span class="text-xs text-gray-400">Benchmark disesuaikan usia ({{ $studentAge }} thn) &amp; gender</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
@@ -364,14 +257,14 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                        @foreach ($tests as $name => $data)
+                        @foreach ($analysis['items'] as $data)
                             <tr class="hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition">
                                 <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                                     <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-700 dark:bg-white/10 dark:text-gray-300">
-                                        {{ $data['category'] }}
+                                        {{ $data['component_name'] }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 font-medium">{{ $name }}</td>
+                                <td class="px-6 py-4 font-medium">{{ $data['name'] }}</td>
                                 <td class="px-6 py-4 text-center font-mono">{{ $data['target'] }} {{ $data['unit'] }}</td>
                                 <td class="px-6 py-4 text-center font-semibold text-primary-600 dark:text-primary-400">100%</td>
                                 <td class="px-6 py-4 text-center font-mono font-bold text-gray-950 dark:text-white">
@@ -395,26 +288,20 @@
         </div>
 
         {{-- FOOTER TIM PELATIH --}}
-        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-gray-900">
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Tim Pelatih & Penguji</span>
-            <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3 text-center">
-                <div class="space-y-1">
-                    <div class="mx-auto h-12 w-32 border-b border-gray-300 dark:border-gray-700"></div>
-                    <p class="font-bold text-sm text-gray-900 dark:text-white pt-2">HENNY WIJAYANTI</p>
-                    <p class="text-xs text-gray-400">Pelatih Fisik</p>
-                </div>
-                <div class="space-y-1">
-                    <div class="mx-auto h-12 w-32 border-b border-gray-300 dark:border-gray-700"></div>
-                    <p class="font-bold text-sm text-gray-900 dark:text-white pt-2">WULAN RAMADANI</p>
-                    <p class="text-xs text-gray-400">Pelatih Teknik</p>
-                </div>
-                <div class="space-y-1">
-                    <div class="mx-auto h-12 w-32 border-b border-gray-300 dark:border-gray-700"></div>
-                    <p class="font-bold text-sm text-gray-900 dark:text-white pt-2">M. TAQIYYUDIN ROHANAN</p>
-                    <p class="text-xs text-gray-400">Head Coach</p>
+        @if ($coaches->isNotEmpty())
+            <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Tim Pelatih &amp; Penguji</span>
+                <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3 text-center">
+                    @foreach ($coaches as $coach)
+                        <div class="space-y-1">
+                            <div class="mx-auto h-12 w-32 border-b border-gray-300 dark:border-gray-700"></div>
+                            <p class="font-bold text-sm text-gray-900 dark:text-white pt-2 uppercase">{{ $coach->name }}</p>
+                            <p class="text-xs text-gray-400">{{ $coach->role ?: 'Pelatih' }}</p>
+                        </div>
+                    @endforeach
                 </div>
             </div>
-        </div>
+        @endif
 
     </div>
 </x-filament-panels::page>

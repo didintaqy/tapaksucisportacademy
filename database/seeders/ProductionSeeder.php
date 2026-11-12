@@ -49,5 +49,8 @@ class ProductionSeeder extends Seeder
 
         // Pengaturan situs awal; admin melengkapi data resmi lewat panel.
         $this->call(SiteSettingSeeder::class);
+
+        // Master data komponen kebugaran, item tes, kategori skor, dan benchmark usia/gender.
+        $this->call(FitnessBenchmarkSeeder::class);
     }
 }

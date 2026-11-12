@@ -11,6 +11,7 @@ use App\Models\PaymentType;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class FinancialReportTest extends TestCase
@@ -188,5 +189,35 @@ class FinancialReportTest extends TestCase
         $this->actingAs($pelatih)
             ->get(route('admin.reports.outstanding.pdf'))
             ->assertForbidden();
+    }
+
+    public function test_admin_can_queue_financial_report_export_and_receive_notification(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->admin()->create();
+        $student = Student::factory()->create(['full_name' => 'Rizky Pratama']);
+        $type = PaymentType::factory()->create(['name' => 'SPP Reguler', 'slug' => 'spp-reguler']);
+
+        Payment::factory()->paid()->create([
+            'student_id' => $student->id,
+            'payment_type_id' => $type->id,
+            'amount' => 175000,
+            'paid_at' => now(),
+        ]);
+
+        $this->actingAs($admin)
+            ->from(IncomeReport::getUrl())
+            ->post(route('admin.reports.queue-export'), [
+                'report_type' => 'income',
+                'from' => now()->startOfMonth()->toDateString(),
+                'to' => now()->toDateString(),
+            ])
+            ->assertRedirect(IncomeReport::getUrl());
+
+        $this->assertDatabaseHas('notifications', [
+            'notifiable_type' => User::class,
+            'notifiable_id' => $admin->id,
+        ]);
     }
 }

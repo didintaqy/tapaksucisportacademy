@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\BeltRank;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -27,7 +28,7 @@ class StudentFactory extends Factory
             'phone_number' => fake()->numerify('08##########'),
             'email' => fake()->safeEmail(),
             'gender' => fake()->randomElement(['L', 'P']),
-            'belt_level' => 'putih',
+            'belt_level' => BeltRank::SiswaDasar->value,
             'address' => fake()->address(),
             'education' => fake()->randomElement(['SD', 'SMP', 'SMA']),
             'photo' => null,

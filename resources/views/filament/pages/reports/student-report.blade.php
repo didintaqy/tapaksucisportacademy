@@ -283,6 +283,53 @@
             TB/BB: tinggi (cm) / berat (kg); VO2max: beep test (ml/kg/min); Push-up: repetisi/menit;
             Sit-up: repetisi/2 menit; Kelentukan: sit &amp; reach (cm); Agility: Illinois test (detik).
         </p>
+
+        @if(!empty($fitness_analysis))
+        <div class="stats-grid" style="margin-top: 10px;">
+            <div class="stat-card">
+                <div class="stat-value">{{ $fitness_analysis['overall_score'] }}%</div>
+                <div class="stat-label">Skor Kebugaran (REMAJA)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 16px; color: {{ $fitness_analysis['score_category']['color'] ?? '#1e3a8a' }};">{{ $fitness_analysis['score_category']['label'] }}</div>
+                <div class="stat-label">{{ $fitness_analysis['score_category']['description'] }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 16px;">{{ $fitness_analysis['bmi'] ?? '-' }} ({{ $fitness_analysis['bmi_category'] }})</div>
+                <div class="stat-label">Indeks Massa Tubuh (IMT)</div>
+            </div>
+        </div>
+        @endif
+    </div>
+    @endif
+
+    @if(!empty($achievements) && $achievements->count() > 0)
+    <div class="section">
+        <div class="section-title">Prestasi &amp; Kejuaraan</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 15%;">Tanggal</th>
+                    <th style="width: 30%;">Nama Kejuaraan</th>
+                    <th style="width: 15%;">Tingkat</th>
+                    <th style="width: 20%;">Kategori / Kelas</th>
+                    <th>Medali</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($achievements as $index => $achievement)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ \Carbon\Carbon::parse($achievement->event_date)->format('d/m/Y') }}</td>
+                    <td>{{ $achievement->competition_name }}</td>
+                    <td>{{ $achievement->level_label }}</td>
+                    <td>{{ trim(($achievement->category ?? '') . ($achievement->weight_class ? ' • ' . $achievement->weight_class : '')) ?: '-' }}</td>
+                    <td><strong>{{ $achievement->medal_label }}</strong></td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
     @endif
 

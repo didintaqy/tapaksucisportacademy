@@ -19,10 +19,12 @@
 							<li class="nav-item"><a class="nav-link" href="{{ route('blog') }}">Blog</a></li>
 							<li class="nav-item submenu"><a class="nav-link" href="#">Informasi</a>
 								<ul>
+									<li class="nav-item"><a class="nav-link" href="{{ route('achievements') }}">Prestasi Atlet</a></li>
 									<li class="nav-item"><a class="nav-link" href="{{ route('gallery') }}">Galeri</a></li>
 									<li class="nav-item"><a class="nav-link" href="{{ route('testimonials') }}">Testimoni</a></li>
 									<li class="nav-item"><a class="nav-link" href="{{ route('faqs') }}">FAQ</a></li>
 									<li class="nav-item"><a class="nav-link" href="{{ route('calendar') }}">Kalender Kegiatan</a></li>
+									<li class="nav-item"><a class="nav-link" href="{{ route('student.portal') }}">Portal Siswa (REMAJA)</a></li>
 									<li class="nav-item"><a class="nav-link" href="{{ route('payments.portal') }}">Pembayaran Iuran</a></li>
 								</ul>
 							</li>

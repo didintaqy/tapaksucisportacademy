@@ -10,6 +10,7 @@ use App\Mail\NewsletterMail;
 use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Newsletter;
+use App\Models\NewsletterDelivery;
 use App\Models\Payment;
 use App\Models\PaymentType;
 use App\Models\Post;
@@ -138,6 +139,39 @@ class ContentManagementTest extends TestCase
         $this->assertSame(4, $newsletter->recipients_count);
 
         Mail::assertQueued(NewsletterMail::class, 4);
+    }
+
+    #[Test]
+    public function newsletter_job_is_idempotent_per_recipient_on_retry(): void
+    {
+        Mail::fake();
+
+        $admin = User::factory()->admin()->create(['email' => 'admin@test.com']);
+        User::factory()->create(['email' => 'user1@test.com']);
+        Student::factory()->create(['email' => 'siswa1@test.com']);
+
+        $newsletter = Newsletter::create([
+            'subject' => 'Newsletter Idempoten',
+            'content' => '<p>Isi newsletter</p>',
+            'status' => 'queued',
+            'created_by' => $admin->id,
+        ]);
+
+        // Simulasikan sebagian penerima sudah tercatat pada percobaan pertama sebelum gagal
+        NewsletterDelivery::create([
+            'newsletter_id' => $newsletter->id,
+            'email' => 'user1@test.com',
+            'sent_at' => now()->subMinute(),
+        ]);
+
+        (new SendNewsletterJob($newsletter))->handle();
+
+        // Hanya 2 penerima sisanya (admin & siswa1) yang boleh dikirimi email baru
+        Mail::assertQueued(NewsletterMail::class, 2);
+
+        $newsletter->refresh();
+        $this->assertSame('sent', $newsletter->status);
+        $this->assertSame(3, $newsletter->recipients_count);
     }
 
     #[Test]

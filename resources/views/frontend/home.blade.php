@@ -152,6 +152,54 @@
         <!-- Our Programs Section End -->
     @endif
 
+    @if (isset($achievements) && $achievements->isNotEmpty())
+        <!-- Achievements Section Start -->
+        <div class="our-programs">
+            <div class="container">
+                <div class="row section-row">
+                    <div class="col-lg-12">
+                        <div class="section-title section-title-center">
+                            <h3 class="wow fadeInUp">Jejak Juara</h3>
+                            <h2 class="text-anime-style-3" data-cursor="-opaque">Prestasi &amp; Kejuaraan Atlet</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    @foreach ($achievements->take(3) as $achievement)
+                        <div class="col-xl-4 col-md-6">
+                            <div class="program-item wow fadeInUp">
+                                <div class="program-item-content">
+                                    <span class="badge bg-warning text-dark mb-2">{{ $achievement->medal_label }}</span>
+                                    <h3>{{ $achievement->competition_name }}</h3>
+                                    <p>
+                                        <strong>{{ $achievement->student?->full_name ?? 'Kontingen Tapak Suci Sport Academy' }}</strong>
+                                    </p>
+                                    @if ($achievement->category || $achievement->weight_class)
+                                        <p>{{ trim(($achievement->category ?? '').($achievement->weight_class ? " • {$achievement->weight_class}" : '')) }}</p>
+                                    @endif
+                                    <p class="small text-muted mb-0">
+                                        {{ $achievement->event_date?->translatedFormat('d F Y') }} &middot; {{ $achievement->level_label }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <div class="col-lg-12">
+                        <div class="section-footer-text wow fadeInUp" data-wow-delay="0.3s">
+                            <p>
+                                Lihat rekap lengkap medali dan kejuaraan
+                                <a href="{{ route('achievements') }}">di halaman prestasi atlet</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Achievements Section End -->
+    @endif
+
     @if (! empty($home['why_items']))
         <!-- Why Choose Us Section Start -->
         <div class="why-choose-us">

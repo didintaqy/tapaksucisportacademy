@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
                 EventSeeder::class,
                 AttendanceSeeder::class,
                 BeltPromotionSeeder::class,
+                FitnessBenchmarkSeeder::class,
+                AchievementSeeder::class,
             ]);
 
             return;

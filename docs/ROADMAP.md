@@ -22,7 +22,9 @@ Dokumen ini adalah acuan resmi pengembangan website dari kondisi saat ini sampai
 | Blog & artikel | ✅ | ✅ | Selesai |
 | Kontak (form → database) | ✅ | ✅ | Selesai |
 | Data siswa | — | ✅ | Selesai |
-| Performa fisik siswa | — | ✅ | Selesai (input manual) |
+| Performa fisik siswa | ✅ portal | ✅ | **Selesai** (input manual + benchmark usia/gender & skor kategori REMAJA) |
+| Prestasi & medali atlet | ✅ | ✅ | **Selesai** (rekap medali, filter kejuaraan, integrasi portal & rapor PDF) |
+| Portal siswa (REMAJA) | ✅ | — | **Selesai** (`/portal-siswa`: profil fisik, radar, perkembangan, absensi, UKT, prestasi, rapor PDF) |
 | Pembayaran & tagihan | ✅ portal | ✅ | Selesai |
 | Generate tagihan bulanan | — | ✅ | Selesai |
 | Rekap & export laporan keuangan | — | ✅ | **Selesai** |

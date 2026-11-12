@@ -68,9 +68,11 @@
                             <li><a href="{{ route('schedules') }}">Jadwal Latihan</a></li>
                             <li><a href="{{ route('blog') }}">Blog</a></li>
                             <li><a href="{{ route('gallery') }}">Galeri</a></li>
+                            <li><a href="{{ route('achievements') }}">Prestasi Atlet</a></li>
                             <li><a href="{{ route('testimonials') }}">Testimoni</a></li>
                             <li><a href="{{ route('faqs') }}">FAQ</a></li>
                             <li><a href="{{ route('calendar') }}">Kalender Kegiatan</a></li>
+                            <li><a href="{{ route('student.portal') }}">Portal Siswa</a></li>
                             <li><a href="{{ route('registration') }}">Pendaftaran</a></li>
                             <li><a href="{{ route('contact-us') }}">Kontak</a></li>
                         </ul>

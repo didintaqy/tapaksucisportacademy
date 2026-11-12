@@ -1,49 +1,45 @@
 @php
     $r = $getRecord();
     $student = $r->student ?? null;
+    $analysis = app(\App\Services\Fitness\PerformanceAnalysisService::class)->analyze($r, $student);
 
     // --- 1. DATA ANTROPOMETRI & BMI ---
-    $height = (float) ($r->height ?? 0);
-    $weight = (float) ($r->weight ?? 0);
-    $bmi = ($height > 0 && $weight > 0) ? round($weight / ($height * $height), 1) : '-';
-    $kategoriBmi = match(true) {
-        $bmi === '-' => '-',
-        $bmi < 18.5  => 'KURUS',
-        $bmi < 23.0  => 'NORMAL',
-        $bmi < 25.0  => 'KELEBIHAN BB',
-        default      => 'OBESITAS',
-    };
+    $height = $analysis['height'] ?? 0;
+    $weight = $analysis['weight'] ?? 0;
+    $bmi = $analysis['bmi'] ?? '-';
+    $kategoriBmi = $analysis['bmi_category'];
 
     // --- 2. DATA TES FISIK & PERSENTASE ---
-    $valSitReach  = (float) ($r->sit_and_reach ?? 0);
-    $valPushUp    = (float) ($r->push_up_1_min ?? 0);
-    $valSitUp     = (float) ($r->sit_up_2_min ?? 0);
-    $valCore      = (float) ($r->core_stability_level ?? 0);
-    $valHopR      = (float) ($r->triple_hop_right ?? 0);
-    $valHopL      = (float) ($r->triple_hop_left ?? 0);
-    $valIllinois  = (float) ($r->illinois_agility ?? 0);
-    $valRastP     = (float) ($r->rast_average_power ?? 0);
-    $valRastF     = (float) ($r->rast_fatigue_index ?? 0);
-    $valBeep      = (float) ($r->beep_test_vo2max ?? 0);
+    $itemsByKey = collect($analysis['items'])->keyBy('key');
+    $valSitReach  = $itemsByKey['sit_and_reach']['result'] ?? 0;
+    $valPushUp    = $itemsByKey['push_up_1_min']['result'] ?? 0;
+    $valSitUp     = $itemsByKey['sit_up_2_min']['result'] ?? 0;
+    $valCore      = $itemsByKey['core_stability_level']['result'] ?? 0;
+    $valHopR      = $itemsByKey['triple_hop_right']['result'] ?? 0;
+    $valHopL      = $itemsByKey['triple_hop_left']['result'] ?? 0;
+    $valIllinois  = $itemsByKey['illinois_agility']['result'] ?? 0;
+    $valRastP     = $itemsByKey['rast_average_power']['result'] ?? 0;
+    $valRastF     = $itemsByKey['rast_fatigue_index']['result'] ?? 0;
+    $valBeep      = $itemsByKey['beep_test_vo2max']['result'] ?? 0;
 
-    $pctSitReach  = min(round(($valSitReach / 28) * 100), 100);
-    $pctPushUp    = min(round(($valPushUp / 24) * 100), 100);
-    $pctSitUp     = min(round(($valSitUp / 45) * 100), 100);
-    $pctCore      = min(round(($valCore / 12) * 100), 100);
-    $pctHopR      = min(round(($valHopR / 4.0) * 100), 100);
-    $pctHopL      = min(round(($valHopL / 4.0) * 100), 100);
-    $pctIllinois  = $valIllinois > 0 ? min(round((19.0 / $valIllinois) * 100), 100) : 0;
-    $pctRastP     = min(round(($valRastP / 275) * 100), 100);
-    $pctRastF     = $valRastF > 0 ? min(round((5.0 / $valRastF) * 100), 100) : 0;
-    $pctBeep      = min(round(($valBeep / 45.0) * 100), 100);
+    $pctSitReach  = $itemsByKey['sit_and_reach']['pct'] ?? 0;
+    $pctPushUp    = $itemsByKey['push_up_1_min']['pct'] ?? 0;
+    $pctSitUp     = $itemsByKey['sit_up_2_min']['pct'] ?? 0;
+    $pctCore      = $itemsByKey['core_stability_level']['pct'] ?? 0;
+    $pctHopR      = $itemsByKey['triple_hop_right']['pct'] ?? 0;
+    $pctHopL      = $itemsByKey['triple_hop_left']['pct'] ?? 0;
+    $pctIllinois  = $itemsByKey['illinois_agility']['pct'] ?? 0;
+    $pctRastP     = $itemsByKey['rast_average_power']['pct'] ?? 0;
+    $pctRastF     = $itemsByKey['rast_fatigue_index']['pct'] ?? 0;
+    $pctBeep      = $itemsByKey['beep_test_vo2max']['pct'] ?? 0;
 
     // --- 3. PERHITUNGAN 5 PILAR ---
-    $flex      = $pctSitReach;
-    $strength  = min(round(($pctPushUp + $pctSitUp + $pctCore) / 3), 100);
-    $power     = min(round(($pctHopR + $pctHopL) / 2), 100);
-    $agility   = $pctIllinois;
-    $endurance = min(round(($pctRastP + $pctRastF + $pctBeep) / 3), 100);
-    $overall   = round(($flex + $strength + $power + $agility + $endurance) / 5);
+    $flex      = $analysis['pillar_scores']['Flexibility'] ?? 0;
+    $strength  = $analysis['pillar_scores']['Strength'] ?? 0;
+    $power     = $analysis['pillar_scores']['Power'] ?? 0;
+    $agility   = $analysis['pillar_scores']['Agility'] ?? 0;
+    $endurance = $analysis['pillar_scores']['Endurance'] ?? 0;
+    $overall   = $analysis['overall_score'];
 
     $pillars = [
         ['name' => 'Flexibility', 'val' => $flex,      'color' => '#84cc16'],
@@ -53,12 +49,9 @@
         ['name' => 'Endurance',   'val' => $endurance, 'color' => '#fef08a'],
     ];
 
-    $radarLabels = [
-        'Sit & Reach (Cm)', 'Push Up 1 Menit', 'Sit Up 2 Menit', 'Core Stability 12 Level',
-        'Triple Hop Kanan', 'Triple Hop Kiri', 'Illinois Agility Test',
-        'RAST Average Power', 'RAST Fatigue Index', 'Beep Test VO2Max',
-    ];
-    $radarValues = [$pctSitReach, $pctPushUp, $pctSitUp, $pctCore, $pctHopR, $pctHopL, $pctIllinois, $pctRastP, $pctRastF, $pctBeep];
+    $radarLabels = $analysis['chart_labels'];
+    $radarValues = $analysis['chart_scores'];
+    $coaches = \App\Models\Coach::query()->where('is_active', true)->orderBy('sort_order')->take(3)->get();
 @endphp
 
 <div style="background-color: #ffffff; color: #333333; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; border-radius: 8px; border: 1px solid #e5e7eb; max-width: 950px; margin: 0 auto; box-sizing: border-box;">
@@ -380,17 +373,19 @@
     </div>
 
     <!-- ==================== TIM PELATIH ==================== -->
-    <div>
-        <div style="background-color: #00adef; color: #ffffff; font-weight: 700; padding: 4px 12px; font-size: 13px;">
-            TIM PELATIH
+    @if ($coaches->isNotEmpty())
+        <div>
+            <div style="background-color: #00adef; color: #ffffff; font-weight: 700; padding: 4px 12px; font-size: 13px;">
+                TIM PELATIH
+            </div>
+            <table style="font-size: 12px; margin: 10px 0; border-collapse: collapse;">
+                @foreach ($coaches as $coach)
+                    <tr style="height: 20px;"><td style="width: 110px; font-weight: bold;">{{ $coach->role ?: 'Pelatih' }}</td><td style="width: 15px;">:</td><td style="font-weight: bold; text-transform: uppercase;">{{ $coach->name }}</td></tr>
+                @endforeach
+            </table>
+            <div style="height: 6px; background-color: #00adef; width: 100%; margin-top: 10px;"></div>
         </div>
-        <table style="font-size: 12px; margin: 10px 0; border-collapse: collapse;">
-            <tr style="height: 20px;"><td style="width: 80px; font-weight: bold;">Pelatih</td><td style="width: 15px;">:</td><td style="font-weight: bold;">HENNY WIJAYANTI</td></tr>
-            <tr style="height: 20px;"><td style="font-weight: bold;">Pelatih</td><td>:</td><td style="font-weight: bold;">WULAN RAMADANI</td></tr>
-            <tr style="height: 20px;"><td style="font-weight: bold;">Pelatih</td><td>:</td><td style="font-weight: bold;">M. TAQIYYUDIN ROIHANAN</td></tr>
-        </table>
-        <div style="height: 6px; background-color: #00adef; width: 100%; margin-top: 10px;"></div>
-    </div>
+    @endif
 
 </div>
 

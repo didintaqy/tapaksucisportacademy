@@ -46,8 +46,10 @@ app/
 | Jadwal latihan | `TrainingSchedule` | `TrainingSchedules/` | `/jadwal` |
 | Pendaftaran siswa | `StudentRegistration` | `StudentRegistrations/` | `/pendaftaran` |
 | Kegiatan | `Event` | `Events/` | `/kalender` |
-| Absensi | `Attendance` | `Attendances/` | — |
-| UKT / sabuk | `BeltPromotion` | `BeltPromotions/` | — |
+| Prestasi atlet | `Achievement` | `Achievements/` | `/prestasi`, Portal Siswa |
+| Benchmark kebugaran (REMAJA) | `FitnessBenchmark`, `FitnessComponent`, `FitnessTestItem`, `ScoreCategory` | `FitnessBenchmarks/` | Portal Siswa (`/portal-siswa`) |
+| Absensi | `Attendance` | `Attendances/` | Portal Siswa |
+| UKT / sabuk | `BeltPromotion` | `BeltPromotions/` | Portal Siswa |
 | Pengguna | `User` | `Users/` | — |
 
 ## Alur Program

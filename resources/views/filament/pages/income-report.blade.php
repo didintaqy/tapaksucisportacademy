@@ -72,6 +72,18 @@
                     Export PDF
                 </x-filament::button>
 
+                <form method="POST" action="{{ route('admin.reports.queue-export') }}" class="inline">
+                    @csrf
+                    <input type="hidden" name="report_type" value="income">
+                    <input type="hidden" name="from" value="{{ $fromDate->toDateString() }}">
+                    <input type="hidden" name="to" value="{{ $toDate->toDateString() }}">
+                    <input type="hidden" name="type" value="{{ $type }}">
+                    <input type="hidden" name="method" value="{{ $method }}">
+                    <x-filament::button type="submit" icon="heroicon-o-clock" color="info" outlined>
+                        Export via Antrean
+                    </x-filament::button>
+                </form>
+
                 <x-filament::button wire:click="resetFilters" color="gray" outlined>
                     Reset Filter
                 </x-filament::button>

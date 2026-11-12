@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\Admin\FinancialReportController;
 use App\Http\Controllers\BeltPromotionCertificateController;
 use App\Http\Controllers\BlogController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\StudentPortalController;
 use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TrainingScheduleController;
@@ -44,8 +46,9 @@ Route::post('/testimoni', [TestimonialController::class, 'store'])
 Route::get('/faq', FaqController::class)->name('faqs');
 Route::get('/jadwal', TrainingScheduleController::class)->name('schedules');
 
-// Kalender Kegiatan
+// Kalender Kegiatan & Prestasi Atlet
 Route::get('/kalender', [CalendarController::class, '__invoke'])->name('calendar');
+Route::get('/prestasi', AchievementController::class)->name('achievements');
 
 Route::get('/pendaftaran', [StudentRegistrationController::class, 'index'])->name('registration');
 Route::post('/pendaftaran', [StudentRegistrationController::class, 'store'])
@@ -81,7 +84,23 @@ Route::middleware('auth')->prefix('admin/reports')->name('admin.reports.')->grou
     Route::get('/outstanding/export', [FinancialReportController::class, 'exportOutstanding'])->name('outstanding.export');
     Route::get('/outstanding/excel', [FinancialReportController::class, 'exportOutstandingExcel'])->name('outstanding.excel');
     Route::get('/outstanding/pdf', [FinancialReportController::class, 'exportOutstandingPdf'])->name('outstanding.pdf');
+    Route::post('/queue-export', [FinancialReportController::class, 'queueExport'])->name('queue-export');
 });
+
+// Portal Siswa & Analisis Kebugaran (REMAJA)
+Route::get('/portal-siswa', [StudentPortalController::class, 'index'])
+    ->name('student.portal');
+Route::post('/portal-siswa/masuk', [StudentPortalController::class, 'login'])
+    ->middleware('throttle:10,1')
+    ->name('student.portal.login');
+Route::get('/portal-siswa/dashboard', [StudentPortalController::class, 'dashboard'])
+    ->name('student.portal.dashboard');
+Route::get('/portal-siswa/rapor-pdf', [StudentPortalController::class, 'downloadReportPdf'])
+    ->name('student.portal.report-pdf');
+Route::get('/portal-siswa/sertifikat-ukt/{beltPromotion}', [StudentPortalController::class, 'certificate'])
+    ->name('student.portal.certificate');
+Route::get('/portal-siswa/keluar', [StudentPortalController::class, 'logout'])
+    ->name('student.portal.logout');
 
 // Portal pembayaran untuk orang tua / siswa
 Route::get('/pembayaran', [PaymentPortalController::class, 'index'])
