@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CompetitionLevel;
 use App\Enums\MedalType;
+use App\Traits\OptimizesImages;
 use Database\Factories\AchievementFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,18 @@ class Achievement extends Model
 {
     /** @use HasFactory<AchievementFactory> */
     use HasFactory;
+
+    use OptimizesImages;
+
+    protected function imageAttributes(): array
+    {
+        return ['certificate_file'];
+    }
+
+    protected function imageMaxDimensions(string $attribute): array
+    {
+        return [1200, 1200];
+    }
 
     protected $fillable = [
         'student_id',

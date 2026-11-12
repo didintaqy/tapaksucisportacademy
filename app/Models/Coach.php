@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\OptimizesImages;
 use Database\Factories\CoachFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,18 @@ class Coach extends Model
 {
     /** @use HasFactory<CoachFactory> */
     use HasFactory;
+
+    use OptimizesImages;
+
+    protected function imageAttributes(): array
+    {
+        return ['photo_path'];
+    }
+
+    protected function imageMaxDimensions(string $attribute): array
+    {
+        return [400, 400];
+    }
 
     protected $fillable = [
         'name',

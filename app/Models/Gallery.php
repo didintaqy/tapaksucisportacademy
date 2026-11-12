@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\OptimizesImages;
 use Database\Factories\GalleryFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,18 @@ class Gallery extends Model
     /** @use HasFactory<GalleryFactory> */
     use HasFactory;
 
+    use OptimizesImages;
     use SoftDeletes;
+
+    protected function imageAttributes(): array
+    {
+        return ['image'];
+    }
+
+    protected function imageMaxDimensions(string $attribute): array
+    {
+        return [1600, 1200];
+    }
 
     protected static function booted(): void
     {

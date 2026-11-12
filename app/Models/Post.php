@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PostStatus;
+use App\Traits\OptimizesImages;
 use Database\Factories\PostFactory;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,18 @@ class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
     use HasFactory;
+
+    use OptimizesImages;
+
+    protected function imageAttributes(): array
+    {
+        return ['cover_image'];
+    }
+
+    protected function imageMaxDimensions(string $attribute): array
+    {
+        return [1200, 800];
+    }
 
     use SoftDeletes;
 

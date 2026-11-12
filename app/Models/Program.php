@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProgramLevel;
+use App\Traits\OptimizesImages;
 use Database\Factories\ProgramFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,18 @@ class Program extends Model
 {
     /** @use HasFactory<ProgramFactory> */
     use HasFactory, SoftDeletes;
+
+    use OptimizesImages;
+
+    protected function imageAttributes(): array
+    {
+        return ['cover_image'];
+    }
+
+    protected function imageMaxDimensions(string $attribute): array
+    {
+        return [1200, 800];
+    }
 
     protected $fillable = [
         'name',

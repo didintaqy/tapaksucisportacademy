@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\OptimizesImages;
 use Database\Factories\StudentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,18 @@ class Student extends Model
 
     /** @use HasFactory<StudentFactory> */
     use HasFactory, softDeletes;
+
+    use OptimizesImages;
+
+    protected function imageAttributes(): array
+    {
+        return ['photo'];
+    }
+
+    protected function imageMaxDimensions(string $attribute): array
+    {
+        return [800, 800];
+    }
 
     protected static function booted(): void
     {
