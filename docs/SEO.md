@@ -4,7 +4,7 @@ Website ini dioptimalkan untuk SEO dengan:
 
 - **Meta Title & Description** — diset di setiap halaman frontend (via View Composer).
 - **Sitemap** — `/sitemap.xml` menampilkan semua halaman penting dan di-ping ke Google.
-- **Open Graph** — (disiapkan callback); template KickPro sudah menyertakan meta opengraph di head.
+- **Open Graph** - (disiapkan callback); template dasar sudah menyertakan meta opengraph di head.
 
 ## Meta Tags per Halaman
 

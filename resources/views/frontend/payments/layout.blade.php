@@ -85,7 +85,11 @@
     <header class="site-header">
         <div class="inner">
             <div class="brand">
-                <div class="logo">TS</div>
+                @if (filled($site['assets']['logo'] ?? null))
+                    <img src="{{ $site['assets']['logo'] }}" alt="{{ $site['identity']['name'] ?? 'Tapak Suci Sport Academy' }}" style="width:40px;height:40px;border-radius:10px;object-fit:contain;background:#fff;">
+                @else
+                    <div class="logo">TS</div>
+                @endif
                 <div>
                     <h1>{{ config('payment.merchant.name', 'Tapak Suci Sport Academy') }}</h1>
                     <p>Portal Pembayaran Siswa</p>

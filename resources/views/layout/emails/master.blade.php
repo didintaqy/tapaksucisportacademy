@@ -39,6 +39,11 @@
     </style>
 </head>
 <body>
-    @yield('content')
+    <div class="email-container">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+            <img src="{{ $site['assets']['logo'] ?? asset('images/logo.svg') }}" alt="{{ $site['identity']['name'] ?? 'Tapak Suci Sport Academy' }}" style="max-height:60px;max-width:200px;">
+        </div>
+        @yield('content')
+    </div>
 </body>
 </html>

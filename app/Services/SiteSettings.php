@@ -266,7 +266,7 @@ class SiteSettings
             'about_video' => $this->mediaUrl(data_get($data, 'about.video_image'), asset('images/about-us-video-image.jpg')),
             'contact' => $this->mediaUrl(data_get($data, 'contact.image'), asset('images/contact-us-img.jpg')),
             'feature' => $this->mediaUrl(data_get($data, 'home.feature_image'), asset('images/cour-feature-image.png')),
-            'og_image' => $this->mediaUrl(data_get($data, 'seo.image'), asset('images/hero-bg.jpg')),
+            'og_image' => $this->mediaUrl(data_get($data, 'seo.image'), data_get($data, 'identity.logo') ? $this->mediaUrl(data_get($data, 'identity.logo')) : asset('images/logo.svg')),
             'why_1' => $this->mediaUrl(data_get($data, 'home.why_image_1'), asset('images/why-choose-image-1.jpg')),
             'why_2' => $this->mediaUrl(data_get($data, 'home.why_image_2'), asset('images/why-choose-image-2.jpg')),
             'why_item_1' => $this->mediaUrl(data_get($data, 'home.why_items.0.image'), asset('images/why-choose-item-img-1.jpg')),

@@ -192,7 +192,11 @@
         <div class="container">
             <div class="header-bar">
                 <div class="brand">
-                    <div class="brand-badge">TS</div>
+                    @if (filled($site['assets']['logo'] ?? null))
+                        <img src="{{ $site['assets']['logo'] }}" alt="{{ $site['identity']['name'] ?? 'Tapak Suci Sport Academy' }}" style="width:46px;height:46px;border-radius:12px;object-fit:contain;background:#fff;padding:4px;">
+                    @else
+                        <div class="brand-badge">TS</div>
+                    @endif
                     <div>
                         <h1>REMAJA &middot; Tapak Suci Sport Academy</h1>
                         <p>Rekam Medis, Analisis Jasmani &amp; Portal Akademik Siswa</p>
