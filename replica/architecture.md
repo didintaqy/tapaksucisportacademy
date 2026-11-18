@@ -41,7 +41,7 @@ modul, bukan redesign tampilan.
 | `items` + `stock_movements` | ✅ diterapkan | stok update otomatis |
 | QR check-in | ✅ skema + helper | endpoint/scan belum ada |
 | WhatsApp gateway | ✅ abstraksi + driver log | driver provider nyata belum |
-| UI admin Fase C | ⏸ belum | resource Filament menyusul |
+| UI admin Fase C | ✅ diterapkan | 7 resource + policy |
 
 ---
 

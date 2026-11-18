@@ -412,9 +412,20 @@ Ditambahkan 19-11-2026. Aditif; UI admin belum dibuat.
   slot konfigurasi tetapi implementasinya belum dibuat.
 - Binding di `AppServiceProvider`, jadi pemakaian: `app(WhatsAppGateway::class)`.
 
+### Menu admin (Filament)
+
+- **Master Data → Wali Siswa** (`GuardianResource`, pilih siswa langsung dari form).
+- **Master Data → Barang & Inventaris** (`ItemResource`, penanda stok menipis).
+- **Master Data → Pergerakan Stok** (`StockMovementResource`; daftar + catat, tanpa edit/hapus agar stok tetap konsisten).
+- **Manajemen Akademi → Keanggotaan** (`EnrollmentResource`).
+- **Manajemen Web → Peserta Event** (`EventParticipantResource`).
+- **Keuangan → Tarif Pelatih** (`CoachRateResource`).
+- **Keuangan → Honor Pelatih** (`CoachPayrollResource`, aksi **Hitung dari Absensi** dan **Tandai Dibayar**).
+
+Akses: Admin & Operator dapat melihat/mengubah; hapus hanya Admin; Pelatih ditolak.
+
 ### Yang belum dikerjakan di Fase C
 
-- Resource Filament untuk guardian, payroll, inventaris, dan peserta event.
 - Implementasi driver WhatsApp nyata (Fonnte/Wablas) + template pesan.
 - Halaman/endpoint check-in QR untuk pelatih.
 - Portal wali (login multi-anak) dan PWA.
