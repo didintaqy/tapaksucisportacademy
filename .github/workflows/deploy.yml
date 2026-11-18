@@ -219,6 +219,14 @@ jobs:
           rm -f "$APP_PATH/release.tar.gz"
 
           ln -sfn "$APP_PATH/shared/.env" "$RELEASE_DIR/.env"
+
+          # Pastikan URL aplikasi memakai HTTPS agar URL berkas dari
+          # Storage::url() tidak memicu mixed content pada halaman HTTPS.
+          if grep -Eq '^APP_URL=http://' "$APP_PATH/shared/.env"; then
+            sed -i 's#^APP_URL=.*#APP_URL=https://tapaksucisportacademy.com#' "$APP_PATH/shared/.env"
+            echo "APP_URL diubah ke https"
+          fi
+
           rm -rf "$RELEASE_DIR/storage"
           ln -sfn "$APP_PATH/shared/storage" "$RELEASE_DIR/storage"
           mkdir -p "$RELEASE_DIR/bootstrap/cache"
@@ -295,49 +303,13 @@ jobs:
           trap - EXIT
 
           # Diagnostik deploy (tidak mengekspos path rahasia).
-          echo "DIAG release=$(basename "$(readlink -f "$APP_PATH/current")")"
-          echo "DIAG resources=$(ls -1 "$APP_PATH/current/app/Filament/Resources" 2>/dev/null | tr '\n' ',')"
-          echo "DIAG guardians_in_routes=$(grep -c 'admin/guardians' "$APP_PATH/current/bootstrap/cache/routes-v7.php" 2>/dev/null || echo 0)"
-          echo "DIAG public_index_current_refs=$(grep -c 'current/vendor/autoload' "$PUBLIC_PATH/index.php" 2>/dev/null || echo 0)"
-          echo "DIAG marker=$(printf '%s' "$RELEASE_ID" > "$PUBLIC_PATH/__deploy_marker.txt" && echo written)"
-
-          # Diagnostik rute dari SAPI web (sementara, dihapus setelah dibaca).
-          DIAG_FILE="$PUBLIC_PATH/__diag_${RELEASE_ID}.php"
-          cat > "$DIAG_FILE" <<PHP
-          <?php
-          require '$RELEASE_DIR/vendor/autoload.php';
-          \$app = require '$RELEASE_DIR/bootstrap/app.php';
-          \$app->make(Illuminate\Contracts\Http\Kernel::class)->bootstrap();
-          \$routes = \$app['router']->getRoutes();
-          \$name = 'filament.admin.resources.guardians.index';
-          \$route = \$routes->getByName(\$name);
-          echo 'has=' . (\$route ? 'yes' : 'no') . "\n";
-          echo 'uri=' . (\$route ? \$route->uri() : '-') . "\n";
-          echo 'routes_count=' . count(\$routes) . "\n";
-          echo 'base=' . basename(base_path()) . "\n";
-          echo 'env=' . \$app->environment() . "\n";
-          echo 'app_url=' . config('app.url') . "\n";
-          echo 'routes_cached=' . (\$app->routesAreCached() ? 'yes' : 'no') . "\n";
-          echo 'routes_file=' . basename(\$app->getCachedRoutesPath()) . "\n";
-          echo 'routes_mtime=' . @date('c', @filemtime(\$app->getCachedRoutesPath())) . "\n";
-          echo 'opcache_validate=' . ini_get('opcache.validate_timestamps') . "\n";
-          echo 'host=' . (\$_SERVER['HTTP_HOST'] ?? '-') . "\n";
-          echo 'docroot=' . basename(\$_SERVER['DOCUMENT_ROOT'] ?? '-') . "\n";
-          PHP
-          echo "DIAG web_sapi=$(curl -s "https://tapaksucisportacademy.com/__diag_${RELEASE_ID}.php" | tr '\n' ' ')"
-          rm -f "$DIAG_FILE"
-
           cd "$APP_PATH/releases"
           ls -1dt */ 2>/dev/null | tail -n +4 | xargs -r rm -rf
           REMOTE
 
-      - name: Verify public root
+      - name: Cleanup deploy diagnostics
         run: |
-          set -e
-          status=$(curl -s -o /tmp/marker.txt -w '%{http_code}' "https://tapaksucisportacademy.com/__deploy_marker.txt" || true)
-          echo "DIAG marker_http=$status"
-          echo "DIAG marker_body=$(head -c 100 /tmp/marker.txt 2>/dev/null)"
           ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
             -o BatchMode=yes -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes \
             "$SSH_USER@$SSH_HOST" \
-            "rm -f '$PUBLIC_PATH/__deploy_marker.txt'" || true
+            "rm -f '$PUBLIC_PATH/__deploy_marker.txt' '$PUBLIC_PATH'/__diag_*.php" || true

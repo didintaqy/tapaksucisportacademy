@@ -24,6 +24,8 @@ return [
     'img_sources' => [
         'https://www.google-analytics.com',
         'https://*.googleusercontent.com',
+        // Avatar bawaan Filament (ui-avatars.com) untuk pengguna tanpa foto.
+        'https://ui-avatars.com',
     ],
 
     'connect_sources' => [

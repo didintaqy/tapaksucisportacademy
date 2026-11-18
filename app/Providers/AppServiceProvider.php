@@ -60,6 +60,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Pastikan URL berkas publik mengikuti skema request. Tanpa ini,
+        // Storage::url() memakai APP_URL dan bisa menghasilkan http:// pada
+        // halaman HTTPS (mixed content) sehingga gambar upload tidak tampil.
+        if (! app()->runningInConsole() && request()->isSecure()) {
+            config(['filesystems.disks.public.url' => rtrim(secure_url('/storage'), '/')]);
+        }
+
         // FileUpload default: jangan buang path lama hanya karena berkasnya
         // tidak ada di disk publik. Filament secara default menghapus path
         // seperti `images/...` (aset tema) saat form edit dimuat, lalu
