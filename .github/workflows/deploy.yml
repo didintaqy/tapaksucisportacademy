@@ -294,6 +294,24 @@ jobs:
 
           trap - EXIT
 
+          # Diagnostik deploy (tidak mengekspos path rahasia).
+          echo "DIAG release=$(basename "$(readlink -f "$APP_PATH/current")")"
+          echo "DIAG resources=$(ls -1 "$APP_PATH/current/app/Filament/Resources" 2>/dev/null | tr '\n' ',')"
+          echo "DIAG guardians_in_routes=$(grep -c 'admin/guardians' "$APP_PATH/current/bootstrap/cache/routes-v7.php" 2>/dev/null || echo 0)"
+          echo "DIAG public_index_current_refs=$(grep -c 'current/vendor/autoload' "$PUBLIC_PATH/index.php" 2>/dev/null || echo 0)"
+          echo "DIAG marker=$(printf '%s' "$RELEASE_ID" > "$PUBLIC_PATH/__deploy_marker.txt" && echo written)"
+
           cd "$APP_PATH/releases"
           ls -1dt */ 2>/dev/null | tail -n +4 | xargs -r rm -rf
           REMOTE
+
+      - name: Verify public root
+        run: |
+          set -e
+          status=$(curl -s -o /tmp/marker.txt -w '%{http_code}' "https://tapaksucisportacademy.com/__deploy_marker.txt" || true)
+          echo "DIAG marker_http=$status"
+          echo "DIAG marker_body=$(head -c 100 /tmp/marker.txt 2>/dev/null)"
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes \
+            "$SSH_USER@$SSH_HOST" \
+            "rm -f '$PUBLIC_PATH/__deploy_marker.txt'" || true
