@@ -450,6 +450,13 @@ lewat `/storage/<path>`.
   PDF, SVG, dan ICO dilewati tanpa error.
 - **Batas unggah:** 5 MB untuk foto umum, 8 MB untuk hero/background,
   2 MB untuk logo, 1 MB untuk favicon. Logo dan favicon menerima SVG/ICO.
+- **Mengedit foto lama:** `FileUpload` dikonfigurasi global dengan
+  `fetchFileInformation(false)` agar path tersimpan tidak dibuang saat form
+  edit dimuat (Filament secara default menghapus path yang tidak ada di disk).
+  Preview mendukung disk publik, aset tema `images/...`, dan URL eksternal.
+- **Crop/rotate:** `imageEditor()` aktif pada foto siswa, pelatih, program,
+  artikel, dan galeri.
+- **Aset tema** (`images/...`) tidak ikut dioptimasi karena bukan unggahan.
 - **Catatan keamanan:** bukti pembayaran (`payments/proofs`) saat ini berada
   di disk publik. Pertimbangkan memindahkannya ke disk privat + signed URL.
 

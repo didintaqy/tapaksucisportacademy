@@ -71,9 +71,8 @@ trait OptimizesImages
     protected function resolveImagePath(string $stored): ?string
     {
         if (Str::startsWith($stored, 'images/')) {
-            $full = public_path($stored);
-
-            return file_exists($full) ? $full : null;
+            // Aset tema di public/images, bukan unggahan admin. Jangan diubah.
+            return null;
         }
 
         if (method_exists($this, 'getImagePath')) {

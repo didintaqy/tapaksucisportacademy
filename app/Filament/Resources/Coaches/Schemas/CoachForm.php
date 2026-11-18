@@ -49,6 +49,7 @@ class CoachForm
                         FileUpload::make('photo_path')
                             ->label('Foto')
                             ->image()
+                            ->imageEditor()
                             ->disk('public')
                             ->directory('coaches')
                             ->visibility('public')

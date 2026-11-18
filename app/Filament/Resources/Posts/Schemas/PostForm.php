@@ -118,6 +118,7 @@ class PostForm
                         FileUpload::make('cover_image')
                             ->label('Gambar Sampul')
                             ->image()
+                            ->imageEditor()
                             ->disk('public')
                             ->directory('posts/covers')
                             ->visibility('public')

@@ -92,6 +92,7 @@ class StudentForm
                     ->avatar()
                     ->label('Foto Terbaru Seragam Tapak Suci')
                     ->image()
+                    ->imageEditor()
                     ->disk('public')
                     ->directory('students')
                     ->visibility('public')

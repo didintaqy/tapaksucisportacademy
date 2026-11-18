@@ -23,6 +23,7 @@ class GalleryForm
                         FileUpload::make('image')
                             ->label('Foto')
                             ->image()
+                            ->imageEditor()
                             ->disk('public')
                             ->directory('gallery')
                             ->visibility('public')

@@ -120,6 +120,7 @@ class ProgramForm
                         FileUpload::make('cover_image')
                             ->label('Gambar Sampul')
                             ->image()
+                            ->imageEditor()
                             ->disk('public')
                             ->directory('programs/covers')
                             ->visibility('public')
