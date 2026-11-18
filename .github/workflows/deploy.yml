@@ -262,18 +262,18 @@ jobs:
 
           define('LARAVEL_START', microtime(true));
 
-          if (file_exists($maintenance = '__APP_PATH__/current/storage/framework/maintenance.php')) {
+          if (file_exists($maintenance = '__RELEASE_DIR__/storage/framework/maintenance.php')) {
               require $maintenance;
           }
 
-          require '__APP_PATH__/current/vendor/autoload.php';
+          require '__RELEASE_DIR__/vendor/autoload.php';
 
           /** @var Application $app */
-          $app = require_once '__APP_PATH__/current/bootstrap/app.php';
+          $app = require_once '__RELEASE_DIR__/bootstrap/app.php';
 
           $app->handleRequest(Request::capture());
           PHP
-          sed -i "s#__APP_PATH__#$APP_PATH#g" "$PUBLIC_PATH/index.php"
+          sed -i "s#__RELEASE_DIR__#$RELEASE_DIR#g" "$PUBLIC_PATH/index.php"
 
           rm -rf "$PUBLIC_PATH/storage"
           ln -s "$APP_PATH/shared/storage/app/public" "$PUBLIC_PATH/storage"
@@ -305,8 +305,8 @@ jobs:
           DIAG_FILE="$PUBLIC_PATH/__diag_${RELEASE_ID}.php"
           cat > "$DIAG_FILE" <<PHP
           <?php
-          require '$APP_PATH/current/vendor/autoload.php';
-          \$app = require '$APP_PATH/current/bootstrap/app.php';
+          require '$RELEASE_DIR/vendor/autoload.php';
+          \$app = require '$RELEASE_DIR/bootstrap/app.php';
           \$app->make(Illuminate\Contracts\Http\Kernel::class)->bootstrap();
           \$routes = \$app['router']->getRoutes();
           \$name = 'filament.admin.resources.guardians.index';
