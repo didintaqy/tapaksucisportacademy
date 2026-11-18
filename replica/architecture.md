@@ -6,7 +6,7 @@ modul, bukan redesign tampilan.
 
 - **Sumber analisis:** repo `main` @ `61f8098` + skema hasil `migrate:fresh` lokal.
 - **Skala:** 29 tabel domain + 9 tabel framework (cache, jobs, sessions, dst).
-- **Status:** Fase A sudah diterapkan (18-11-2026). Fase B & C masih rencana.
+- **Status:** Fase A & B sudah diterapkan (18-11-2026). Fase C masih rencana.
 
 ### Status penerapan
 
@@ -20,6 +20,17 @@ modul, bukan redesign tampilan.
 | Audit log | ✅ diterapkan | siswa, pembayaran, UKT, absensi |
 | Zona waktu | ✅ diterapkan | simpan UTC, tampil `Asia/Jakarta` |
 | Enkripsi NIK/KK | ⏸ ditunda | butuh migrasi data bertahap |
+
+### Status Fase B
+
+| item Fase B | status | catatan |
+| --- | --- | --- |
+| `enrollments` | ✅ diterapkan | backfill + auto-enroll siswa baru |
+| `coach_student` | ✅ diterapkan | tabel + relasi |
+| `event_participants` | ✅ diterapkan | unik per event+siswa |
+| `notification_logs` | ✅ diterapkan | audit email/WhatsApp |
+| Hapus kolom duplikat | ⏸ ditunda | butuh cutover UI |
+| Aktivasi queue worker | ⏸ operasional | cron sudah didokumentasikan |
 
 ---
 

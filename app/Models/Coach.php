@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -68,6 +69,13 @@ class Coach extends Model
     public function schedules(): HasMany
     {
         return $this->hasMany(TrainingSchedule::class, 'coach_ref_id');
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'coach_student')
+            ->withPivot(['assigned_at', 'released_at'])
+            ->withTimestamps();
     }
 
     public function getPhotoUrlAttribute(): ?string

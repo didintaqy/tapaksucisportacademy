@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EnrollmentStatus;
 use App\Traits\LogsActivity;
 use App\Traits\OptimizesImages;
 use App\Traits\SyncsBranch;
@@ -9,6 +10,7 @@ use Database\Factories\StudentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -57,6 +59,16 @@ class Student extends Model
                     'student_code' => 'SIS-'.str_pad((string) $student->id, 5, '0', STR_PAD_LEFT),
                 ])->saveQuietly();
             }
+
+            // Buat keanggotaan awal bila siswa langsung punya program.
+            if (filled($student->program_id) && ! $student->enrollments()->exists()) {
+                $student->enrollments()->create([
+                    'program_id' => $student->program_id,
+                    'branch_id' => $student->branch_id,
+                    'status' => EnrollmentStatus::Active,
+                    'started_at' => now()->toDateString(),
+                ]);
+            }
         });
     }
 
@@ -78,6 +90,35 @@ class Student extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(StudentDocument::class);
+    }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function activeEnrollment(): ?Enrollment
+    {
+        return $this->enrollments()->active()->latest('started_at')->first();
+    }
+
+    public function coaches(): BelongsToMany
+    {
+        return $this->belongsToMany(Coach::class, 'coach_student')
+            ->withPivot(['assigned_at', 'released_at'])
+            ->withTimestamps();
+    }
+
+    public function eventParticipations(): HasMany
+    {
+        return $this->hasMany(EventParticipant::class);
+    }
+
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, 'event_participants')
+            ->withPivot(['status', 'fee_amount', 'result_note'])
+            ->withTimestamps();
     }
 
     public function payments(): HasMany

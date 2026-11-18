@@ -320,6 +320,52 @@ aplikasi tetap berjalan selama transisi.
 - Semua jadwal di `routes/console.php` memakai `->timezone(...)` agar berjalan
   pada jam lokal, bukan UTC.
 
+## Skema Fase B (operasional)
+
+Ditambahkan 18-11-2026. Semua aditif; belum ada kolom lama yang dihapus.
+
+### Keanggotaan (`enrollments`)
+
+- Riwayat program per siswa: `program_id`, `branch_id`, `coach_id`,
+  `started_at`, `ended_at`, dan `status` (`active`, `cuti`, `berhenti`, `lulus`).
+- `active_key` + unique index menegakkan **satu keanggotaan aktif per siswa**;
+  nilainya NULL untuk baris non-aktif sehingga riwayat lama tetap boleh ada.
+- Backfill dari `students.program_id` saat migrasi.
+- Siswa baru yang langsung punya `program_id` otomatis mendapat keanggotaan
+  aktif (`Student::created`).
+- Relasi: `Student::enrollments()`, `Student::activeEnrollment()`,
+  `Program::enrollments()`, `Branch::enrollments()`.
+
+### Penugasan atlet ke pelatih (`coach_student`)
+
+- Pivot `coach_id` ↔ `student_id` dengan `assigned_at` dan `released_at`.
+- Memungkinkan scoping rapor/absensi/UKT per pelatih tanpa bergantung pada
+  cabang atau jadwal.
+- Relasi: `Coach::students()`, `Student::coaches()`.
+
+### Peserta event (`event_participants`)
+
+- Menyimpan peserta lomba/UKT/pertemuan: `status`, `fee_amount`, `result_note`.
+- Unik per `(event_id, student_id)`.
+- Relasi: `Event::participants()`, `Event::participantRecords()`,
+  `Student::events()`, `Student::eventParticipations()`.
+
+### Log notifikasi (`notification_logs`)
+
+- Mencatat pengiriman keluar (email/WhatsApp/SMS): channel, penerima, template,
+  status, referensi provider, dan error.
+- Belum ada pengiriman WhatsApp; tabel disiapkan agar channel baru bisa
+  dicatat tanpa ubah struktur.
+- Pembungkus: `NotificationLog::markAsSent()` / `markAsFailed()`.
+
+### Yang belum dikerjakan di Fase B
+
+- **Penghapusan kolom duplikat** (`posts.category`, `students.belt_level`,
+  `training_schedules.coach_name`, kolom string `branch`): ditunda sampai
+  seluruh tampilan, filter, dan form membaca relasi baru.
+- **Aktivasi queue worker**: konfigurasi cron sudah ada di
+  `docs/DEPLOYMENT-HOSTINGER.md` §7; yang tersisa adalah aktivasi di server.
+
 ## Proteksi Form Publik
 
 Form kontak memakai tiga lapis perlindungan:

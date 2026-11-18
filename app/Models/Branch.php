@@ -52,6 +52,11 @@ class Branch extends Model
         return $this->hasMany(StudentRegistration::class);
     }
 
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
     public function programs(): BelongsToMany
     {
         return $this->belongsToMany(Program::class, 'program_branch');

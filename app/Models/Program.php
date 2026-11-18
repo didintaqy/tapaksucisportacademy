@@ -96,6 +96,11 @@ class Program extends Model
         return $this->belongsToMany(Branch::class, 'program_branch');
     }
 
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
