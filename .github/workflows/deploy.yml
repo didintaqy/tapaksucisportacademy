@@ -301,6 +301,32 @@ jobs:
           echo "DIAG public_index_current_refs=$(grep -c 'current/vendor/autoload' "$PUBLIC_PATH/index.php" 2>/dev/null || echo 0)"
           echo "DIAG marker=$(printf '%s' "$RELEASE_ID" > "$PUBLIC_PATH/__deploy_marker.txt" && echo written)"
 
+          # Diagnostik rute dari SAPI web (sementara, dihapus setelah dibaca).
+          DIAG_FILE="$PUBLIC_PATH/__diag_${RELEASE_ID}.php"
+          cat > "$DIAG_FILE" <<PHP
+<?php
+require '$APP_PATH/current/vendor/autoload.php';
+\$app = require '$APP_PATH/current/bootstrap/app.php';
+\$app->make(Illuminate\Contracts\Http\Kernel::class)->bootstrap();
+\$routes = \$app['router']->getRoutes();
+\$name = 'filament.admin.resources.guardians.index';
+\$route = \$routes->getByName(\$name);
+echo 'has=' . (\$route ? 'yes' : 'no') . "\n";
+echo 'uri=' . (\$route ? \$route->uri() : '-') . "\n";
+echo 'routes_count=' . count(\$routes) . "\n";
+echo 'base=' . basename(base_path()) . "\n";
+echo 'env=' . \$app->environment() . "\n";
+echo 'app_url=' . config('app.url') . "\n";
+echo 'routes_cached=' . (\$app->routesAreCached() ? 'yes' : 'no') . "\n";
+echo 'routes_file=' . basename(\$app->getCachedRoutesPath()) . "\n";
+echo 'routes_mtime=' . @date('c', @filemtime(\$app->getCachedRoutesPath())) . "\n";
+echo 'opcache_validate=' . ini_get('opcache.validate_timestamps') . "\n";
+echo 'host=' . (\$_SERVER['HTTP_HOST'] ?? '-') . "\n";
+echo 'docroot=' . basename(\$_SERVER['DOCUMENT_ROOT'] ?? '-') . "\n";
+PHP
+          echo "DIAG web_sapi=$(curl -s "https://tapaksucisportacademy.com/__diag_${RELEASE_ID}.php" | tr '\n' ' ')"
+          rm -f "$DIAG_FILE"
+
           cd "$APP_PATH/releases"
           ls -1dt */ 2>/dev/null | tail -n +4 | xargs -r rm -rf
           REMOTE
