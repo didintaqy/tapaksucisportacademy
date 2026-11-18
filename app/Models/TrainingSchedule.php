@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\DayOfWeek;
+use App\Traits\SyncsBranch;
 use Carbon\Carbon;
 use Database\Factories\TrainingScheduleFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,8 @@ class TrainingSchedule extends Model
 {
     /** @use HasFactory<TrainingScheduleFactory> */
     use HasFactory;
+
+    use SyncsBranch;
 
     public const DAYS = [
         1 => 'Senin',
@@ -29,12 +32,14 @@ class TrainingSchedule extends Model
         'class_name',
         'program_id',
         'branch',
+        'branch_id',
         'day_of_week',
         'start_time',
         'end_time',
         'location',
         'coach_name',
         'coach_id',
+        'coach_ref_id',
         'is_active',
         'sort_order',
     ];
@@ -51,6 +56,20 @@ class TrainingSchedule extends Model
     public function coach(): BelongsTo
     {
         return $this->belongsTo(User::class, 'coach_id');
+    }
+
+    /**
+     * Profil pelatih terpadu (sumber baru). `coach()` lama dipertahankan
+     * sampai cutover selesai.
+     */
+    public function coachProfile(): BelongsTo
+    {
+        return $this->belongsTo(Coach::class, 'coach_ref_id');
+    }
+
+    public function branchRecord(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function program(): BelongsTo

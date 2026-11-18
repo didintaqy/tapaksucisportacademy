@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Traits\LogsActivity;
 use Database\Factories\PaymentFactory;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,8 @@ class Payment extends Model
 {
     /** @use HasFactory<PaymentFactory> */
     use HasFactory, SoftDeletes;
+
+    use LogsActivity;
 
     /**
      * Alasan & metadata sementara untuk audit trail status.

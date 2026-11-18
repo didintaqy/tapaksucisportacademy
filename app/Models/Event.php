@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -79,5 +80,15 @@ class Event extends Model
     {
         return $query->whereMonth('starts_at', $month)
             ->whereYear('starts_at', $year);
+    }
+
+    public function localStartsAt(): ?Carbon
+    {
+        return $this->starts_at?->copy()->tz(config('app.display_timezone'));
+    }
+
+    public function localEndsAt(): ?Carbon
+    {
+        return $this->ends_at?->copy()->tz(config('app.display_timezone'));
     }
 }

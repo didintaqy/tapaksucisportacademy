@@ -135,9 +135,9 @@
                                                   title="{{ $event->title }}{{ $event->description ? ': ' . $event->description : '' }}">
                                                 {{ $event->title }}
                                             </span>
-                                            @if($event->ends_at && $event->ends_at->format('Y-m-d') !== $event->starts_at->format('Y-m-d'))
+                                            @if($event->ends_at && $event->localEndsAt()->format('Y-m-d') !== $event->localStartsAt()->format('Y-m-d'))
                                                 <small class="text-muted d-block ms-2" style="font-size: 0.55rem;">
-                                                    (sd {{ $event->ends_at->format('d M') }})
+                                                    (sd {{ $event->localEndsAt()->format('d M') }})
                                                 </small>
                                             @endif
                                         </div>

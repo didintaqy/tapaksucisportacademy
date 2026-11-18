@@ -260,6 +260,66 @@ php artisan make:filament-resource NamaModel
 6. Tambahkan factory dan seeder idempotent bila model butuh data awal.
 7. Jalankan `vendor/bin/pint` dan `php artisan test`.
 
+## Skema Fase A (integritas data)
+
+Perubahan skema bertahap mulai 18-11-2026. Kolom lama **tidak dihapus** agar
+aplikasi tetap berjalan selama transisi.
+
+### Cabang (`branches`)
+
+- Tabel `branches` (nama, slug, alamat, telepon, aktif, urutan) menjadi sumber
+  data cabang.
+- `students.branch_id`, `training_schedules.branch_id`, dan
+  `student_registrations.branch_id` diisi otomatis dari kolom string `branch`
+  lewat trait `SyncsBranch`.
+- Pivot `program_branch` menggantikan pemakaian `programs.branches` (JSON).
+- Relasi: `Student::branchRecord()`, `TrainingSchedule::branchRecord()`,
+  `StudentRegistration::branchRecord()`, `Program::branchRecords()`.
+- **Masih transisi:** kolom string `branch` dan `programs.branches` tetap ada.
+  Hapus setelah semua tampilan/filter membaca relasi baru.
+
+### Identitas pelatih
+
+- `coaches.user_id` menautkan profil pelatih ke akun login (opsional).
+- `training_schedules.coach_ref_id` menunjuk ke `coaches`; `coach_id` lama
+  (ke `users`) dipertahankan sampai cutover.
+- Relasi baru: `Coach::user()`, `Coach::schedules()`,
+  `TrainingSchedule::coachProfile()`.
+- Backfill mencocokkan nama pelatih dengan user ber-role `pelatih`; nama ganda
+  dilewati dan perlu ditinjau admin.
+
+### Pembayaran
+
+- Unique berubah dari `(student_id, period)` menjadi
+  `(student_id, payment_type_id, period)`.
+- Efek: SPP, ujian, dan seragam boleh berada di periode yang sama; tagihan
+  sekali bayar (`period` NULL) tidak dibatasi.
+- Index baru `(status, paid_at)` untuk laporan pemasukan.
+
+### Dokumen siswa
+
+- Tabel `student_documents` untuk KK, akta, ijazah, dan foto.
+- Relasi `Student::documents()`.
+- **Belum diterapkan:** enkripsi kolom `nik` dan `family_card_number`. Data
+  lama masih plaintext sehingga enkripsi butuh migrasi data tersendiri.
+
+### Audit log
+
+- Tabel `activity_log` mencatat `created`, `updated`, `deleted`, `restored`
+  untuk `Student`, `Payment`, `BeltPromotion`, dan `Attendance` lewat trait
+  `LogsActivity`.
+- Kegagalan pencatatan tidak menggagalkan operasi utama.
+
+### Zona waktu
+
+- Timestamp tetap disimpan **UTC** (`config('app.timezone')`).
+- `config('app.display_timezone')` (`APP_DISPLAY_TIMEZONE`, default
+  `Asia/Jakarta`) dipakai untuk tampilan dan zona penjadwalan.
+- `Event::localStartsAt()` / `localEndsAt()` mengonversi ke zona tampilan;
+  kalender mengelompokkan event per hari lokal.
+- Semua jadwal di `routes/console.php` memakai `->timezone(...)` agar berjalan
+  pada jam lokal, bukan UTC.
+
 ## Proteksi Form Publik
 
 Form kontak memakai tiga lapis perlindungan:

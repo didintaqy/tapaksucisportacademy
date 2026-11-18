@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RegistrationStatus;
+use App\Traits\SyncsBranch;
 use Database\Factories\StudentRegistrationFactory;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,8 @@ class StudentRegistration extends Model
 {
     /** @use HasFactory<StudentRegistrationFactory> */
     use HasFactory;
+
+    use SyncsBranch;
 
     public const GENDERS = [
         'L' => 'Laki-laki',
@@ -32,6 +35,7 @@ class StudentRegistration extends Model
         'email',
         'address',
         'branch',
+        'branch_id',
         'program_id',
         'notes',
         'status',
@@ -68,6 +72,11 @@ class StudentRegistration extends Model
     public function program(): BelongsTo
     {
         return $this->belongsTo(Program::class);
+    }
+
+    public function branchRecord(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function scopeNew(Builder $query): Builder

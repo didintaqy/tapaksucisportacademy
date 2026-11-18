@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use App\Traits\OptimizesImages;
+use App\Traits\SyncsBranch;
 use Database\Factories\StudentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,13 +30,14 @@ class Student extends Model
         'education',
         'photo',
         'branch',
+        'branch_id',
         'program_id',
     ];
 
     /** @use HasFactory<StudentFactory> */
     use HasFactory, softDeletes;
 
-    use OptimizesImages;
+    use LogsActivity, OptimizesImages, SyncsBranch;
 
     protected function imageAttributes(): array
     {
@@ -65,6 +68,16 @@ class Student extends Model
     public function program(): BelongsTo
     {
         return $this->belongsTo(Program::class);
+    }
+
+    public function branchRecord(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(StudentDocument::class);
     }
 
     public function payments(): HasMany
