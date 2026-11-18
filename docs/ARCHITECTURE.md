@@ -459,6 +459,9 @@ lewat `/storage/<path>`.
 - **Aset tema** (`images/...`) tidak ikut dioptimasi karena bukan unggahan.
 - **Catatan keamanan:** bukti pembayaran (`payments/proofs`) saat ini berada
   di disk publik. Pertimbangkan memindahkannya ke disk privat + signed URL.
+- **APP_URL produksi wajib `https://`.** `Storage::url()` memakai nilai ini,
+  jadi `http://` membuat gambar upload diblokir browser (mixed content).
+  Aplikasi juga memaksa URL disk publik mengikuti skema request HTTPS.
 
 ## Proteksi Form Publik
 

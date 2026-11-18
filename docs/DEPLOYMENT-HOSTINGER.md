@@ -170,7 +170,17 @@ chmod 600 ~/domains/tapaksucisportacademy.com/laravel/shared/.env
    - symlink `laravel/current`,
    - jalankan migrasi dan cache Laravel (tanpa seeder),
    - menyalin file publik ke `public_html`,
-   - membuat `index.php` yang mengarah ke `laravel/current`.
+   - membuat `index.php` yang mengarah ke path release fisik
+     (`laravel/releases/<commit>`), bukan ke symlink `laravel/current`,
+   - mengubah `APP_URL` di `shared/.env` menjadi `https://...` bila masih
+     `http://` (mencegah mixed content pada gambar upload).
+
+> **Penting:** jangan mengarahkan `index.php` ke `laravel/current`. PHP-FPM
+> (Hostinger/LiteSpeed) dapat men-cache hasil resolve symlink sehingga situs
+> tetap menjalankan release lama meski `current` sudah diganti. Akibatnya
+> migrasi berjalan (CLI melihat release baru) tetapi route/menu baru 404 di
+> web. Path release fisik selalu unik per deploy sehingga cache itu tidak
+> berlaku.
 
 Jika workflow gagal karena `.env` belum ada, buat dulu file pada langkah 4.
 
