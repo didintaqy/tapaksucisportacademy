@@ -430,6 +430,29 @@ Akses: Admin & Operator dapat melihat/mengubah; hapus hanya Admin; Pelatih ditol
 - Halaman/endpoint check-in QR untuk pelatih.
 - Portal wali (login multi-anak) dan PWA.
 
+## Upload & Media
+
+Semua gambar disimpan pada disk `public` (`storage/app/public`) dan diakses
+lewat `/storage/<path>`.
+
+- **Symlink:** `php artisan storage:link` wajib dijalankan saat deploy.
+  Sebagai jaring pengaman, `StorageFallbackController` menyajikan
+  `/storage/{path}` bila symlink tidak tersedia (mis. shared hosting tanpa
+  izin `symlink`).
+- **Konflik rute:** disk `local` memakai `serve => false` karena Laravel
+  memakai URI `/storage/{path}` untuk berkas privat; URI itu kini dipakai
+  fallback publik.
+- **Optimasi:** `ImageOptimizer` mengecilkan (tidak memperbesar) lalu
+  mengompres ulang. Dipakai oleh trait `OptimizesImages` (Student, Coach,
+  Program, Post, Achievement, Gallery) dan `SiteSettingMedia::optimizeAll()`
+  untuk gambar Pengaturan Situs.
+- **Format:** hanya raster (JPG/PNG/GIF/BMP/WEBP/AVIF) yang diproses.
+  PDF, SVG, dan ICO dilewati tanpa error.
+- **Batas unggah:** 5 MB untuk foto umum, 8 MB untuk hero/background,
+  2 MB untuk logo, 1 MB untuk favicon. Logo dan favicon menerima SVG/ICO.
+- **Catatan keamanan:** bukti pembayaran (`payments/proofs`) saat ini berada
+  di disk publik. Pertimbangkan memindahkannya ke disk privat + signed URL.
+
 ## Proteksi Form Publik
 
 Form kontak memakai tiga lapis perlindungan:

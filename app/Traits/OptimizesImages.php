@@ -2,9 +2,9 @@
 
 namespace App\Traits;
 
+use App\Services\ImageOptimizer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManagerStatic as Image;
 
 trait OptimizesImages
 {
@@ -39,51 +39,28 @@ trait OptimizesImages
     protected static function bootOptimizesImages(): void
     {
         static::saved(function ($model) {
+            $optimizer = app(ImageOptimizer::class);
+
             foreach ($model->imageAttributes() as $attribute) {
                 if (! $model->wasChanged($attribute)) {
                     continue;
                 }
 
                 $stored = $model->{$attribute} ?? null;
+
                 if (blank($stored) || Str::startsWith((string) $stored, ['http://', 'https://', '//'])) {
                     continue;
                 }
 
                 $path = $model->resolveImagePath((string) $stored);
-                if (! $path || ! file_exists($path)) {
+
+                if (! $path) {
                     continue;
                 }
 
-                try {
-                    [$maxWidth, $maxHeight] = $model->imageMaxDimensions($attribute);
-                    $quality = $model->imageQuality($attribute);
+                [$maxWidth, $maxHeight] = $model->imageMaxDimensions($attribute);
 
-                    $image = Image::make($path);
-
-                    // Resize (hanya mengecilkan, tidak memperbesar)
-                    if ($image->width() > $maxWidth || $image->height() > $maxHeight) {
-                        $image->resize($maxWidth, $maxHeight, function ($constraint) {
-                            $constraint->aspectRatio();
-                            $constraint->upsize();
-                        });
-                    }
-
-                    // Kompres sesuai ekstensi
-                    $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-                    if (in_array($extension, ['jpg', 'jpeg'], true)) {
-                        $image->save($path, $quality);
-                    } elseif ($extension === 'png') {
-                        // PNG: simpan dengan kompresi maksimal (level 9) via quality param
-                        $image->save($path, min($quality, 9));
-                    } elseif ($extension === 'webp') {
-                        $image->save($path, $quality);
-                    } else {
-                        $image->save($path);
-                    }
-                } catch (\Throwable $e) {
-                    // Jangan gagalkan penyimpanan model bila optimasi gagal
-                    report($e);
-                }
+                $optimizer->optimize($path, $maxWidth, $maxHeight, $model->imageQuality($attribute));
             }
         });
     }

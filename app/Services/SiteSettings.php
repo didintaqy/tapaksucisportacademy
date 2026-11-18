@@ -226,6 +226,14 @@ class SiteSettings
 
         $this->flush();
 
+        // Kecilkan/kompres gambar yang baru diunggah (hero, background, logo).
+        // Dilewati untuk SVG/ICO. Kegagalan tidak boleh menggagalkan simpan.
+        try {
+            app(SiteSettingMedia::class)->optimizeAll();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+
         // Data baru sudah tersimpan sebelum berkas lama dihapus, sehingga
         // kegagalan penghapusan tidak pernah membuat data menunjuk ke
         // gambar yang sudah hilang. Kegagalan filesystem juga tidak boleh

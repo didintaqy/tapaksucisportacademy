@@ -88,7 +88,6 @@ class ManageSiteSettings extends Page implements HasForms
 
                                         FileUpload::make('identity.logo')
                                             ->label('Logo')
-                                            ->image()
                                             ->disk('public')
                                             ->directory('site')
                                             ->visibility('public')
@@ -99,13 +98,12 @@ class ManageSiteSettings extends Page implements HasForms
 
                                         FileUpload::make('identity.favicon')
                                             ->label('Favicon')
-                                            ->image()
                                             ->disk('public')
                                             ->directory('site')
                                             ->visibility('public')
                                             ->maxSize(1024)
-                                            ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/svg+xml'])
-                                            ->helperText('Ikon kecil browser. Maksimal 1 MB.'),
+                                            ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon', 'image/svg+xml'])
+                                            ->helperText('Ikon kecil browser (PNG/ICO/SVG). Maksimal 1 MB.'),
 
                                         FileUpload::make('identity.page_header_image')
                                             ->label('Foto Latar Header Halaman')

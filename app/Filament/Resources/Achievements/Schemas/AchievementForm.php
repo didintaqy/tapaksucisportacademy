@@ -87,8 +87,10 @@ class AchievementForm
                     ->label('Bukti / Piagam / Foto')
                     ->disk('public')
                     ->directory('achievements')
+                    ->visibility('public')
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])
-                    ->maxSize(5120),
+                    ->maxSize(5120)
+                    ->helperText('Format JPG, PNG, WEBP, atau PDF. Maksimal 5 MB.'),
 
                 Toggle::make('is_published')
                     ->label('Tampilkan di Halaman Publik')

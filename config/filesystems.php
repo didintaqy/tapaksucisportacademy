@@ -33,7 +33,10 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Dimatikan agar Laravel tidak memakai rute /storage/{path}
+            // (khusus berkas privat dengan signed URL). Rute /storage/{path}
+            // dipakai StorageFallbackController untuk berkas publik.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

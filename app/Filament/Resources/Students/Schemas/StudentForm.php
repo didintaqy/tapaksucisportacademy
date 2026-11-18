@@ -94,13 +94,15 @@ class StudentForm
                     ->image()
                     ->disk('public')
                     ->directory('students')
+                    ->visibility('public')
                     ->nullable()
-                    ->maxSize(2048)
+                    ->maxSize(5120)
                     ->acceptedFileTypes([
                         'image/jpeg',
                         'image/png',
                         'image/webp',
-                    ]),
+                    ])
+                    ->helperText('Format JPG, PNG, atau WEBP. Maksimal 5 MB.'),
             ]);
     }
 }

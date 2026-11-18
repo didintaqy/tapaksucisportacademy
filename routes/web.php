@@ -18,6 +18,7 @@ use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\StorageFallbackController;
 use App\Http\Controllers\StudentPortalController;
 use App\Http\Controllers\StudentRegistrationController;
 use App\Http\Controllers\TestimonialController;
@@ -65,6 +66,12 @@ Route::get('/robots.txt', RobotsController::class)->name('robots');
 Route::get('/images/{model}/{id}/{variant}', ImageDeliveryController::class)
     ->where('variant', 'webp|avif')
     ->name('images.variant');
+
+// Fallback penyajian berkas publik bila symlink storage belum tersedia.
+// Bila `public/storage` ada, web server menyajikan berkas lebih dulu.
+Route::get('/storage/{path}', StorageFallbackController::class)
+    ->where('path', '.*')
+    ->name('storage.fallback');
 
 // Kwitansi pembayaran (khusus admin / operator yang sudah login)
 Route::get('/kwitansi/{payment}', [PaymentReceiptController::class, 'show'])

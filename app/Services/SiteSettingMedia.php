@@ -112,6 +112,31 @@ class SiteSettingMedia
     }
 
     /**
+     * Optimasi seluruh gambar yang masih direferensikan settings.
+     * Hanya mengecilkan; SVG/ICO/PDF dilewati.
+     *
+     * @param  array<string, mixed>|null  $data
+     * @return array<int, string> Path yang berhasil dioptimasi
+     */
+    public function optimizeAll(?array $data = null): array
+    {
+        $optimizer = app(ImageOptimizer::class);
+        $optimized = [];
+
+        foreach ($this->referencedPaths($data) as $path) {
+            $absolute = Storage::disk($this->disk)->path($path);
+
+            if ($optimizer->optimize($absolute)) {
+                $optimized[] = $path;
+            }
+        }
+
+        sort($optimized);
+
+        return $optimized;
+    }
+
+    /**
      * Hapus berkas yatim di DIRECTORY milik fitur ini.
      *
      * Bila $quarantine bernilai true, berkas dipindahkan ke disk karantina

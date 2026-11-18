@@ -89,13 +89,14 @@ class PaymentForm
                             ->disk('public')
                             ->directory('payments/proofs')
                             ->visibility('public')
-                            ->maxSize(4096)
+                            ->maxSize(5120)
                             ->acceptedFileTypes([
                                 'image/jpeg',
                                 'image/png',
                                 'image/webp',
                                 'application/pdf',
                             ])
+                            ->helperText('Format JPG, PNG, WEBP, atau PDF. Maksimal 5 MB.')
                             ->columnSpanFull(),
 
                         Textarea::make('notes')
