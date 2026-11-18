@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Contracts\PaymentGateway;
+use App\Contracts\WhatsAppGateway;
 use App\Services\Payments\PaymentGatewayManager;
 use App\Services\SiteSettings;
+use App\Services\WhatsApp\WhatsAppManager;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +22,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PaymentGateway::class,
             fn ($app) => $app->make(PaymentGatewayManager::class)->driver(),
+        );
+
+        $this->app->singleton(WhatsAppManager::class);
+
+        $this->app->bind(
+            WhatsAppGateway::class,
+            fn ($app) => $app->make(WhatsAppManager::class)->driver(),
         );
     }
 

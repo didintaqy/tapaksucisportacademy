@@ -18,11 +18,14 @@ class Attendance extends Model
         'date',
         'status',
         'notes',
+        'checked_in_at',
+        'checkin_method',
         'recorded_by',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'checked_in_at' => 'datetime',
     ];
 
     protected static function booted(): void
@@ -89,5 +92,22 @@ class Attendance extends Model
     public function scopeStatus($query, string $status)
     {
         return $query->where('status', $status);
+    }
+
+    /**
+     * Tandai kehadiran lewat check-in (QR atau manual).
+     */
+    public function markCheckedIn(string $method = 'qr'): void
+    {
+        $this->forceFill([
+            'status' => 'hadir',
+            'checked_in_at' => now(),
+            'checkin_method' => $method,
+        ])->save();
+    }
+
+    public function isCheckedIn(): bool
+    {
+        return $this->checked_in_at !== null;
     }
 }

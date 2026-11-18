@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Student extends Model
 {
@@ -54,10 +55,18 @@ class Student extends Model
     protected static function booted(): void
     {
         static::created(function (Student $student): void {
+            $attributes = [];
+
             if (blank($student->student_code)) {
-                $student->forceFill([
-                    'student_code' => 'SIS-'.str_pad((string) $student->id, 5, '0', STR_PAD_LEFT),
-                ])->saveQuietly();
+                $attributes['student_code'] = 'SIS-'.str_pad((string) $student->id, 5, '0', STR_PAD_LEFT);
+            }
+
+            if (blank($student->qr_token)) {
+                $attributes['qr_token'] = static::generateQrToken();
+            }
+
+            if ($attributes !== []) {
+                $student->forceFill($attributes)->saveQuietly();
             }
 
             // Buat keanggotaan awal bila siswa langsung punya program.
@@ -70,6 +79,18 @@ class Student extends Model
                 ]);
             }
         });
+    }
+
+    /**
+     * Token QR unik untuk check-in absensi.
+     */
+    public static function generateQrToken(): string
+    {
+        do {
+            $token = Str::random(40);
+        } while (static::withTrashed()->where('qr_token', $token)->exists());
+
+        return $token;
     }
 
     public function performances(): HasMany
@@ -118,6 +139,13 @@ class Student extends Model
     {
         return $this->belongsToMany(Event::class, 'event_participants')
             ->withPivot(['status', 'fee_amount', 'result_note'])
+            ->withTimestamps();
+    }
+
+    public function guardians(): BelongsToMany
+    {
+        return $this->belongsToMany(Guardian::class, 'guardian_student')
+            ->withPivot(['relation', 'is_primary'])
             ->withTimestamps();
     }
 

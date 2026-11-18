@@ -366,6 +366,59 @@ Ditambahkan 18-11-2026. Semua aditif; belum ada kolom lama yang dihapus.
 - **Aktivasi queue worker**: konfigurasi cron sudah ada di
   `docs/DEPLOYMENT-HOSTINGER.md` §7; yang tersisa adalah aktivasi di server.
 
+## Skema Fase C (pertumbuhan)
+
+Ditambahkan 19-11-2026. Aditif; UI admin belum dibuat.
+
+### Wali / orang tua (`guardians`, `guardian_student`)
+
+- Satu wali bisa terhubung ke banyak siswa dan sebaliknya.
+- Pivot menyimpan `relation` (ayah/ibu/wali) dan `is_primary`.
+- `guardians.user_id` (opsional) untuk akun login wali di masa depan.
+- Relasi: `Guardian::students()`, `Guardian::primaryStudent()`,
+  `Student::guardians()`.
+
+### Honor pelatih (`coach_rates`, `coach_payrolls`)
+
+- `coach_rates`: tarif per pelatih (`per_session`/`per_month`), masa berlaku,
+  dan status aktif.
+- `coach_payrolls`: rekap per periode `YYYY-MM` (jumlah sesi, tarif, bonus,
+  potongan, total, status draft/disetujui/dibayar), unik per pelatih+periode.
+- `CoachPayrollCalculator::sessionsHeld()` menghitung sesi unik
+  (jadwal, tanggal) dari absensi; `draftFor()` mengisi draf payroll dan tidak
+  menimpa payroll yang sudah disetujui/dibayar.
+- Relasi: `Coach::rates()`, `Coach::payrolls()`.
+
+### Inventaris (`items`, `stock_movements`)
+
+- `items`: kode unik, kategori (seragam/alat/lain), satuan, harga, stok,
+  stok minimum.
+- `stock_movements`: masuk/keluar/penyesuaian; `items.stock` diperbarui
+  otomatis saat pergerakan dibuat.
+- Relasi: `Item::movements()`; scope `lowStock()`.
+
+### QR check-in
+
+- `students.qr_token` unik, dibuat otomatis saat siswa dibuat (token lama
+  di-backfill saat migrasi).
+- `attendances.checked_in_at` + `checkin_method` (`manual`/`qr`);
+  `Attendance::markCheckedIn()` menandai hadir sekaligus waktu check-in.
+
+### WhatsApp
+
+- Kontrak `WhatsAppGateway`, `WhatsAppManager`, dan driver `log` sebagai
+  default (menulis ke log + `notification_logs`).
+- Konfigurasi di `config/whatsapp.php`; driver `fonnte`/`wablas` sudah punya
+  slot konfigurasi tetapi implementasinya belum dibuat.
+- Binding di `AppServiceProvider`, jadi pemakaian: `app(WhatsAppGateway::class)`.
+
+### Yang belum dikerjakan di Fase C
+
+- Resource Filament untuk guardian, payroll, inventaris, dan peserta event.
+- Implementasi driver WhatsApp nyata (Fonnte/Wablas) + template pesan.
+- Halaman/endpoint check-in QR untuk pelatih.
+- Portal wali (login multi-anak) dan PWA.
+
 ## Proteksi Form Publik
 
 Form kontak memakai tiga lapis perlindungan:

@@ -78,6 +78,16 @@ class Coach extends Model
             ->withTimestamps();
     }
 
+    public function rates(): HasMany
+    {
+        return $this->hasMany(CoachRate::class);
+    }
+
+    public function payrolls(): HasMany
+    {
+        return $this->hasMany(CoachPayroll::class);
+    }
+
     public function getPhotoUrlAttribute(): ?string
     {
         if (blank($this->photo_path)) {

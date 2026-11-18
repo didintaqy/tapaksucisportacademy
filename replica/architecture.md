@@ -6,7 +6,7 @@ modul, bukan redesign tampilan.
 
 - **Sumber analisis:** repo `main` @ `61f8098` + skema hasil `migrate:fresh` lokal.
 - **Skala:** 29 tabel domain + 9 tabel framework (cache, jobs, sessions, dst).
-- **Status:** Fase A & B sudah diterapkan (18-11-2026). Fase C masih rencana.
+- **Status:** Fase A, B, dan C sudah diterapkan (19-11-2026). UI admin dan driver WhatsApp nyata menyusul.
 
 ### Status penerapan
 
@@ -31,6 +31,17 @@ modul, bukan redesign tampilan.
 | `notification_logs` | ✅ diterapkan | audit email/WhatsApp |
 | Hapus kolom duplikat | ⏸ ditunda | butuh cutover UI |
 | Aktivasi queue worker | ⏸ operasional | cron sudah didokumentasikan |
+
+### Status Fase C
+
+| item Fase C | status | catatan |
+| --- | --- | --- |
+| `guardians` + pivot | ✅ diterapkan | portal wali belum ada |
+| `coach_rates` + `coach_payrolls` | ✅ diterapkan | kalkulator sesi dari absensi |
+| `items` + `stock_movements` | ✅ diterapkan | stok update otomatis |
+| QR check-in | ✅ skema + helper | endpoint/scan belum ada |
+| WhatsApp gateway | ✅ abstraksi + driver log | driver provider nyata belum |
+| UI admin Fase C | ⏸ belum | resource Filament menyusul |
 
 ---
 
